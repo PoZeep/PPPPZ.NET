@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2022/01/11/ACTF%E6%96%B0%E7%94%9F%E8%B5%9B2020-Splendid-MineCraft/</loc>
+    
+    <lastmod>2022-01-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/CTF/index.html</loc>
     
     <lastmod>2022-01-11</lastmod>
