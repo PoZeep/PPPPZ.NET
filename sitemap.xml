@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/CTF/index.html</loc>
+    
+    <lastmod>2022-01-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/01/11/GWCTF-2019-babyvm/</loc>
+    
+    <lastmod>2022-01-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2022/01/09/W-Z%E5%AD%A6%E4%B9%A0%E6%89%93%E5%8D%A1-1-9/</loc>
     
     <lastmod>2022-01-09</lastmod>
@@ -30,15 +48,6 @@
   
   <url>
     <loc>http://ppppz.net/Book/index.html</loc>
-    
-    <lastmod>2022-01-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/CTF/index.html</loc>
     
     <lastmod>2022-01-04</lastmod>
     
@@ -175,7 +184,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-01-10</lastmod>
+    <lastmod>2022-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
