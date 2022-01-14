@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2022/01/14/BSidesSF2019-blink/</loc>
+    
+    <lastmod>2022-01-14</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/CTF/index.html</loc>
     
     <lastmod>2022-01-13</lastmod>
@@ -202,7 +211,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-01-13</lastmod>
+    <lastmod>2022-01-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
