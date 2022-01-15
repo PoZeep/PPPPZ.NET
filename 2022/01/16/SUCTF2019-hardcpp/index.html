@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>SUCTF2019-hardcpp - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book">Book</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            <span>January</span>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>16,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">SUCTF2019-hardcpp</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <h1 id="0x00-日常查壳"><a href="#0x00-日常查壳" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h1><p>无壳64位</p>
+<p><img src="/2022/01/16/SUCTF2019-hardcpp/image-20220116002514227.png" alt="image-20220116002514227"></p>
+<h1 id="0x01-去平坦化"><a href="#0x01-去平坦化" class="headerlink" title="0x01 去平坦化"></a>0x01 去平坦化</h1><p>标准的平坦化控制流，装去平坦的可以参考我的之前写的一篇（晚点移植过来）</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_50166464/article/details/121635877">https://blog.csdn.net/weixin_50166464/article/details/121635877</a></p>
+<p><img src="/2022/01/16/SUCTF2019-hardcpp/image-20220116002641902.png" alt="image-20220116002641902"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">workon env1 			</span><br><span class="line"><span class="comment">#进入虚拟环境</span></span><br><span class="line"></span><br><span class="line">python deflat.py -f /home/p0z/Desktop/hardCpp --addr <span class="number">0x4007E0</span></span><br><span class="line"><span class="comment">#python delat.py -f 文件名 --addr main函数开始地址 </span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="0x02-去平坦后混淆"><a href="#0x02-去平坦后混淆" class="headerlink" title="0x02 去平坦后混淆"></a>0x02 去平坦后混淆</h1><p>去平坦化后，可以发现很奇怪，可以发现这些判断是进不去的，具体随我思路看</p>
+<p><img src="/2022/01/16/SUCTF2019-hardcpp/image-20220116003942433.png" alt="image-20220116003942433"></p>
+<p>这个x和y都是.bss段，意思就是未初始化的全局变量，那么就是为0，于是上面那图的很多判断都进不去</p>
+<p>可以看下这篇文章讲data和bss段的详细介绍，<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/28659560">https://zhuanlan.zhihu.com/p/28659560</a></p>
+<h3 id=""><a href="#" class="headerlink" title=""></a><img src="/2022/01/16/SUCTF2019-hardcpp/image-20220116004207366.png" alt="image-20220116004207366"></h3><p>每段都是类似这样的，jnz肯定会执行，于是我们的去混淆就是，每当碰到标识为ds:x的时候</p>
+<ol>
+<li>然后把下面的jnz改成jmp （这样就是直接跳转不用判断）</li>
+<li>再把jnz后的那条指令jmp nop掉（不nop掉也行）</li>
+</ol>
+<p><img src="/2022/01/16/SUCTF2019-hardcpp/image-20220116010208605.png" alt="image-20220116010208605"></p>
+<p>还要注意一下这边的jnz指令是 0F 85</p>
+<p><img src="/2022/01/16/SUCTF2019-hardcpp/image-20220116012007120.png" alt="image-20220116012007120"></p>
+<p>参考这篇文章：<a target="_blank" rel="noopener" href="https://codeantenna.com/a/juuDUaGf62">https://codeantenna.com/a/juuDUaGf62</a></p>
+<p>（针对ida7.0之后的脚本）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">st = <span class="number">0x4007E0</span></span><br><span class="line">end = <span class="number">0x401154</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">patch_nop</span>(<span class="params">start, end</span>):</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(start, end):</span><br><span class="line">		ida_bytes.patch_byte(i, <span class="number">0x90</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">next_instr</span>(<span class="params">addr</span>):</span>					            		<span class="comment">#get_item_size 获取指令或数据长度，这个函数的作用就是去往下一条指令</span></span><br><span class="line">	<span class="keyword">return</span> addr + idc.get_item_size(addr)</span><br><span class="line"></span><br><span class="line">addr = st</span><br><span class="line"><span class="keyword">while</span> (addr &lt; end):</span><br><span class="line">	<span class="built_in">next</span> = next_instr(addr)</span><br><span class="line">	<span class="keyword">if</span> <span class="string">&quot;ds:x&quot;</span> <span class="keyword">in</span> idc.GetDisasm(addr):	        			<span class="comment">#idc.GetDisasm(addr)得到addr的反汇编语句</span></span><br><span class="line">		<span class="keyword">while</span> (<span class="literal">True</span>):</span><br><span class="line">			addr = <span class="built_in">next</span></span><br><span class="line">			<span class="built_in">next</span> = next_instr(addr)</span><br><span class="line">			<span class="keyword">if</span> <span class="string">&quot;jnz&quot;</span> <span class="keyword">in</span> idc.GetDisasm(addr):</span><br><span class="line">				dest = idc.get_operand_value(addr, <span class="number">0</span>)       <span class="comment">#得到操作数,即指令后的数 例如 jz 偏移地址 于是get_oprand_value获得偏移地址</span></span><br><span class="line">				ida_bytes.patch_byte(addr, <span class="number">0xE9</span>)            <span class="comment">#改addr地址的机器码为jmp</span></span><br><span class="line">				ida_bytes.patch_byte(addr + <span class="number">5</span>, <span class="number">0x90</span>)        <span class="comment">#addr + 5的位置改成nop</span></span><br><span class="line">				offset = dest - (addr + <span class="number">5</span>)                  <span class="comment">#调整为正确的偏移地址 也就是相对偏移地址 - 当前指令后的地址</span></span><br><span class="line">				ida_bytes.patch_dword(addr + <span class="number">1</span>, offset)     <span class="comment">#把偏移地址放到 jmp xxxx nop</span></span><br><span class="line">				<span class="built_in">print</span>(<span class="string">&quot;patch bcf: 0x%x&quot;</span> % addr)</span><br><span class="line">				addr = <span class="built_in">next</span></span><br><span class="line">				patch_nop(<span class="built_in">next</span>, <span class="built_in">next</span> + <span class="number">3</span>)					<span class="comment">#把无用的jmp xxx全部nop掉</span></span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		addr = <span class="built_in">next</span></span><br></pre></td></tr></table></figure>
+
+<p>然后就成功去掉了！</p>
+<p><img src="/2022/01/16/SUCTF2019-hardcpp/image-20220116010851596.png" alt="image-20220116010851596"></p>
+<h1 id="0x03-正式分析main函数"><a href="#0x03-正式分析main函数" class="headerlink" title="0x03 正式分析main函数"></a>0x03 正式分析main函数</h1><p>函数有点多 但其实大部分都比较简单（可以边动调边看作用和返回值）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> v3; <span class="comment">// al</span></span><br><span class="line">  <span class="keyword">char</span> v4; <span class="comment">// al</span></span><br><span class="line">  <span class="keyword">char</span> v5; <span class="comment">// al</span></span><br><span class="line">  <span class="keyword">char</span> v6; <span class="comment">// al</span></span><br><span class="line">  <span class="keyword">char</span> v8[<span class="number">8</span>]; <span class="comment">// [rsp+A0h] [rbp-90h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v9[<span class="number">8</span>]; <span class="comment">// [rsp+A8h] [rbp-88h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v10[<span class="number">8</span>]; <span class="comment">// [rsp+B0h] [rbp-80h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v11[<span class="number">8</span>]; <span class="comment">// [rsp+B8h] [rbp-78h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> t0[<span class="number">8</span>]; <span class="comment">// [rsp+C0h] [rbp-70h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v13[<span class="number">7</span>]; <span class="comment">// [rsp+C8h] [rbp-68h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> t1; <span class="comment">// [rsp+CFh] [rbp-61h]</span></span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+D0h] [rbp-60h]</span></span><br><span class="line">  <span class="keyword">int</span> v16; <span class="comment">// [rsp+D4h] [rbp-5Ch]</span></span><br><span class="line">  <span class="keyword">int</span> v17; <span class="comment">// [rsp+D8h] [rbp-58h]</span></span><br><span class="line">  <span class="keyword">int</span> v18; <span class="comment">// [rsp+DCh] [rbp-54h]</span></span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [rsp+E0h] [rbp-50h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v20[<span class="number">23</span>]; <span class="comment">// [rsp+E1h] [rbp-4Fh] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v21[<span class="number">8</span>]; <span class="comment">// [rsp+F8h] [rbp-38h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v22[<span class="number">8</span>]; <span class="comment">// [rsp+100h] [rbp-30h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v23[<span class="number">8</span>]; <span class="comment">// [rsp+108h] [rbp-28h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v24[<span class="number">4</span>]; <span class="comment">// [rsp+110h] [rbp-20h] BYREF</span></span><br><span class="line">  <span class="keyword">int</span> v25; <span class="comment">// [rsp+114h] [rbp-1Ch]</span></span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">char</span> **v26; <span class="comment">// [rsp+118h] [rbp-18h]</span></span><br><span class="line">  <span class="keyword">int</span> v27; <span class="comment">// [rsp+120h] [rbp-10h]</span></span><br><span class="line">  <span class="keyword">int</span> v28; <span class="comment">// [rsp+124h] [rbp-Ch]</span></span><br><span class="line">  <span class="keyword">int</span> v29; <span class="comment">// [rsp+128h] [rbp-8h]</span></span><br><span class="line">  <span class="keyword">bool</span> v30; <span class="comment">// [rsp+12Eh] [rbp-2h]</span></span><br><span class="line"></span><br><span class="line">  v28 = <span class="number">0</span>;</span><br><span class="line">  v27 = argc;</span><br><span class="line">  v26 = argv;</span><br><span class="line">  v25 = <span class="built_in">time</span>(<span class="number">0LL</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;func(?)=\&quot;01abfc750a0c942167651c40d088531d\&quot;?&quot;</span>);</span><br><span class="line">  s = <span class="built_in">getchar</span>();</span><br><span class="line">  <span class="built_in">fgets</span>(v20, <span class="number">21</span>, stdin);</span><br><span class="line">  v18 = <span class="built_in">time</span>(<span class="number">0LL</span>);</span><br><span class="line">  v17 = v18 - v25;</span><br><span class="line">  v29 = v18 - v25;</span><br><span class="line">  v16 = <span class="built_in">strlen</span>(&amp;s);</span><br><span class="line">  v30 = v16 != <span class="number">21</span>;</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">1</span>; i &lt; <span class="number">21</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">      t1 = v17 ^ *(&amp;s + i);</span><br><span class="line">      v13[<span class="number">0</span>] = <span class="built_in">ret_a2</span>((__int64)v23, t1);</span><br><span class="line">      t0[<span class="number">0</span>] = <span class="built_in">ret_a22</span>((__int64)v21, *(&amp;s + v17 + i - <span class="number">1</span>));</span><br><span class="line">      v3 = <span class="built_in">MOD</span>(t0, <span class="number">7</span>);</span><br><span class="line">      t1 = <span class="built_in">ADD</span>((__int64)v13, v3);</span><br><span class="line">      v11[<span class="number">0</span>] = <span class="built_in">ret_a222</span>((__int64)v24, t1);</span><br><span class="line">      v10[<span class="number">0</span>] = <span class="built_in">ret_a222</span>((__int64)v24, *(&amp;s + v17 + i - <span class="number">1</span>));</span><br><span class="line">      v4 = <span class="built_in">XOR</span>(v10, <span class="number">18</span>);</span><br><span class="line">      v9[<span class="number">0</span>] = <span class="built_in">ret_a2222</span>((__int64)v22, v4);</span><br><span class="line">      v5 = <span class="built_in">MUL</span>(v9, <span class="number">3</span>);</span><br><span class="line">      v8[<span class="number">0</span>] = <span class="built_in">ret_a2</span>((__int64)v23, v5);</span><br><span class="line">      v6 = <span class="built_in">ADD</span>((__int64)v8, <span class="number">2</span>);</span><br><span class="line">      t1 = <span class="built_in">XOR</span>(v11, v6);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> ( enc[i - <span class="number">1</span>] != t1 );</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;You win&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还要关于我的ubuntu动调报错</p>
+<p><img src="/2022/01/16/SUCTF2019-hardcpp/image-20220116012230486.png" alt="image-20220116012230486"></p>
+<p>这篇文章解决了我的缺少库问题</p>
+<p><a target="_blank" rel="noopener" href="https://askubuntu.com/questions/1219027/problem-with-shared-library-libc-so-1-on-kubuntu-18-04">https://askubuntu.com/questions/1219027/problem-with-shared-library-libc-so-1-on-kubuntu-18-04</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install libc++-dev</span><br></pre></td></tr></table></figure>
+
+<p>可以打个草稿跟一下就会比较容易</p>
+<p><img src="/2022/01/16/SUCTF2019-hardcpp/image-20220116011803611.png" alt="image-20220116011803611"></p>
+<p><img src="/2022/01/16/SUCTF2019-hardcpp/image-20220116011814554.png" alt="image-20220116011814554"></p>
+<h1 id="0x04-GetFlag"><a href="#0x04-GetFlag" class="headerlink" title="0x04 GetFlag!"></a>0x04 GetFlag!</h1><p>关于flag[0]就是关于一开始的提示，要不然无法解出</p>
+<h3 id="-1"><a href="#-1" class="headerlink" title=""></a><img src="/2022/01/16/SUCTF2019-hardcpp/image-20220116012432211.png" alt="image-20220116012432211"></h3><p><img src="/2022/01/16/SUCTF2019-hardcpp/image-20220116012441315.png" alt="image-20220116012441315"></p>
+<p>EXP</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> base64 <span class="keyword">import</span> encode</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ef = [<span class="number">0xF3</span>, <span class="number">0x2E</span>, <span class="number">0x18</span>, <span class="number">0x36</span>, <span class="number">0xE1</span>, <span class="number">0x4C</span>, <span class="number">0x22</span>, <span class="number">0xD1</span>, <span class="number">0xF9</span>, <span class="number">0x8C</span>, <span class="number">0x40</span>, <span class="number">0x76</span>, <span class="number">0xF4</span>, <span class="number">0x0E</span>, <span class="number">0x00</span>, <span class="number">0x05</span>, <span class="number">0xA3</span>, <span class="number">0x90</span>, <span class="number">0x0E</span>, <span class="number">0xA5</span>]</span><br><span class="line">f = [<span class="number">0</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">21</span>)]</span><br><span class="line">f[<span class="number">0</span>] = <span class="built_in">ord</span>(<span class="string">&#x27;#&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">21</span>):</span><br><span class="line">    f[i] = ((ef[i - <span class="number">1</span>] ^ ((f[i - <span class="number">1</span>] ^ <span class="number">18</span>) * <span class="number">3</span> + <span class="number">2</span>) &amp; <span class="number">0xFF</span> ) - (f[i - <span class="number">1</span>] % <span class="number">7</span>))   <span class="comment">#要注意* 3 + 2容易超过一字节限制 所以加个0xFF</span></span><br><span class="line">    <span class="comment"># print(ef[i - 1], end=&quot;^&quot;)</span></span><br><span class="line">    <span class="comment"># print(((f[i - 1] ^ 18) * 3 + 2) &amp; 0xFF, end = &quot; = &quot;) </span></span><br><span class="line">    <span class="comment"># print((ef[i - 1] ^ (((f[i - 1] ^ 18) * 3 + 2)) &amp; 0xFF), end = &quot;  &quot;)</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">chr</span>(f[i]) , end=<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>GetFlag!(总算脱离了1分题)</p>
+<h3 id="-2"><a href="#-2" class="headerlink" title=""></a><img src="/2022/01/16/SUCTF2019-hardcpp/image-20220116012527931.png" alt="image-20220116012527931"></h3>
+    </div>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+
+    
+        
+    
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary" class="item">Diary</a>
+                
+                <a href="/Friends" class="item">Friends</a>
+                
+                <a href="/CTF" class="item">CTF</a>
+                
+                <a href="/Book" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2022 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+        <!-- 
+         -->
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    siteTime();
+</script>
+
+
+<!-- <script>
+    $(document).ready(function () {
+
+        var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+        var pvcountOffset = 80000;  // 初始化首次数据
+        var uvcountOffset = 20000;
+
+        function fixCount() {
+            if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
+                $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
+                clearInterval(int);
+            }
+            if ($("#busuanzi_container_site_pv").css("display") != "none") {
+                $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + uvcountOffset); // 加上初始数据 
+                clearInterval(int); // 停止检测
+            }
+        }
+    });      
+</script> -->
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
