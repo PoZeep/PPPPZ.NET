@@ -159,12 +159,15 @@
 
 <p>GetFlag!</p>
 <p><img src="/2022/01/22/%E6%B5%85%E8%B0%88CTF%E9%80%86%E5%90%91%E5%B8%B8%E8%A7%81%E9%A2%98%E5%9E%8B-P-Z/image-20220122154832273.png" alt="image-20220122154832273"></p>
-<h1 id="加壳类-（肝不动了，早上再肝）"><a href="#加壳类-（肝不动了，早上再肝）" class="headerlink" title="加壳类 （肝不动了，早上再肝）"></a>加壳类 （肝不动了，早上再肝）</h1><p>加壳，有压缩壳和加密壳，这节课简单讲讲压缩壳</p>
+<h1 id="加壳类"><a href="#加壳类" class="headerlink" title="加壳类"></a>加壳类</h1><p>加壳，有压缩壳和加密壳，这节课简单讲讲压缩壳</p>
 <p>简单看几眼这张图</p>
 <p><img src="/2022/01/22/%E6%B5%85%E8%B0%88CTF%E9%80%86%E5%90%91%E5%B8%B8%E8%A7%81%E9%A2%98%E5%9E%8B-P-Z/image-20220122152655468.png" alt="image-20220122152655468"></p>
-<h2 id="Buuctf-新年快乐"><a href="#Buuctf-新年快乐" class="headerlink" title="Buuctf 新年快乐"></a>Buuctf 新年快乐</h2><p>关于upx加壳，该怎么办（利用googel！百度！bing！）</p>
-<p><img src="/2022/01/22/%E6%B5%85%E8%B0%88CTF%E9%80%86%E5%90%91%E5%B8%B8%E8%A7%81%E9%A2%98%E5%9E%8B-P-Z/image-20220122150414919.png" alt="image-20220122150414919"></p>
-<h1 id="异或类"><a href="#异或类" class="headerlink" title="异或类"></a>异或类</h1><p>异或口诀，相同为0，不同为1</p>
+<h2 id="Buuctf-新年快乐"><a href="#Buuctf-新年快乐" class="headerlink" title="Buuctf 新年快乐"></a>Buuctf 新年快乐</h2><h3 id="0x00-日常查壳-2"><a href="#0x00-日常查壳-2" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h3><p>upx壳 32位</p>
+<p><img src="/%E6%B5%85%E8%B0%88CTF%E9%80%86%E5%90%91%E5%B8%B8%E8%A7%81%E9%A2%98%E5%9E%8B-P-Z/image-20220123123642658.png" alt="image-20220123123642658"></p>
+<p>有三种脱壳方法</p>
+<h4 id="upx软件直接脱"><a href="#upx软件直接脱" class="headerlink" title="upx软件直接脱"></a>upx软件直接脱</h4><p>注意原文件会给覆盖</p>
+<p><img src="/%E6%B5%85%E8%B0%88CTF%E9%80%86%E5%90%91%E5%B8%B8%E8%A7%81%E9%A2%98%E5%9E%8B-P-Z/image-20220123123906479.png" alt="image-20220123123906479"></p>
+<h4 id=""><a href="#" class="headerlink" title=""></a></h4><h1 id="异或类"><a href="#异或类" class="headerlink" title="异或类"></a>异或类</h1><p>异或口诀，相同为0，不同为1</p>
 <p>例如两个数，5和11，那么如何相同为0，不同为1呢</p>
 <p>意为他们的转成二进制</p>
 <p>5:   0101</p>
@@ -172,7 +175,7 @@
 <p>14: 1110</p>
 <p>对应位相同为0不同为1</p>
 <p>注意异或是可逆的，自己把5 11 14三个数据相同为0不同为1，代一代就会很明白</p>
-<h2 id="Buuctf-Xor"><a href="#Buuctf-Xor" class="headerlink" title="Buuctf Xor"></a>Buuctf Xor</h2><h3 id="0x00-日常查壳-2"><a href="#0x00-日常查壳-2" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h3><p>无壳64位</p>
+<h2 id="Buuctf-Xor"><a href="#Buuctf-Xor" class="headerlink" title="Buuctf Xor"></a>Buuctf Xor</h2><h3 id="0x00-日常查壳-3"><a href="#0x00-日常查壳-3" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h3><p>无壳64位</p>
 <p><img src="/2022/01/22/%E6%B5%85%E8%B0%88CTF%E9%80%86%E5%90%91%E5%B8%B8%E8%A7%81%E9%A2%98%E5%9E%8B-P-Z/image-20220122210828333.png" alt="image-20220122210828333"></p>
 <h3 id="0x01-分析主函数-2"><a href="#0x01-分析主函数-2" class="headerlink" title="0x01 分析主函数"></a>0x01 分析主函数</h3><p>一个异或加密</p>
 <p>input[1] ^= input[0]</p>
@@ -188,7 +191,7 @@
 
 <p>GetFlag!</p>
 <p><img src="/2022/01/22/%E6%B5%85%E8%B0%88CTF%E9%80%86%E5%90%91%E5%B8%B8%E8%A7%81%E9%A2%98%E5%9E%8B-P-Z/image-20220122212158338.png" alt="image-20220122212158338"></p>
-<h2 id="PZCTF-Xor"><a href="#PZCTF-Xor" class="headerlink" title="PZCTF Xor"></a>PZCTF Xor</h2><h3 id="0x00-日常查壳-3"><a href="#0x00-日常查壳-3" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h3><p>无壳64位</p>
+<h2 id="PZCTF-Xor"><a href="#PZCTF-Xor" class="headerlink" title="PZCTF Xor"></a>PZCTF Xor</h2><h3 id="0x00-日常查壳-4"><a href="#0x00-日常查壳-4" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h3><p>无壳64位</p>
 <p><img src="/2022/01/22/%E6%B5%85%E8%B0%88CTF%E9%80%86%E5%90%91%E5%B8%B8%E8%A7%81%E9%A2%98%E5%9E%8B-P-Z/image-20220123010153514.png" alt="image-20220123010153514"></p>
 <h3 id="0x01-分析主函数-3"><a href="#0x01-分析主函数-3" class="headerlink" title="0x01 分析主函数"></a>0x01 分析主函数</h3><p>就是分组异或</p>
 <p>当下标为0 1 2 3什么都不异或</p>
@@ -203,7 +206,7 @@
 
 <h2 id="绿城杯-easy-Re"><a href="#绿城杯-easy-Re" class="headerlink" title="绿城杯 easy_Re"></a>绿城杯 easy_Re</h2><p>虽然是RC4加密（下周会讲），但其实也可以当成异或题</p>
 <p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1jL411s71x?spm_id_from=333.999.0.0">绿城杯-Reverse(逆向)-easy_Re 保姆级新手向_哔哩哔哩_bilibili</a></p>
-<h2 id="BugKu-Ez-Fibon"><a href="#BugKu-Ez-Fibon" class="headerlink" title="BugKu Ez_Fibon"></a>BugKu Ez_Fibon</h2><h3 id="0x00-日常查壳-4"><a href="#0x00-日常查壳-4" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h3><p>upx壳 64位 直接-d脱掉即可</p>
+<h2 id="BugKu-Ez-Fibon"><a href="#BugKu-Ez-Fibon" class="headerlink" title="BugKu Ez_Fibon"></a>BugKu Ez_Fibon</h2><h3 id="0x00-日常查壳-5"><a href="#0x00-日常查壳-5" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h3><p>upx壳 64位 直接-d脱掉即可</p>
 <p><img src="/2022/01/22/%E6%B5%85%E8%B0%88CTF%E9%80%86%E5%90%91%E5%B8%B8%E8%A7%81%E9%A2%98%E5%9E%8B-P-Z/image-20220122215540631.png" alt="image-20220122215540631"></p>
 <h3 id="0x01-分析主函数-4"><a href="#0x01-分析主函数-4" class="headerlink" title="0x01 分析主函数"></a>0x01 分析主函数</h3><p>重点在与那行 % 64的操作，是没法直接逆回来的，因为不知道减掉了多少个64，所以我们采用爆破法</p>
 <p><img src="/2022/01/22/%E6%B5%85%E8%B0%88CTF%E9%80%86%E5%90%91%E5%B8%B8%E8%A7%81%E9%A2%98%E5%9E%8B-P-Z/image-20220122224801239.png" alt="image-20220122224801239"></p>
@@ -219,7 +222,7 @@
 <p>当我们打开ida看，发现ins[] = { 11, 12, 13, 14 }，那不就乱了是不是分析不了</p>
 <p>但其实出题人在程序的开头有个解码函数将ins里的数据每个 - 10，当程序在运行的时候，数据又回到了 1 2 3 4</p>
 <p>这就是SMC</p>
-<h2 id="穿山甲-SMC"><a href="#穿山甲-SMC" class="headerlink" title="穿山甲 SMC"></a>穿山甲 SMC</h2><h3 id="0x00-日常查壳-5"><a href="#0x00-日常查壳-5" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h3><p><img src="/2022/01/22/%E6%B5%85%E8%B0%88CTF%E9%80%86%E5%90%91%E5%B8%B8%E8%A7%81%E9%A2%98%E5%9E%8B-P-Z/image-20220123001042962.png" alt="image-20220123001042962"></p>
+<h2 id="穿山甲-SMC"><a href="#穿山甲-SMC" class="headerlink" title="穿山甲 SMC"></a>穿山甲 SMC</h2><h3 id="0x00-日常查壳-6"><a href="#0x00-日常查壳-6" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h3><p><img src="/2022/01/22/%E6%B5%85%E8%B0%88CTF%E9%80%86%E5%90%91%E5%B8%B8%E8%A7%81%E9%A2%98%E5%9E%8B-P-Z/image-20220123001042962.png" alt="image-20220123001042962"></p>
 <h3 id="0x01-分析主函数-5"><a href="#0x01-分析主函数-5" class="headerlink" title="0x01 分析主函数"></a>0x01 分析主函数</h3><p>这边即使SMC，还没解码的，可以发现上面for循环就是解码的代码，对401000的地址每个异或7</p>
 <p><img src="/2022/01/22/%E6%B5%85%E8%B0%88CTF%E9%80%86%E5%90%91%E5%B8%B8%E8%A7%81%E9%A2%98%E5%9E%8B-P-Z/image-20220123001426418.png" alt="image-20220123001426418"></p>
 <h3 id="0x02-SMC"><a href="#0x02-SMC" class="headerlink" title="0x02 SMC"></a>0x02 SMC</h3><p>于是我们直接在本地调试，让程序解码，这就是我们说的动调</p>
