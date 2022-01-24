@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://ppppz.net/2022/01/24/2022-HWS-EasyVM/</loc>
+    <loc>http://ppppz.net/Diary/index.html</loc>
     
     <lastmod>2022-01-24</lastmod>
     
@@ -11,7 +11,25 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/Diary/index.html</loc>
+    <loc>http://ppppz.net/Book/index.html</loc>
+    
+    <lastmod>2022-01-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/CTF/index.html</loc>
+    
+    <lastmod>2022-01-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/01/24/2022-HWS-EasyVM/</loc>
     
     <lastmod>2022-01-24</lastmod>
     
@@ -57,15 +75,6 @@
   
   <url>
     <loc>http://ppppz.net/2022/01/03/Week-of-12-27/</loc>
-    
-    <lastmod>2022-01-17</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/CTF/index.html</loc>
     
     <lastmod>2022-01-17</lastmod>
     
@@ -140,15 +149,6 @@
     <loc>http://ppppz.net/2022/01/06/MRCTF2020-EasyCpp/</loc>
     
     <lastmod>2022-01-07</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/Book/index.html</loc>
-    
-    <lastmod>2022-01-04</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
