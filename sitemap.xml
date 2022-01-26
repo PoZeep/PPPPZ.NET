@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2022/01/26/COMMNET/</loc>
+    
+    <lastmod>2022-01-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/01/24/2022-HWS-EasyVM/</loc>
+    
+    <lastmod>2022-01-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/Diary/index.html</loc>
     
     <lastmod>2022-01-24</lastmod>
@@ -21,15 +39,6 @@
   
   <url>
     <loc>http://ppppz.net/CTF/index.html</loc>
-    
-    <lastmod>2022-01-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/2022/01/24/2022-HWS-EasyVM/</loc>
     
     <lastmod>2022-01-24</lastmod>
     
