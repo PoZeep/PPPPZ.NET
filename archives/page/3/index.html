@@ -57,7 +57,6 @@
  
   
 
-
     <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
 
 <meta name="generator" content="Hexo 6.0.0"></head>
@@ -401,8 +400,6 @@
     <span id="sitetime" style="text-align: center;display:block;"></span>
 
 
-        <!-- 
-         -->
 </footer>
 
 <script language=javascript>
@@ -437,7 +434,7 @@
         var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
         var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
         document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
-    }/*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
+    }/*因为建站时间还没有一年，就将之注释掉了*/
     siteTime();
 </script>
 
