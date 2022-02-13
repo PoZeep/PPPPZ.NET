@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>Book - P.Z&#39;s Blog</title>
+  <title>关于Python-Maze模块的学习 - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -116,184 +116,58 @@
             
             
             
-            <span>13,</span>
+            <span>7,</span>
             <span>2022</span>
         </div>
         
 
-        <h2 class="title">Book</h2>
+        <h2 class="title">关于Python-Maze模块的学习</h2>
     </div>
 
     <div class="divider"></div>
 
     <div class="content">
-        <h2 class="section-title">2022.2</h2>
-
-<div class="post-list">
-    <article class="post-list-item">
-            <a href="/2022/02/07/%E5%85%B3%E4%BA%8EPython-Maze%E6%A8%A1%E5%9D%97%E7%9A%84%E5%AD%A6%E4%B9%A0/">
-                <div class="content">
-                    <div class="title">
-                        关于Python-Maze模块的学习
-                    </div>
-                    <div class="excerpt">   
-                    </div>
-                    <div class="time">
-                        <span>February</span>
-                        <span>&nbsp;7,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
- <article class="post-list-item">
-            <a href="/2022/02/03/SM4-P-Z/">
-                <div class="content">
-                    <div class="title">
-                        SM4-P.Z
-                    </div>
-                    <div class="excerpt">  
-                    </div>
-                    <div class="time">
-                        <span>February</span>
-                        <span>&nbsp;3,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-</div>
+        <h1 id="A-Python-Module-for-Maze-Search-Algorithms"><a href="#A-Python-Module-for-Maze-Search-Algorithms" class="headerlink" title="A Python Module for Maze Search Algorithms"></a>A Python Module for Maze Search Algorithms</h1><p>出题找着找着找到这个模块，真不错，正好用来出道题，现在先来学习一下这个迷宫模块</p>
+<h2 id="装库"><a href="#装库" class="headerlink" title="装库"></a>装库</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install pyamaze</span><br><span class="line"></span><br><span class="line">pip3 install pyamaze</span><br></pre></td></tr></table></figure>
 
 
-<h2 class="section-title">2022.1</h2>
 
-<div class="post-list">
-<article class="post-list-item">
-            <a href="/2022/01/31/TEA-P-Z/">
-                <div class="content">
-                    <div class="title">
-                        TEA-P.Z
-                    </div>
-                    <div class="excerpt">  
-                    </div>
-                    <div class="time">
-                        <span>January</span> 
-                        <span>&nbsp;31,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-        <article class="post-list-item">
-            <a href="/2022/01/31/RC4-P-Z/">
-                <div class="content">
-                    <div class="title">
-                        RC4-P.Z
-                    </div>
-                    <div class="excerpt">   
-                    </div>
-                    <div class="time"> 
-                        <span>January</span>
-                        <span>&nbsp;31,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-        <article class="post-list-item">
-            <a href="/2022/01/31/AES-P-Z/">
-                <div class="content">
-                    <div class="title">
-                        AES-P.Z
-                    </div>
-                    <div class="excerpt">   
-                    </div>
-                    <div class="time">
-                        <span>January</span>
-                        <span>&nbsp;31,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-        <article class="post-list-item">
-            <a href="/2022/01/21/%E5%85%B3%E4%BA%8EDFS%E4%B8%8EBFS%E7%9A%84%E5%AD%A6%E4%B9%A0/">
-                <div class="content">
-                    <div class="title">
-                        关于DFS与BFS的学习
-                    </div>
-                    <div class="excerpt">   
-                    </div>
-                    <div class="time">
-                        <span>January</span>  
-                        <span>&nbsp;21,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-         <article class="post-list-item">
-            <a href="/2022/01/04/%E7%A0%B4%E8%A7%A3010Editor%E6%9C%89%E6%84%9F/">
-                <div class="content">
-                    <div class="title">
-                        破解010Editor有感
-                    </div>
-                    <div class="excerpt">    
-                    </div>
-                    <div class="time">
-                        <span>January</span>
-                        <span>&nbsp;4,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article> 
-</div>
+<h2 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyamaze <span class="keyword">import</span> maze</span><br><span class="line"></span><br><span class="line">m=maze()</span><br><span class="line"></span><br><span class="line">m.CreateMaze()</span><br><span class="line"></span><br><span class="line">m.run()</span><br></pre></td></tr></table></figure>
 
-<h2 class="section-title">2021.12</h2>
+<p>创建一个只有唯一解的迷宫</p>
+<p><img src="/%E5%85%B3%E4%BA%8EPython-Maze%E6%A8%A1%E5%9D%97%E7%9A%84%E5%AD%A6%E4%B9%A0/image-20220207185611098.png" alt="image-20220207185611098"></p>
+<h2 id="指定迷宫宽高"><a href="#指定迷宫宽高" class="headerlink" title="指定迷宫宽高"></a>指定迷宫宽高</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyamaze <span class="keyword">import</span> maze</span><br><span class="line"></span><br><span class="line">m=maze(<span class="number">5</span>,<span class="number">5</span>)					<span class="comment">#设置为5 x 5的迷宫</span></span><br><span class="line"></span><br><span class="line">m.CreateMaze()</span><br><span class="line"></span><br><span class="line">m.run()</span><br></pre></td></tr></table></figure>
 
-<div class="post-list">
-        <article class="post-list-item">
-            <a href="/2021/12/28/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E4%B8%8A%E7%9A%84PE%E6%96%87%E4%BB%B6%E5%AD%A6%E4%B9%A0/">
-                <div class="content">
-                    <div class="title">
-                        关于在逆向工程核心原理--PE文件格式学习
-                    </div>
-                    <div class="excerpt">   
-                    </div>
-                    <div class="time">
-                        <span>December</span>
-                        <span>&nbsp;28,&nbsp;</span>
-                        <span>2021</span>
-                    </div>
-                </div>
-            </a>
-        </article>   
-</div>
 
-<!-- <div class="post-list">                模板
-        <article class="post-list-item">
-            <a href="/2021/12/28/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E4%B8%8A%E7%9A%84PE%E6%96%87%E4%BB%B6%E5%AD%A6%E4%B9%A0/">
-                <div class="content">
-                    <div class="title">
-                        关于在逆向工程核心原理--PE文件格式学习
-                    </div>
-                    <div class="excerpt">   
-                    </div>
-                    <div class="time">
-                        <span>December</span>
-                        <span>&nbsp;28,&nbsp;</span>
-                        <span>2021</span>
-                    </div>
-                </div>
-            </a>
-        </article> 
-</div> -->
+
+<h2 id="设置纵向横向迷宫"><a href="#设置纵向横向迷宫" class="headerlink" title="设置纵向横向迷宫"></a>设置纵向横向迷宫</h2><p>默认是横线，这样可以设置成纵向</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m.CreateMaze(<span class="number">5</span>,<span class="number">5</span>,pattern=’v’)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E5%85%B3%E4%BA%8EPython-Maze%E6%A8%A1%E5%9D%97%E7%9A%84%E5%AD%A6%E4%B9%A0/image-20220207190054724.png" alt="image-20220207190054724"></p>
+<h2 id="设置多路径迷宫"><a href="#设置多路径迷宫" class="headerlink" title="设置多路径迷宫"></a>设置多路径迷宫</h2><p>这样就有一百种解法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m.CreateMaze(loopPercent=<span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E5%85%B3%E4%BA%8EPython-Maze%E6%A8%A1%E5%9D%97%E7%9A%84%E5%AD%A6%E4%B9%A0/image-20220207190024845.png" alt="image-20220207190024845"></p>
+<h2 id="设置不同主题颜色"><a href="#设置不同主题颜色" class="headerlink" title="设置不同主题颜色"></a>设置不同主题颜色</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">m.CreateMaze(theme=COLOR.light)</span><br><span class="line"></span><br><span class="line"><span class="comment"># or</span></span><br><span class="line"></span><br><span class="line">m.CreateMaze(theme=”light”)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="放置特工"><a href="#放置特工" class="headerlink" title="放置特工"></a>放置特工</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">from pyamaze import maze,COLOR,agent</span><br><span class="line"></span><br><span class="line">m=maze(10,10)</span><br><span class="line"></span><br><span class="line">m.CreateMaze(theme=COLOR.light)	#设置主题</span><br><span class="line"></span><br><span class="line">a=agent(m)	#放置特工</span><br><span class="line"></span><br><span class="line">m.run()</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="打印地图"><a href="#打印地图" class="headerlink" title="打印地图"></a>打印地图</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(m.maze_map)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="保存迷宫和生成旧迷宫"><a href="#保存迷宫和生成旧迷宫" class="headerlink" title="保存迷宫和生成旧迷宫"></a>保存迷宫和生成旧迷宫</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">m.CreateMaze(saveMaze = True)</span><br><span class="line"></span><br><span class="line">m.CreateMaze(loadMaze=&quot;maze--2022-02-07--21-20-22.csv&quot;)</span><br></pre></td></tr></table></figure>
+
+
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 <b><span
-            id="/Book/Book.html"
+            id="/2022/02/07/关于Python-Maze模块的学习/"
             class="waline-visitor-count"
           />...</b> 次呢🎉</p>
     
@@ -325,7 +199,7 @@
   </script>
 </div>
 
-<!-- <span id="/Book/Book.html" class="leancloud_visitors" data-flag-title="Book">
+<!-- <span id="/2022/02/07/关于Python-Maze模块的学习/" class="leancloud_visitors" data-flag-title="关于Python-Maze模块的学习">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->
