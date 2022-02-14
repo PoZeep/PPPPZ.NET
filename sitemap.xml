@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/Diary/Diary.html</loc>
+    
+    <lastmod>2022-02-14</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/02/14/Week-of-2-7/</loc>
+    
+    <lastmod>2022-02-14</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2022/02/08/BabyMaze/</loc>
     
     <lastmod>2022-02-13</lastmod>
@@ -66,15 +84,6 @@
   
   <url>
     <loc>http://ppppz.net/2022/02/07/%E5%85%B3%E4%BA%8EPython-Maze%E6%A8%A1%E5%9D%97%E7%9A%84%E5%AD%A6%E4%B9%A0/</loc>
-    
-    <lastmod>2022-02-07</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/Diary/Diary.html</loc>
     
     <lastmod>2022-02-07</lastmod>
     
@@ -391,7 +400,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-02-13</lastmod>
+    <lastmod>2022-02-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
