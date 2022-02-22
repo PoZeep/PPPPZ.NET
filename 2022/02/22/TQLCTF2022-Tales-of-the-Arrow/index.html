@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>TQL2022-Tales of the Arrow - P.Z&#39;s Blog</title>
+  <title>TQLCTF2022-Tales of the Arrow - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -121,7 +121,7 @@
         </div>
         
 
-        <h2 class="title">TQL2022-Tales of the Arrow</h2>
+        <h2 class="title">TQLCTF2022-Tales of the Arrow</h2>
     </div>
 
     <div class="divider"></div>
@@ -141,13 +141,13 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">output = open(&quot;output.txt&quot;, &quot;rb&quot;).read().split(b&#x27;\n&#x27;)</span><br><span class="line">flags = output[2:-1]</span><br><span class="line"></span><br><span class="line">bits = [0 for i in range(136)]</span><br><span class="line">vis = [False for i in range(136)]</span><br><span class="line">f = []</span><br><span class="line"></span><br><span class="line">for i in range(136):</span><br><span class="line">    if i % 8 == 0:</span><br><span class="line">        bits[i] = 0</span><br><span class="line">        vis[i] = True</span><br><span class="line"></span><br><span class="line">for i in range(5000):</span><br><span class="line">    f.append([])</span><br><span class="line">    for j in range(3):</span><br><span class="line">        x = abs(int(flags[i * 3 + j])) - 1</span><br><span class="line">        if int(flags[i * 3 + j]) &gt; 0 and x % 8 == 0:                 # 如果必为负数位大于0 就进入下次循环</span><br><span class="line">            continue</span><br><span class="line">        f[i].append(int(flags[i * 3 + j]))                           # 去掉确定为假的值 其他全部装入</span><br><span class="line">    if len(f[i]) == 1:                                               # 如果只剩一个说明其他两个都为假 那么剩下那个必为真</span><br><span class="line">        vis[abs(f[i][0]) - 1] = True</span><br><span class="line">        bits[abs(f[i][0]) - 1] = 1 if f[i][0] &gt; 0 else 0</span><br><span class="line"></span><br><span class="line">Judge = True</span><br><span class="line">while ( Judge ):</span><br><span class="line">    Judge = False</span><br><span class="line">    for i in range(5000):</span><br><span class="line">        for j in f[i]:</span><br><span class="line">            x = abs(j) - 1</span><br><span class="line">            if vis[x]:                                               # 用已确定的值来去除不确定的值</span><br><span class="line">                if j &gt; 0 and bits[abs(j) - 1] == 0:</span><br><span class="line">                    f[i].remove(j)</span><br><span class="line">                if j &lt; 0 and bits[abs(j) - 1] == 1:</span><br><span class="line">                    f[i].remove(j)</span><br><span class="line">            if len(f[i]) == 1:                                       # 如果只有剩下一共值 两个可能 1. 这个值已经确定不用再添加  2. 该值是新值 加入确定数组 并重新开始循环</span><br><span class="line">                x = abs(f[i][0]) - 1</span><br><span class="line">                if not vis[x]:</span><br><span class="line">                    vis[x] = True</span><br><span class="line">                    bits[x] = 1 if f[i][0] &gt; 0 else 0</span><br><span class="line">                    Judge = True</span><br><span class="line">                    break</span><br><span class="line"></span><br><span class="line">flag = &#x27;&#x27;</span><br><span class="line">x = 0</span><br><span class="line">for i in range(17):</span><br><span class="line">    x = 0</span><br><span class="line">    for j in range(8):</span><br><span class="line">        x = x * 2 + bits[i * 8 + j]</span><br><span class="line">    flag += chr(x)    </span><br><span class="line"></span><br><span class="line">print(&quot;TQLCTF&#123;&quot; + flag + &quot;&#125;&quot;)</span><br></pre></td></tr></table></figure>
 
 <p>银河见！（理科生的浪漫我爱了）</p>
-<p><img src="/2022/02/22/TQL2022-Tales-of-the-Arrow/image-20220222154144475.png" alt="image-20220222154144475"></p>
+<p><img src="/2022/02/22/TQLCTF2022-Tales-of-the-Arrow/image-20220222154144475.png" alt="image-20220222154144475"></p>
 
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 <b><span
-            id="/2022/02/22/TQL2022-Tales-of-the-Arrow/"
+            id="/2022/02/22/TQLCTF2022-Tales-of-the-Arrow/"
             class="waline-visitor-count"
           />...</b> 次呢🎉</p>
     
@@ -179,7 +179,7 @@
   </script>
 </div>
 
-<!-- <span id="/2022/02/22/TQL2022-Tales-of-the-Arrow/" class="leancloud_visitors" data-flag-title="TQL2022-Tales of the Arrow">
+<!-- <span id="/2022/02/22/TQLCTF2022-Tales-of-the-Arrow/" class="leancloud_visitors" data-flag-title="TQLCTF2022-Tales of the Arrow">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->

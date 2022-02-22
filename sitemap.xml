@@ -2,7 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://ppppz.net/2022/02/22/TQL2022-Tales-of-the-Arrow/</loc>
+    <loc>http://ppppz.net/2022/02/22/TQLCTF2022-Tales-of-the-Arrow/</loc>
+    
+    <lastmod>2022-02-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/CTF/CTF.html</loc>
     
     <lastmod>2022-02-22</lastmod>
     
@@ -48,15 +57,6 @@
   
   <url>
     <loc>http://ppppz.net/2022/02/08/BabyMaze/</loc>
-    
-    <lastmod>2022-02-13</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/CTF/CTF.html</loc>
     
     <lastmod>2022-02-13</lastmod>
     
