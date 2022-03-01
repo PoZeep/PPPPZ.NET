@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>关于在逆向工程核心原理-UPX壳学习 - P.Z&#39;s Blog</title>
+  <title>关于在逆向工程核心原理-基址重定位表 - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -104,7 +104,8 @@
         <div class="date" id="date">
             
             
-            <span>February</span>
+            
+            <span>March</span>
             
             
             
@@ -115,68 +116,40 @@
             
             
             
-            
-            <span>25,</span>
+            <span>1,</span>
             <span>2022</span>
         </div>
         
 
-        <h2 class="title">关于在逆向工程核心原理-UPX壳学习</h2>
+        <h2 class="title">关于在逆向工程核心原理-基址重定位表</h2>
     </div>
 
     <div class="divider"></div>
 
     <div class="content">
-        <p>（简称《逆向工程核心原理》第十四章和第十五章学习）</p>
-<h1 id="X-exe与X-upx-exe的比较"><a href="#X-exe与X-upx-exe的比较" class="headerlink" title="X.exe与X_upx.exe的比较"></a>X.exe与X_upx.exe的比较</h1><p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3%E5%AD%A6%E4%B9%A0/image-20220225094721376.png" alt="image-20220225094721376"></p>
-<ol>
-<li> PE头的大小一样（0~400h）</li>
-<li> 节区名称改变（“.text” -&gt; “UPX0”, “.data” -&gt; “”UPX1）</li>
-<li> 第一个节区的RawDataSize = 0（文件中的大小为0）</li>
-<li> EP位于第二个节区（原nodepad.exe的EP在第一个节区）</li>
-<li> 资源区（.rsrc）大小几乎无变化</li>
-</ol>
-<p>可以发现Size of Raw Data为0，可Virtual Size设置为10000，说明在运行瞬间讲代码压缩到第一个节区</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3%E5%AD%A6%E4%B9%A0/image-20220225095122762.png" alt="image-20220225095122762"></p>
-<p>两种方法找到OEP</p>
-<p>首先可以看下OEP的位置在100739Dh</p>
-<p>10073B4处与10073C0地址处是比较MZ与PE签名</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3%E5%AD%A6%E4%B9%A0/image-20220225095744515.png" alt="image-20220225095744515"></p>
-<h1 id="单步跟踪法"><a href="#单步跟踪法" class="headerlink" title="单步跟踪法"></a>单步跟踪法</h1><p>这两条指令设置了upx1和upx0的起始位置</p>
-<p>1001000是upx0 待解压缩区</p>
-<p>1011000是upx1 资源区</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3%E5%AD%A6%E4%B9%A0/image-20220225100612978.png" alt="image-20220225100612978"></p>
-<p>（跟踪UPX文件，遇到LOOP时，先了解作用再跳出）</p>
-<h2 id="1-循环-1（初始化）"><a href="#1-循环-1（初始化）" class="headerlink" title="1.  循环#1（初始化）"></a>1.  循环#1（初始化）</h2><p>从EDX（1001000）中读取一个字节写入EDI（1001001）</p>
-<p>（感觉就是初始化upx0节区）</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3%E5%AD%A6%E4%B9%A0/image-20220225101519176.png" alt="image-20220225101519176"></p>
-<h2 id="2-循环-2（解压缩循环）"><a href="#2-循环-2（解压缩循环）" class="headerlink" title="2. 循环#2（解压缩循环）"></a>2. 循环#2（解压缩循环）</h2><p>这个循环比较大，一共有三处从upx1放入upx0</p>
-<p>第一处放入</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3%E5%AD%A6%E4%B9%A0/image-20220225102348391.png" alt="image-20220225102348391"></p>
-<p>第二处放入</p>
-<p>（这里有点不理解edx指向的也是upx0的区域，然后又放入upx0，为什么是upx1解压到upx0）</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3%E5%AD%A6%E4%B9%A0/image-20220227145525947.png" alt="image-20220227145525947"></p>
-<p>第三处放入</p>
-<p>（和第二处同疑问）</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3%E5%AD%A6%E4%B9%A0/image-20220227150518763.png" alt="image-20220227150518763"></p>
-<h2 id="3-循环-3（修复重定位）"><a href="#3-循环-3（修复重定位）" class="headerlink" title="3. 循环#3（修复重定位）"></a>3. 循环#3（修复重定位）</h2><p>恢复E9的重定位，低八位直接舍弃了，减原来基地址，再加当前upx0的基地址</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3%E5%AD%A6%E4%B9%A0/image-20220227160054930.png" alt="image-20220227160054930"></p>
-<h2 id="4-循环-4（恢复IAT）"><a href="#4-循环-4（恢复IAT）" class="headerlink" title="4. 循环#4（恢复IAT）"></a>4. 循环#4（恢复IAT）</h2><p>从upx1存放的API函数名称，GetProcAddress获取IAT地址再放到nodepad的IAT地址</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3%E5%AD%A6%E4%B9%A0/image-20220227161744467.png" alt="image-20220227161744467"></p>
-<h2 id="5-跳转到OEP"><a href="#5-跳转到OEP" class="headerlink" title="5. 跳转到OEP"></a>5. 跳转到OEP</h2><p>再往下一点就是跳转到OEP的位置了</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3%E5%AD%A6%E4%B9%A0/image-20220227162329809.png" alt="image-20220227162329809"></p>
-<h1 id="ESP定律法"><a href="#ESP定律法" class="headerlink" title="ESP定律法"></a>ESP定律法</h1><h2 id="1-设置内存断点"><a href="#1-设置内存断点" class="headerlink" title="1.  设置内存断点"></a>1.  设置内存断点</h2><p>pushad是把八个通用寄存器放入堆栈，这样不会影响寄存器初始状态</p>
-<p>所以当upx恢复完了，会有对应的popad，那么在这八个寄存器的数据下个断点</p>
-<p>F9直接运行，当dbg断下来，说明已经恢复完了</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3%E5%AD%A6%E4%B9%A0/image-20220227162545774.png" alt="image-20220227162545774"></p>
-<h1 id="2-找到OEP"><a href="#2-找到OEP" class="headerlink" title="2. 找到OEP"></a>2. 找到OEP</h1><p>可以发现已经快到跳OEP的位置了</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3%E5%AD%A6%E4%B9%A0/image-20220227162740358.png" alt="image-20220227162740358"></p>
+        <p>（简称逆向工程核心原理第十六章学习）</p>
+<p>每个PE文件都有本身的imagebase，但当同一个类型文件的基地址是相同，就要发生基地址重定位问题。</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8/image-20220301150644781.png" alt="image-20220301150644781"></p>
+<p>由于Vista之后引入了ASLR安全机制，每次运行程序会发现基地址都不一样。</p>
+<p>（系统的DLL有自己的固定基地址所以实际不会发生重定位问题，如kernel32.dll等）</p>
+<p>这里来学习下PE文件的基地址重定位表</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8/image-20220301151440310.png" alt="image-20220301151440310"></p>
+<h1 id="IMAGE-BASE-RELOCATION"><a href="#IMAGE-BASE-RELOCATION" class="headerlink" title="IMAGE_BASE_RELOCATION"></a>IMAGE_BASE_RELOCATION</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_BASE_RELOCATION</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	DWORD	VirtualAddress;			<span class="comment">// 基准地址</span></span><br><span class="line">	DWORD	SizeOfBlock;			<span class="comment">// 块大小</span></span><br><span class="line"><span class="comment">//	WORD	TypeOffset[1];			// 以注释形式存在我不太理解，就是放那些待修改的偏移值</span></span><br><span class="line">&#125; IMAGE_BASE_RELOCATION;</span><br></pre></td></tr></table></figure>
+
+<p>拿书上整理好的</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8/image-20220301152245361.png" alt="image-20220301152245361"></p>
+<h1 id="如何看offset值"><a href="#如何看offset值" class="headerlink" title="如何看offset值"></a>如何看offset值</h1><p>还要注意下如何看后面offset的值</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8/image-20220301152404987.png" alt="image-20220301152404987"></p>
+<p>可以看下文件中1420所留的值，存放着原内存基址的IAT值</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8/image-20220301162810995.png" alt="image-20220301162810995"></p>
+<p>同时可以dbg到里面的IAT已经改变成随机的基地址</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8/image-20220301162910266.png" alt="image-20220301162910266"></p>
 
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 <b><span
-            id="/2022/02/25/关于在逆向工程核心原理-UPX壳学习/"
+            id="/2022/03/01/关于在逆向工程核心原理-基址重定位表/"
             class="waline-visitor-count"
           />...</b> 次呢🎉</p>
     
@@ -208,7 +181,7 @@
   </script>
 </div>
 
-<!-- <span id="/2022/02/25/关于在逆向工程核心原理-UPX壳学习/" class="leancloud_visitors" data-flag-title="关于在逆向工程核心原理-UPX壳学习">
+<!-- <span id="/2022/03/01/关于在逆向工程核心原理-基址重定位表/" class="leancloud_visitors" data-flag-title="关于在逆向工程核心原理-基址重定位表">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->
