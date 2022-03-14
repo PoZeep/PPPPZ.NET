@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>关于在逆向工程核心原理-UPX壳 - P.Z&#39;s Blog</title>
+  <title>关于逆向工程核心原理-删添节区 - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -104,7 +104,8 @@
         <div class="date" id="date">
             
             
-            <span>February</span>
+            
+            <span>March</span>
             
             
             
@@ -115,68 +116,73 @@
             
             
             
-            
-            <span>25,</span>
+            <span>1,</span>
             <span>2022</span>
         </div>
         
 
-        <h2 class="title">关于在逆向工程核心原理-UPX壳</h2>
+        <h2 class="title">关于逆向工程核心原理-删添节区</h2>
     </div>
 
     <div class="divider"></div>
 
     <div class="content">
-        <p>（简称《逆向工程核心原理》第十四章和第十五章学习）</p>
-<h1 id="X-exe与X-upx-exe的比较"><a href="#X-exe与X-upx-exe的比较" class="headerlink" title="X.exe与X_upx.exe的比较"></a>X.exe与X_upx.exe的比较</h1><p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220225094721376.png" alt="image-20220225094721376"></p>
+        <p>（简称逆向工程核心原理第十七章）</p>
+<p>EXE形式的.reloc节区对运行没什么问题，对DLL/SYS比较重要</p>
+<h1 id="删除-reloc节区"><a href="#删除-reloc节区" class="headerlink" title="删除.reloc节区"></a>删除.reloc节区</h1><p>理一下步骤</p>
 <ol>
-<li> PE头的大小一样（0~400h）</li>
-<li> 节区名称改变（“.text” -&gt; “UPX0”, “.data” -&gt; “”UPX1）</li>
-<li> 第一个节区的RawDataSize = 0（文件中的大小为0）</li>
-<li> EP位于第二个节区（原nodepad.exe的EP在第一个节区）</li>
-<li> 资源区（.rsrc）大小几乎无变化</li>
+<li> 把.reloc节区头全部变0（不能删，我就在这卡了一会）</li>
+<li> 删除.reloc节区</li>
+<li> 修改文件头的Number of Sections</li>
+<li> 修改可选头的Size of Image</li>
 </ol>
-<p>可以发现Size of Raw Data为0，可Virtual Size设置为10000，说明在运行瞬间讲代码压缩到第一个节区</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220225095122762.png" alt="image-20220225095122762"></p>
-<p>两种方法找到OEP</p>
-<p>首先可以看下OEP的位置在100739Dh</p>
-<p>10073B4处与10073C0地址处是比较MZ与PE签名</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220225095744515.png" alt="image-20220225095744515"></p>
-<h1 id="单步跟踪法"><a href="#单步跟踪法" class="headerlink" title="单步跟踪法"></a>单步跟踪法</h1><p>这两条指令设置了upx1和upx0的起始位置</p>
-<p>1001000是upx0 待解压缩区</p>
-<p>1011000是upx1 资源区</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220225100612978.png" alt="image-20220225100612978"></p>
-<p>（跟踪UPX文件，遇到LOOP时，先了解作用再跳出）</p>
-<h2 id="1-循环-1（初始化）"><a href="#1-循环-1（初始化）" class="headerlink" title="1.  循环#1（初始化）"></a>1.  循环#1（初始化）</h2><p>从EDX（1001000）中读取一个字节写入EDI（1001001）</p>
-<p>（感觉就是初始化upx0节区）</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220225101519176.png" alt="image-20220225101519176"></p>
-<h2 id="2-循环-2（解压缩循环）"><a href="#2-循环-2（解压缩循环）" class="headerlink" title="2. 循环#2（解压缩循环）"></a>2. 循环#2（解压缩循环）</h2><p>这个循环比较大，一共有三处从upx1放入upx0</p>
-<p>第一处放入</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220225102348391.png" alt="image-20220225102348391"></p>
-<p>第二处放入</p>
-<p>（这里有点不理解edx指向的也是upx0的区域，然后又放入upx0，为什么是upx1解压到upx0）</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227145525947.png" alt="image-20220227145525947"></p>
-<p>第三处放入</p>
-<p>（和第二处同疑问）</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227150518763.png" alt="image-20220227150518763"></p>
-<h2 id="3-循环-3（修复重定位）"><a href="#3-循环-3（修复重定位）" class="headerlink" title="3. 循环#3（修复重定位）"></a>3. 循环#3（修复重定位）</h2><p>恢复E9的重定位，低八位直接舍弃了，减原来基地址，再加当前upx0的基地址</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227160054930.png" alt="image-20220227160054930"></p>
-<h2 id="4-循环-4（恢复IAT）"><a href="#4-循环-4（恢复IAT）" class="headerlink" title="4. 循环#4（恢复IAT）"></a>4. 循环#4（恢复IAT）</h2><p>从upx1存放的API函数名称，GetProcAddress获取IAT地址再放到nodepad的IAT地址</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227161744467.png" alt="image-20220227161744467"></p>
-<h2 id="5-跳转到OEP"><a href="#5-跳转到OEP" class="headerlink" title="5. 跳转到OEP"></a>5. 跳转到OEP</h2><p>再往下一点就是跳转到OEP的位置了</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227162329809.png" alt="image-20220227162329809"></p>
-<h1 id="ESP定律法"><a href="#ESP定律法" class="headerlink" title="ESP定律法"></a>ESP定律法</h1><h2 id="1-设置内存断点"><a href="#1-设置内存断点" class="headerlink" title="1.  设置内存断点"></a>1.  设置内存断点</h2><p>pushad是把八个通用寄存器放入堆栈，这样不会影响寄存器初始状态</p>
-<p>所以当upx恢复完了，会有对应的popad，那么在这八个寄存器的数据下个断点</p>
-<p>F9直接运行，当dbg断下来，说明已经恢复完了</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227162545774.png" alt="image-20220227162545774"></p>
-<h1 id="2-找到OEP"><a href="#2-找到OEP" class="headerlink" title="2. 找到OEP"></a>2. 找到OEP</h1><p>可以发现已经快到跳OEP的位置了</p>
-<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227162740358.png" alt="image-20220227162740358"></p>
+<h2 id="1-删除-reloc节区头"><a href="#1-删除-reloc节区头" class="headerlink" title="1. 删除.reloc节区头"></a>1. 删除.reloc节区头</h2><p>这片区域变0，且注意一下节区的文件偏移地址</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301175642891.png" alt="image-20220301175642891"></p>
+<h2 id="2-删除-reloc节区"><a href="#2-删除-reloc节区" class="headerlink" title="2. 删除.reloc节区"></a>2. 删除.reloc节区</h2><p>跳转到C000直接删到底</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301175751672.png" alt="image-20220301175751672"></p>
+<h2 id="3-修改IMAGE-FILE-HEADER"><a href="#3-修改IMAGE-FILE-HEADER" class="headerlink" title="3. 修改IMAGE_FILE_HEADER"></a>3. 修改IMAGE_FILE_HEADER</h2><p>将此值修改成4，因为要减少一个节区</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301175912445.png" alt="image-20220301175912445"></p>
+<h2 id="4-修改IMAGE-OPTION-HEADER"><a href="#4-修改IMAGE-OPTION-HEADER" class="headerlink" title="4. 修改IMAGE_OPTION_HEADER"></a>4. 修改IMAGE_OPTION_HEADER</h2><p>减少了那么多东西，这里的内存映像也会减少，之前的图可得知.reloc的内存映像为E40，这里将根据Section Alignment扩展为1000，所以减1000</p>
+<p>选中位置改成 00 00 01 00</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301180036936.png" alt="image-20220301180036936"></p>
+<p>（于是就全部删完了，程序能正常运行就代表删成功了，这里我就因为删除了节区头卡住了一会）</p>
+<h1 id="添加-P-Z节区"><a href="#添加-P-Z节区" class="headerlink" title="添加.P.Z节区"></a>添加.P.Z节区</h1><h2 id="1-添加-P-Z节区头"><a href="#1-添加-P-Z节区头" class="headerlink" title="1. 添加.P.Z节区头"></a>1. 添加.P.Z节区头</h2><p>.P节区头</p>
+<ol>
+<li><p>Name我观察了一下其他节区头，好像都是8个字节，我这边填完就直接前八个字节都当Name用</p>
+</li>
+<li><p>再后4个字节是内存大小，我直接填了10，根据Section Alignment会扩展成1000</p>
+</li>
+<li><p>于是RVA也就是VirtualSize我往后顺了1000，根据观察.rsrc到.reloc的区别，填了11000</p>
+</li>
+<li><p>磁盘文件大小填了10的大小，根据File Alignment会变成200</p>
+</li>
+<li><p>RAW就在文件结尾D000</p>
+</li>
+<li><p>再后面就是空了12个字节的0</p>
+</li>
+<li><p>最后是节区属性，还没细究直接复制了.text的属性</p>
+</li>
+</ol>
+<p>再后面就是.Z节区头，记录下不一样的</p>
+<p>RVA又往后顺，变成12000</p>
+<p>本来应该File Alignment扩展成200，但我这直接往后顺了10，RA2变成D010也没事（算个小坑？）</p>
+<p>（刚刚实验了一下填成200也可以，这样也可以需要注意的就是大小填多少，就会读取指定地址的多少个地址）</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301180912415.png" alt="image-20220301180912415"></p>
+<h2 id="2-添加-P-Z数据"><a href="#2-添加-P-Z数据" class="headerlink" title="2. 添加.P.Z数据"></a>2. 添加.P.Z数据</h2><p>直接加了20h的数据，可能加200h更正式点（其实也是现在写才注意到）</p>
+<p>（注意在Size of Raw Date那填了多少，就会在指定偏移地址读多少到节区）</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301182142822.png" alt="image-20220301182142822"></p>
+<h2 id="3-修改IMAGE-FILE-HEADER-1"><a href="#3-修改IMAGE-FILE-HEADER-1" class="headerlink" title="3. 修改IMAGE_FILE_HEADER"></a>3. 修改IMAGE_FILE_HEADER</h2><p>老地方，直接改成7</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301182234113.png" alt="image-20220301182234113"></p>
+<h2 id="4-修改IMAGE-OPTION-HEADER-1"><a href="#4-修改IMAGE-OPTION-HEADER-1" class="headerlink" title="4. 修改IMAGE_OPTION_HEADER"></a>4. 修改IMAGE_OPTION_HEADER</h2><p>还是老地方，由于Section Alignment，加了两个节区，所以加2000变成13000</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301182329397.png" alt="image-20220301182329397"></p>
+<h1 id="坚持就是胜利！"><a href="#坚持就是胜利！" class="headerlink" title="坚持就是胜利！"></a>坚持就是胜利！</h1><p>程序解析无误且能运行</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301182410807.png" alt="image-20220301182410807"></p>
 
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 <b><span
-            id="/2022/02/25/关于在逆向工程核心原理-UPX壳/"
+            id="/2022/03/01/关于逆向工程核心原理-删添节区/"
             class="waline-visitor-count"
           />...</b> 次呢🎉</p>
     
@@ -208,7 +214,7 @@
   </script>
 </div>
 
-<!-- <span id="/2022/02/25/关于在逆向工程核心原理-UPX壳/" class="leancloud_visitors" data-flag-title="关于在逆向工程核心原理-UPX壳">
+<!-- <span id="/2022/03/01/关于逆向工程核心原理-删添节区/" class="leancloud_visitors" data-flag-title="关于逆向工程核心原理-删添节区">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->

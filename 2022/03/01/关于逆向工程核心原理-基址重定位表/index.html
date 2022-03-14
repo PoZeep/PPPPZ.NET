@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>关于在逆向工程核心原理-删添节区 - P.Z&#39;s Blog</title>
+  <title>关于逆向工程核心原理-基址重定位表 - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -121,68 +121,35 @@
         </div>
         
 
-        <h2 class="title">关于在逆向工程核心原理-删添节区</h2>
+        <h2 class="title">关于逆向工程核心原理-基址重定位表</h2>
     </div>
 
     <div class="divider"></div>
 
     <div class="content">
-        <p>（简称逆向工程核心原理第十七章）</p>
-<p>EXE形式的.reloc节区对运行没什么问题，对DLL/SYS比较重要</p>
-<h1 id="删除-reloc节区"><a href="#删除-reloc节区" class="headerlink" title="删除.reloc节区"></a>删除.reloc节区</h1><p>理一下步骤</p>
-<ol>
-<li> 把.reloc节区头全部变0（不能删，我就在这卡了一会）</li>
-<li> 删除.reloc节区</li>
-<li> 修改文件头的Number of Sections</li>
-<li> 修改可选头的Size of Image</li>
-</ol>
-<h2 id="1-删除-reloc节区头"><a href="#1-删除-reloc节区头" class="headerlink" title="1. 删除.reloc节区头"></a>1. 删除.reloc节区头</h2><p>这片区域变0，且注意一下节区的文件偏移地址</p>
-<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301175642891.png" alt="image-20220301175642891"></p>
-<h2 id="2-删除-reloc节区"><a href="#2-删除-reloc节区" class="headerlink" title="2. 删除.reloc节区"></a>2. 删除.reloc节区</h2><p>跳转到C000直接删到底</p>
-<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301175751672.png" alt="image-20220301175751672"></p>
-<h2 id="3-修改IMAGE-FILE-HEADER"><a href="#3-修改IMAGE-FILE-HEADER" class="headerlink" title="3. 修改IMAGE_FILE_HEADER"></a>3. 修改IMAGE_FILE_HEADER</h2><p>将此值修改成4，因为要减少一个节区</p>
-<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301175912445.png" alt="image-20220301175912445"></p>
-<h2 id="4-修改IMAGE-OPTION-HEADER"><a href="#4-修改IMAGE-OPTION-HEADER" class="headerlink" title="4. 修改IMAGE_OPTION_HEADER"></a>4. 修改IMAGE_OPTION_HEADER</h2><p>减少了那么多东西，这里的内存映像也会减少，之前的图可得知.reloc的内存映像为E40，这里将根据Section Alignment扩展为1000，所以减1000</p>
-<p>选中位置改成 00 00 01 00</p>
-<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301180036936.png" alt="image-20220301180036936"></p>
-<p>（于是就全部删完了，程序能正常运行就代表删成功了，这里我就因为删除了节区头卡住了一会）</p>
-<h1 id="添加-P-Z节区"><a href="#添加-P-Z节区" class="headerlink" title="添加.P.Z节区"></a>添加.P.Z节区</h1><h2 id="1-添加-P-Z节区头"><a href="#1-添加-P-Z节区头" class="headerlink" title="1. 添加.P.Z节区头"></a>1. 添加.P.Z节区头</h2><p>.P节区头</p>
-<ol>
-<li><p>Name我观察了一下其他节区头，好像都是8个字节，我这边填完就直接前八个字节都当Name用</p>
-</li>
-<li><p>再后4个字节是内存大小，我直接填了10，根据Section Alignment会扩展成1000</p>
-</li>
-<li><p>于是RVA也就是VirtualSize我往后顺了1000，根据观察.rsrc到.reloc的区别，填了11000</p>
-</li>
-<li><p>磁盘文件大小填了10的大小，根据File Alignment会变成200</p>
-</li>
-<li><p>RAW就在文件结尾D000</p>
-</li>
-<li><p>再后面就是空了12个字节的0</p>
-</li>
-<li><p>最后是节区属性，还没细究直接复制了.text的属性</p>
-</li>
-</ol>
-<p>再后面就是.Z节区头，记录下不一样的</p>
-<p>RVA又往后顺，变成12000</p>
-<p>本来应该File Alignment扩展成200，但我这直接往后顺了10，RA2变成D010也没事（算个小坑？）</p>
-<p>（刚刚实验了一下填成200也可以，这样也可以需要注意的就是大小填多少，就会读取指定地址的多少个地址）</p>
-<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301180912415.png" alt="image-20220301180912415"></p>
-<h2 id="2-添加-P-Z数据"><a href="#2-添加-P-Z数据" class="headerlink" title="2. 添加.P.Z数据"></a>2. 添加.P.Z数据</h2><p>直接加了20h的数据，可能加200h更正式点（其实也是现在写才注意到）</p>
-<p>（注意在Size of Raw Date那填了多少，就会在指定偏移地址读多少到节区）</p>
-<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301182142822.png" alt="image-20220301182142822"></p>
-<h2 id="3-修改IMAGE-FILE-HEADER-1"><a href="#3-修改IMAGE-FILE-HEADER-1" class="headerlink" title="3. 修改IMAGE_FILE_HEADER"></a>3. 修改IMAGE_FILE_HEADER</h2><p>老地方，直接改成7</p>
-<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301182234113.png" alt="image-20220301182234113"></p>
-<h2 id="4-修改IMAGE-OPTION-HEADER-1"><a href="#4-修改IMAGE-OPTION-HEADER-1" class="headerlink" title="4. 修改IMAGE_OPTION_HEADER"></a>4. 修改IMAGE_OPTION_HEADER</h2><p>还是老地方，由于Section Alignment，加了两个节区，所以加2000变成13000</p>
-<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301182329397.png" alt="image-20220301182329397"></p>
-<h1 id="坚持就是胜利！"><a href="#坚持就是胜利！" class="headerlink" title="坚持就是胜利！"></a>坚持就是胜利！</h1><p>程序解析无误且能运行</p>
-<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%88%A0%E6%B7%BB%E8%8A%82%E5%8C%BA/image-20220301182410807.png" alt="image-20220301182410807"></p>
+        <p>（简称逆向工程核心原理第十六章学习）</p>
+<p>每个PE文件都有本身的imagebase，但当同一个类型文件的基地址是相同，就要发生基地址重定位问题。</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8image-20220301150644781.png" alt="image-20220301150644781"></p>
+<p>由于Vista之后引入了ASLR安全机制，每次运行程序会发现基地址都不一样。</p>
+<p>（系统的DLL有自己的固定基地址所以实际不会发生重定位问题，如kernel32.dll等）</p>
+<p>这里来学习下PE文件的基地址重定位表</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8/image-20220301151440310.png" alt="image-20220301151440310"></p>
+<h1 id="IMAGE-BASE-RELOCATION"><a href="#IMAGE-BASE-RELOCATION" class="headerlink" title="IMAGE_BASE_RELOCATION"></a>IMAGE_BASE_RELOCATION</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_BASE_RELOCATION</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	DWORD	VirtualAddress;			<span class="comment">// 基准地址</span></span><br><span class="line">	DWORD	SizeOfBlock;			<span class="comment">// 块大小</span></span><br><span class="line"><span class="comment">//	WORD	TypeOffset[1];			// 以注释形式存在我不太理解，就是放那些待修改的偏移值</span></span><br><span class="line">&#125; IMAGE_BASE_RELOCATION;</span><br></pre></td></tr></table></figure>
+
+<p>拿书上整理好的</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8/image-20220301152245361.png" alt="image-20220301152245361"></p>
+<h1 id="如何看offset值"><a href="#如何看offset值" class="headerlink" title="如何看offset值"></a>如何看offset值</h1><p>还要注意下如何看后面offset的值</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8/image-20220301152404987.png" alt="image-20220301152404987"></p>
+<p>可以看下文件中1420所留的值，存放着原内存基址的IAT值</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8/image-20220301162810995.png" alt="image-20220301162810995"></p>
+<p>同时可以dbg到里面的IAT已经改变成随机的基地址</p>
+<p><img src="/2022/03/01/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8/image-20220301162910266.png" alt="image-20220301162910266"></p>
 
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 <b><span
-            id="/2022/03/01/关于在逆向工程核心原理-删添节区/"
+            id="/2022/03/01/关于逆向工程核心原理-基址重定位表/"
             class="waline-visitor-count"
           />...</b> 次呢🎉</p>
     
@@ -214,7 +181,7 @@
   </script>
 </div>
 
-<!-- <span id="/2022/03/01/关于在逆向工程核心原理-删添节区/" class="leancloud_visitors" data-flag-title="关于在逆向工程核心原理-删添节区">
+<!-- <span id="/2022/03/01/关于逆向工程核心原理-基址重定位表/" class="leancloud_visitors" data-flag-title="关于逆向工程核心原理-基址重定位表">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->
