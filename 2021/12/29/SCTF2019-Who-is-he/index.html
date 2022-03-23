@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>SCTF2019-Who is he - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary.html">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends.html">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF.html">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book.html">Book</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>December</span>
+            
+            <span>29,</span>
+            <span>2021</span>
+        </div>
+        
+
+        <h2 class="title">SCTF2019-Who is he</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <h1 id="0x00-日常查壳"><a href="#0x00-日常查壳" class="headerlink" title="0x00 日常查壳?"></a>0x00 日常查壳?<img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229225910145.png" alt="image-20211229225910145"></h1><h1 id="0x01-分析主函数"><a href="#0x01-分析主函数" class="headerlink" title="0x01 分析主函数"></a>0x01 分析主函数</h1><p> <img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230046533.png" alt="image-20211229230046533"></p>
+<p> <img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230101581.png" alt="image-20211229230101581"> </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> DES</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">key = <span class="string">b&#x27;1\x002\x003\x004\x00&#x27;</span>        <span class="comment">#注意C#中是unicode码 而且DES加密肯定要8个字节于是这样子刚好</span></span><br><span class="line"></span><br><span class="line">lun = DES.new(key, mode = DES.MODE_CBC, iv = key)</span><br><span class="line"></span><br><span class="line">c1 = base64.b64decode(<span class="string">&quot;1Tsy0ZGotyMinSpxqYzVBWnfMdUcqCMLu0MA+22Jnp+MNwLHvYuFToxRQr0c+ONZc6Q7L0EAmzbycqobZHh4H23U4WDTNmmXwusW4E+SZjygsntGkO2sGA==&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这里本一直想着用C怎么保存这些再怎么解密 但其实py可以很好解决这些问题</span></span><br><span class="line"></span><br><span class="line">p1 = lun.decrypt(c1)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(p1.decode(<span class="string">&#x27;UTF-16&#x27;</span>))  <span class="comment">#用utf-16解</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230142534.png" alt="image-20211229230142534"> </p>
+<p>结束了？还没有 提交并不对</p>
+<p>很明显我感觉是中间肯定改变了什么 但unity逆向我有些摸不着头脑</p>
+<p>动调也不知道怎么调 于是看了wp发现两种解法</p>
+<h1 id="0x02-GetFlag"><a href="#0x02-GetFlag" class="headerlink" title="0x02 GetFlag"></a>0x02 GetFlag</h1><h2 id="方法一：CE查询解"><a href="#方法一：CE查询解" class="headerlink" title="方法一：CE查询解"></a>方法一：CE查询解</h2><p>CE下载：<a target="_blank" rel="noopener" href="https://cheatengine.org/">https://cheatengine.org/</a></p>
+<p>意思大概是跑的时候搜寻Emmm字符串找到真正的字符串</p>
+<ol>
+<li><p>运行who is he.exe</p>
+</li>
+<li><p>打开进程列表</p>
+</li>
+<li><p>选中who is he！！！(截图的时候选错了)</p>
+</li>
+</ol>
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230221244.png" alt="image-20211229230221244"> </p>
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230232053.png" alt="image-20211229230232053"> </p>
+<p>发现两个base字符串后面可想而知就是密钥了</p>
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230257411.png" alt="image-20211229230257411"> </p>
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230303413.png" alt="image-20211229230303413"> </p>
+<p>第二个才是flag一样的脚本一跑即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> DES</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">key = <span class="string">b&#x27;1\x002\x003\x004\x00&#x27;</span>        <span class="comment">#注意C#中是unicode码 而且DES加密肯定要8个字节于是这样子刚好</span></span><br><span class="line"></span><br><span class="line">lun = DES.new(key, mode = DES.MODE_CBC, iv = key)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">c1 = base64.b64decode(<span class="string">&quot;1Tsy0ZGotyMinSpxqYzVBWnfMdUcqCMLu0MA+22Jnp+MNwLHvYuFToxRQr0c+ONZc6Q7L0EAmzbycqobZHh4H23U4WDTNmmXwusW4E+SZjygsntGkO2sGA==&quot;</span>)</span><br><span class="line"></span><br><span class="line">\<span class="comment">#这里本一直想着用C怎么保存这些 但其实py可以很好解决这些问题</span></span><br><span class="line"></span><br><span class="line">p1 = lun.decrypt(c1)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(p1.decode(<span class="string">&#x27;UTF-16&#x27;</span>))  <span class="comment">#用utf-16解</span></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">\<span class="comment"># c2 = [0x78, 0x00, 0x5A, 0x00, 0x57, 0x00, 0x44, 0x00, 0x5A, 0x00, 0x61, 0x00, 0x4B, 0x00, 0x45, 0x00, 0x68, 0x00, 0x57, 0x00, 0x4E, 0x00, 0x4D, 0x00, 0x43, 0x00, 0x62, 0x00, 0x69, 0x00, 0x47, 0x00, 0x59, 0x00, 0x50, 0x00, 0x42, 0x00, 0x49, 0x00, 0x6C, 0x00, 0x59, 0x00, 0x33, 0x00, 0x2B, 0x00, 0x61, 0x00, 0x72, 0x00, 0x6F, 0x00, 0x7A, 0x00, 0x4F, 0x00, 0x39, 0x00, 0x7A, 0x00, 0x6F, 0x00, 0x6E, 0x00, 0x77, 0x00, 0x72, 0x00, 0x59, 0x00, 0x4C, 0x00, 0x69, 0x00, 0x56, 0x00, 0x4C, 0x00, 0x34, 0x00, 0x6E, 0x00, 0x6A, 0x00, 0x53, 0x00, 0x65, 0x00, 0x7A, 0x00, 0x32, 0x00, 0x52, 0x00, 0x59, 0x00, 0x4D, 0x00, 0x32, 0x00, 0x57, 0x00, 0x77, 0x00, 0x73, 0x00, 0x47, 0x00, 0x6E, 0x00, 0x73, 0x00, 0x6E, 0x00, 0x6A, 0x00, 0x43, 0x00, 0x44, 0x00, 0x6E, 0x00, 0x48, 0x00, 0x73, 0x00, 0x37, 0x00, 0x4E, 0x00, 0x34, 0x00, 0x33, 0x00, 0x61, 0x00, 0x46, 0x00, 0x76, 0x00, 0x4E, 0x00, 0x45, 0x00, 0x35, 0x00, 0x34, 0x00, 0x6E, 0x00, 0x6F, 0x00, 0x53, 0x00, 0x61, 0x00, 0x64, 0x00, 0x50, 0x00, 0x39, 0x00, 0x46, 0x00, 0x38, 0x00, 0x65, 0x00, 0x45, 0x00, 0x70, 0x00, 0x76, 0x00, 0x54, 0x00, 0x73, 0x00, 0x35, 0x00, 0x51, 0x00, 0x50, 0x00, 0x47, 0x00, 0x2B, 0x00, 0x4B, 0x00, 0x4C, 0x00, 0x30, 0x00, 0x54, 0x00, 0x44, 0x00, 0x45, 0x00, 0x2F, 0x00, 0x34, 0x00, 0x30, 0x00, 0x6E, 0x00, 0x62, 0x00, 0x55, 0x00, 0x3D]</span></span><br><span class="line"></span><br><span class="line">\<span class="comment"># for i in range(0, len(c2), 2):		#不太知道用CE怎么直接提取 于是用老实的方法</span></span><br><span class="line"></span><br><span class="line">\<span class="comment">#   print(chr(c2[i]), end = &quot;&quot;)</span></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">key = <span class="string">b&#x27;t\x00e\x00s\x00t\x00&#x27;</span></span><br><span class="line"></span><br><span class="line">lun = DES.new(key, mode = DES.MODE_CBC, iv = key)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">c2 = base64.b64decode(<span class="string">&quot;xZWDZaKEhWNMCbiGYPBIlY3+arozO9zonwrYLiVL4njSez2RYM2WwsGnsnjCDnHs7N43aFvNE54noSadP9F8eEpvTs5QPG+KL0TDE/40nbU=&quot;</span>)</span><br><span class="line"></span><br><span class="line">p2 = lun.decrypt(c2)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(p2.decode(<span class="string">&#x27;UTF-16&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230330861.png" alt="image-20211229230330861"> </p>
+<h2 id="方法二：动调回溯"><a href="#方法二：动调回溯" class="headerlink" title="方法二：动调回溯"></a>方法二：动调回溯</h2><p>动调最先的想法就是定位关键位置，但unity该怎么断呢，一开始我就想到能不能再那加密位置设个断点，然后直接没加密的flag，但断不住，于是查阅资料知道丢进x64动调回溯法。</p>
+<p>那我们该如何定位到底关键位置，由于输入之后就会跳一大段，由动调回溯还是能找到判断位置。</p>
+<h3 id="1-首先是直接把程序丢进x64"><a href="#1-首先是直接把程序丢进x64" class="headerlink" title="1. 首先是直接把程序丢进x64"></a>1. 首先是直接把程序丢进x64</h3><p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230404198.png" alt="image-20211229230404198"> </p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/pijianzhirui/article/details/107373846">https://blog.csdn.net/pijianzhirui/article/details/107373846</a></p>
+<p>参考这篇文章</p>
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230419108.png" alt="image-20211229230419108"> </p>
+<p>于是在刚丢进去的时候设置一下，再F9跑即可</p>
+<h3 id="2-找到判断函数"><a href="#2-找到判断函数" class="headerlink" title="2.  找到判断函数"></a>2.  找到判断函数</h3><p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230425052.png" alt="image-20211229230425052"> </p>
+<p>现在可能有点不知道干什么 但弹出这些东西 栈窗口是有迹可循的</p>
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230438325.png" alt="image-20211229230438325"> </p>
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230442988.png" alt="image-20211229230442988"> </p>
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230451666.png" alt="image-20211229230451666"> </p>
+<h3 id=""><a href="#" class="headerlink" title=""></a><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230650050.png" alt="image-20211229230650050.png"></h3><p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229230848071.png" alt="image-20211229230848071"> </p>
+<h3 id="-1"><a href="#-1" class="headerlink" title=""></a><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229231348987.png" alt="image-20211229231348987"></h3><p>于是就找到了我们的关键判断位置</p>
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229231410316.png" alt="image-20211229231410316"> </p>
+<p>0x03 分析判断函数</p>
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229231418414.png"> </p>
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229231502914.png"> </p>
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229231507084.png"> </p>
+<p><img src="/2021/12/29/SCTF2019-Who-is-he/image-20211229231509824.png"> </p>
+<p>文献参考：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_46296905/article/details/115960117">https://blog.csdn.net/m0_46296905/article/details/115960117</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/a5555678744/article/details/118371570?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~default-1.no_search_link&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~default-1.no_search_link&utm_relevant_index=2">https://blog.csdn.net/a5555678744/article/details/118371570?spm=1001.2101.3001.6650.1&amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-1.no_search_link&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-1.no_search_link&amp;utm_relevant_index=2</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.notion.so/SCTF2019-Who-is-he-unity-ea5310edb004464fae2d61bce92d6bb3">https://www.notion.so/SCTF2019-Who-is-he-unity-ea5310edb004464fae2d61bce92d6bb3</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.manongjc.com/detail/23-glwhbnsjrclkuoq.html#%E5%8D%95%E7%BA%AF%E7%9A%84des%E5%8A%A0%E5%AF%86%EF%BC%9F">http://www.manongjc.com/detail/23-glwhbnsjrclkuoq.html#%E5%8D%95%E7%BA%AF%E7%9A%84des%E5%8A%A0%E5%AF%86%EF%BC%9F</a></p>
+
+    </div>
+
+    <p style= "text-align:center">
+        让我看看我被读了 <b><span
+            id="/2021/12/29/SCTF2019-Who-is-he/"
+            class="waline-visitor-count"
+          />...</b> 次呢🎉</p>
+    
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-5rvxh62nz-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '评论什么好呢',   //占位符
+    });
+  </script>
+</div>
+
+<!-- <span id="/2021/12/29/SCTF2019-Who-is-he/" class="leancloud_visitors" data-flag-title="SCTF2019-Who is he">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2022 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
