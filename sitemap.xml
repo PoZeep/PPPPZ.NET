@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2022/03/30/HFCTF2022-the-shellcode/</loc>
+    
+    <lastmod>2022-03-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/</loc>
+    
+    <lastmod>2022-03-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/Diary/Diary.html</loc>
     
     <lastmod>2022-03-28</lastmod>
@@ -571,7 +589,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-03-28</lastmod>
+    <lastmod>2022-03-31</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>

