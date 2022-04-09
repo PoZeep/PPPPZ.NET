@@ -72,19 +72,23 @@
             <a class="nav-item nav-item-home" href="/">Home</a>
             
             
-            <a class="nav-item" href="/Diary/Diary.html">Diary</a>
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
             
             
             
-            <a class="nav-item" href="/Friends/Friends.html">Friends</a>
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
             
             
             
-            <a class="nav-item" href="/CTF/CTF.html">CTF</a>
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
             
             
             
-            <a class="nav-item" href="/Book/Book.html">Book</a>
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
             
             
             
@@ -278,6 +282,45 @@
             class="waline-visitor-count"
           />...</b> 次呢🎉</p>
     
+    <div id = "frozen-btn" class = "center">
+    <button class="green" onclick = "Change()">🎉一杯咖啡~</button>
+    <button class="purple" onclick = "Change()">☕</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        支付宝
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        微信
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
 
     <div class="about">
         <h1>About this Post</h1>
