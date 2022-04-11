@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/Diary/Diary.html</loc>
+    
+    <lastmod>2022-04-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/Book/C++%20Primer%20Plus.html</loc>
+    
+    <lastmod>2022-04-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/Sundry/Sundry.html</loc>
+    
+    <lastmod>2022-04-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2022/04/11/Week-of-4-4/</loc>
     
     <lastmod>2022-04-11</lastmod>
@@ -47,15 +74,6 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/Diary/Diary.html</loc>
-    
-    <lastmod>2022-04-09</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://ppppz.net/Book/Assembly%20Language.html</loc>
     
     <lastmod>2022-04-09</lastmod>
@@ -75,24 +93,6 @@
   
   <url>
     <loc>http://ppppz.net/Book/C%20Primer%20Plus.html</loc>
-    
-    <lastmod>2022-04-09</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/Book/C++%20Primer%20Plus.html</loc>
-    
-    <lastmod>2022-04-09</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/Sundry/Sundry.html</loc>
     
     <lastmod>2022-04-09</lastmod>
     
