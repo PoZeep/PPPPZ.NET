@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>Malware Loader - P.Z&#39;s Blog</title>
+  <title>Patreon Unlocked - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -120,64 +120,57 @@
             
             
             
-            <span>7,</span>
+            <span>12,</span>
             <span>2022</span>
         </div>
         
 
-        <h2 class="title">Malware Loader</h2>
+        <h2 class="title">Patreon Unlocked</h2>
     </div>
 
     <div class="divider"></div>
 
     <div class="content">
-        <p>主要记录一下恶意加载器，也算是Scr1pt师傅带我的第一次入门，笔记拖更很久，上周连休三天感觉还可以又有些无聊。–4.11</p>
-<h1 id="FUD-Aegis-Crypter"><a href="#FUD-Aegis-Crypter" class="headerlink" title="FUD Aegis Crypter"></a>FUD Aegis Crypter</h1><p><strong>恶意加载器</strong>，主要是保护了所加载内容！</p>
-<p>一个2016年的病毒加载器，雀氏有点老，不过当成我入门的一个分析属实不错</p>
-<p>关于<strong>病毒签名</strong>，这个软件的<strong>存根</strong>已经被很多恶意软件所使用，所以会被立即检测，如果想做个自己的，最好的是构建自己的存根 <strong>自定义存根</strong></p>
-<p>很多时候，在打包一个恶意软件时，会得到一小段代码叫做存根，和加密后的恶意代码部分，通过那段存根，才解密恶意代码部分（好像SMC）</p>
-<p>简单讲几个选项</p>
+        <p>系列小教程，病毒分析的little tips!（还没搞懂名字是什么意思</p>
+<h1 id="How-to-Identify-Dynamic-Imports-In-Malware"><a href="#How-to-Identify-Dynamic-Imports-In-Malware" class="headerlink" title="How to Identify Dynamic Imports In Malware"></a>How to Identify Dynamic Imports In Malware</h1><p>一个函数指向的地方是个空s的地方，那么可能以动态解析的形式填入</p>
+<p>当调用这个地址时，这个地址会已经填入了函数地址</p>
+<p>我们通过交叉引用查看这个地方的引用</p>
 <ol>
-<li><p> 想<strong>StubPath是指向存根</strong>，103KB的存根（自带的），如果使用这个基本都被检测出来</p>
-</li>
-<li><p> Resource Data就在把Encrypt Section放到Resource Section</p>
-</li>
-<li><p> EOF DATA就是把Encrypt Section附加到文件</p>
-</li>
+<li> 这里的地址是以导入地址表的方式动态解析</li>
+<li> 这个地址可能只是一个大表中的一个条目（可能会被不通函数迭代解析</li>
 </ol>
-<p><img src="/2022/04/07/Malware-Loader/image-20220411091603183.png" alt="image-20220411091603183"></p>
-<h1 id="Dump-Aegis-Packed"><a href="#Dump-Aegis-Packed" class="headerlink" title="Dump Aegis_Packed"></a>Dump Aegis_Packed</h1><p><strong>现在的目标是dump出经Aegis加载的calc</strong></p>
-<h2 id="VirtualAlloc断点"><a href="#VirtualAlloc断点" class="headerlink" title="VirtualAlloc断点"></a>VirtualAlloc断点</h2><p>在没加什么保护器的情况下</p>
-<p>我们设置一个断点 在<strong>创建进程</strong>的API上，也就是<strong>VirtualAlloc</strong>，在这个<strong>API返回时</strong>，会将<strong>新分配的内存地址存储在EAX</strong>上</p>
-<p>于是在他返回时查看EAX所指向的内存地址</p>
-<p>通过 Ctrl + G 找到VirtualAlloc</p>
-<p><img src="/2022/04/07/Malware-Loader/image-20220411100124864.png" alt="image-20220411100124864"></p>
-<p>跟随jmp跳转可以找到VirtualAlloc函数返回的地方</p>
-<p><img src="/2022/04/07/Malware-Loader/image-20220411100208206.png" alt="image-20220411100208206"></p>
-<h2 id="First-Dum-and-Second-Dump"><a href="#First-Dum-and-Second-Dump" class="headerlink" title="First Dum and Second Dump"></a>First Dum and Second Dump</h2><p>第一次断点打断，直接跟随到地址（由于是刚分配的所以这个内存区域还是空的）</p>
-<p><img src="/2022/04/07/Malware-Loader/image-20220411100657124.png" alt="image-20220411100657124"></p>
-<p>F9一下发现已经创建了一个<strong>虚拟进程</strong></p>
-<p><img src="/2022/04/07/Malware-Loader/image-20220411100800561.png" alt="image-20220411100800561"></p>
-<p>我们可以dump出来看一下，是否是我们的calc</p>
-<p>右键在内部布局转到</p>
-<p><img src="/2022/04/07/Malware-Loader/image-20220411101009013.png" alt="image-20220411101009013"></p>
-<p>再dump出文件，注意不要点到其他的内存区域，要不然dump出来的不一样</p>
-<p><img src="/2022/04/07/Malware-Loader/image-20220411101057045.png" alt="image-20220411101057045"></p>
-<p>我们可以通过010来比较两个文件，虽然有<strong>少许字节不同</strong>，或者有多的<strong>空字节填充</strong>，但我们<strong>不用hash来比较文件</strong></p>
-<p>文件是大致相同的，所以这并不是我们要找的calc</p>
-<p>再跟着dump一次会发现依然不是真正的calc</p>
-<h2 id="Third-Dump"><a href="#Third-Dump" class="headerlink" title="Third Dump"></a>Third Dump</h2><p>这次dump出来发现就是calc</p>
-<p><img src="/2022/04/07/Malware-Loader/image-20220411102643949.png" alt="image-20220411102643949"></p>
-<h1 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h1><ol>
-<li> <strong>前两次dump</strong>并不是真正的calc，是用来解密的，<strong>进程注入的暂存代码</strong> （ 所以把前两次dump出来做放进ida做下逆向工程分析一下就会知道原理）</li>
-<li> 这种<strong>自我注入</strong>代码的程序一般都打<strong>VirtualAlloc</strong>就好了，因为最后都会调用这个API（<strong>除非是CreateProcess或者多线程</strong>）</li>
-</ol>
+<p><img src="/Patreon-Unlocked/image-20220412091530366.png" alt="image-20220412091530366"></p>
+<h1 id="Setup-IDA-Pro-Type-Librares-For-Windows-Malware-Analysis"><a href="#Setup-IDA-Pro-Type-Librares-For-Windows-Malware-Analysis" class="headerlink" title="Setup IDA Pro Type Librares For Windows Malware Analysis"></a>Setup IDA Pro Type Librares For Windows Malware Analysis</h1><p>识别Windows的恶意软件，里面一般会有一些WIN API，我们可以直接导入<strong>类型库</strong>，方便查看这些类型库，去解析代码</p>
+<p><img src="/Patreon-Unlocked/image-20220412092704547.png" alt="image-20220412092704547"></p>
+<p><img src="/Patreon-Unlocked/image-20220412092843816.png" alt="image-20220412092843816"></p>
+<p>当我们不知道是什么，可以<strong>首选这个</strong>，<strong>不用太接近到底是什么</strong></p>
+<p><img src="/Patreon-Unlocked/image-20220412092958773.png" alt="image-20220412092958773"></p>
+<h1 id="How-to-view-disassembly-and-pseudocode-windows-side-by-side-in-IDA-Pro"><a href="#How-to-view-disassembly-and-pseudocode-windows-side-by-side-in-IDA-Pro" class="headerlink" title="How to view disassembly and pseudocode windows side-by-side in IDA Pro"></a>How to view disassembly and pseudocode windows side-by-side in IDA Pro</h1><p>同时查看反汇编和汇编窗口的命令</p>
+<p><img src="/Patreon-Unlocked/image-20220412093352004.png" alt="image-20220412093352004"></p>
+<p>方便查看</p>
+<p><img src="/Patreon-Unlocked/image-20220412093432063.png" alt="image-20220412093432063"></p>
+<h1 id="C-Malware-With-IDA-Pro"><a href="#C-Malware-With-IDA-Pro" class="headerlink" title="C++ Malware With IDA Pro"></a>C++ Malware With IDA Pro</h1><p>主要讨论的是这个，关于C++类和对象的关系，在IDA里会丢失类和对象的概念</p>
+<p><img src="/Patreon-Unlocked/image-20220412150805638.png" alt="image-20220412150805638"></p>
+<p>必须要先实例化类，才能在内存中创建变量</p>
+<p><img src="/Patreon-Unlocked/image-20220412151050573.png" alt="image-20220412151050573"></p>
+<p>在源代码里没什么问题，但IDA反编译之后不知道这是个结构体，只知道这是个指针</p>
+<p><img src="/Patreon-Unlocked/image-20220412151458803.png" alt="image-20220412151458803"></p>
+<p>显然易见的流程图</p>
+<p><img src="/Patreon-Unlocked/image-20220412151804698.png" alt="image-20220412151804698"></p>
+<p>于是要在IDA修复这个对象，先重置解析指针</p>
+<p><img src="/Patreon-Unlocked/image-20220412152315147.png" alt="image-20220412152315147"></p>
+<p>然后创建结构体</p>
+<p><img src="/Patreon-Unlocked/image-20220412152841016.png" alt="image-20220412152841016"></p>
+<p>这是根据内存自动创建的，不一定是对的，不过先去尝试到底是多大的字节什么类型变量，来逐步确定结构体中的变量</p>
+<p><img src="/Patreon-Unlocked/image-20220412152941984.png" alt="image-20220412152941984"></p>
+<p>在这可以看自己创建的结构体，之前做的login是去本地结构库（shift + F9）去添加结构，这里是我们自己创建的</p>
+<p><img src="/Patreon-Unlocked/image-20220412153744045.png" alt="image-20220412153744045"></p>
 
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 
-    <b><span id="/2022/04/07/Malware-Loader/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    <b><span id="/2022/04/12/Patreon-Unlocked/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
     <div id = "frozen-btn" class = "center">
     <button class="green" onclick = "Change()">🎉一杯咖啡~</button>
@@ -246,7 +239,7 @@
   </script>
 </div>
 
-<!-- <span id="/2022/04/07/Malware-Loader/" class="leancloud_visitors" data-flag-title="Malware Loader">
+<!-- <span id="/2022/04/12/Patreon-Unlocked/" class="leancloud_visitors" data-flag-title="Patreon Unlocked">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->

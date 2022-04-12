@@ -2,6 +2,51 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2022/04/12/Squirrel-Waffle/</loc>
+    
+    <lastmod>2022-04-12</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/04/12/Patreon-Unlocked/</loc>
+    
+    <lastmod>2022-04-12</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/Book/C++%20Primer%20Plus.html</loc>
+    
+    <lastmod>2022-04-12</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/Sundry/Sundry.html</loc>
+    
+    <lastmod>2022-04-12</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/04/07/FUD-Aegis-Crypter/</loc>
+    
+    <lastmod>2022-04-12</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2022/04/11/Week-of-4-4/</loc>
     
     <lastmod>2022-04-11</lastmod>
@@ -20,34 +65,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/Book/C++%20Primer%20Plus.html</loc>
-    
-    <lastmod>2022-04-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/Sundry/Sundry.html</loc>
-    
-    <lastmod>2022-04-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://ppppz.net/2022/04/11/C-Primer-Plus-Ch03/</loc>
-    
-    <lastmod>2022-04-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/2022/04/07/Malware-Loader/</loc>
     
     <lastmod>2022-04-11</lastmod>
     
@@ -221,15 +239,6 @@
     <loc>http://ppppz.net/2022/04/04/Week-of-3-28/</loc>
     
     <lastmod>2022-04-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/2022/03/30/HFCTF2022-the-shellcode/</loc>
-    
-    <lastmod>2022-03-31</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -769,7 +778,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-04-11</lastmod>
+    <lastmod>2022-04-12</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>

@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>Sundry - P.Z&#39;s Blog</title>
+  <title>Squirrel Waffle - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -120,197 +120,44 @@
             
             
             
-            <span>9,</span>
+            <span>12,</span>
             <span>2022</span>
         </div>
         
 
-        <h2 class="title">Sundry</h2>
+        <h2 class="title">Squirrel Waffle</h2>
     </div>
 
     <div class="divider"></div>
 
     <div class="content">
-        <h2 class="section-title">2022.4</h2>
+        <p>松鼠华夫饼！看起来很好吃的Malware</p>
+<h1 id="0x00-日常查壳"><a href="#0x00-日常查壳" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h1><p>无壳32位</p>
+<p><img src="/Squirrel-Waffle/image-20220412114720589.png" alt="image-20220412114720589"></p>
+<h1 id="0x01-分析流程"><a href="#0x01-分析流程" class="headerlink" title="0x01 分析流程"></a>0x01 分析流程</h1><p>这是个dll，分别是加载器入口点和DllEnterPoint</p>
+<p><strong>ldr这里是加载函数入口点导出dll</strong></p>
+<p><img src="/Squirrel-Waffle/image-20220412114923238.png" alt="image-20220412114923238"></p>
+<p>可以通过生成C文件，来让I<strong>DA反编译整个文件</strong>，有助于<strong>修复一些参数</strong>之类（很有用！</p>
+<p><img src="/Squirrel-Waffle/image-20220412115230232.png" alt="image-20220412115230232"></p>
+<p>通过对第一个函数的逛街，发现引用字符串的奇怪函数</p>
+<p>于是进去尝试解析可以发现<strong>C++的未被解析好的结构体</strong></p>
+<p>于是我们去修复他，这里可以看到gap4[12]，可以进行修改一下，因为一开始我们并不确定这到底是类型，我们可以<strong>先从DWORD开始</strong></p>
+<p>如果确定了是字符串还是什么，再去修改</p>
+<p><img src="/Squirrel-Waffle/image-20220412154633147.png" alt="image-20220412154633147"></p>
+<p>改成3个DWORD，再改下命名</p>
+<p><img src="/Squirrel-Waffle/image-20220412154924108.png" alt="image-20220412154924108"></p>
+<p>继续分析可以发现，每两串奇怪数据就会进入这个函数</p>
+<p><img src="/Squirrel-Waffle/image-20220412162021638.png" alt="image-20220412162021638"></p>
+<p>进入这个函数，发现一个有趣的循环解密，而就是这两串数据</p>
+<p><img src="/Squirrel-Waffle/image-20220412163016951.png" alt="image-20220412163016951"></p>
+<p>正好学习下CyberChef的使用</p>
+<p><img src="/Squirrel-Waffle/image-20220412163109509.png" alt="image-20220412163109509"></p>
 
-<div class="post-list">
-    <article class="post-list-item">
-            <a href="/2022/04/12/Squirrel-Waffle/">
-                <div class="content">
-                    <div class="title">
-                        Squirrel Waffle
-                    </div>
-                    <div class="excerpt">    
-                    </div>
-                    <div class="time">
-                        <span>April</span>
-                        <span>&nbsp;12,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-    </article>
-    <article class="post-list-item">
-            <a href="/2022/04/07/FUD-Aegis-Crypter/">
-                <div class="content">
-                    <div class="title">
-                        FUD Aegis Crypter
-                    </div>
-                    <div class="excerpt">    
-                    </div>
-                    <div class="time"> 
-                        <span>April</span>
-                        <span>&nbsp;7,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-    <article class="post-list-item">
-        <a href="/2022/04/06/Socket%E6%8A%80%E6%9C%AF/">
-            <div class="content">
-                <div class="title">
-                    Socket技术
-                </div>
-                <div class="excerpt">  
-                </div>
-                <div class="time"> 
-                    <span>April</span>
-                    <span>&nbsp;6,&nbsp;</span>
-                    <span>2022</span>
-                </div>
-            </div>
-        </a>
-    </article>
-</div>
-
-<h2 class="section-title">2022.2</h2>
-
-<div class="post-list">
-    <article class="post-list-item">
-        <a href="/2022/02/07/%E5%85%B3%E4%BA%8EPython-Maze%E6%A8%A1%E5%9D%97%E7%9A%84%E5%AD%A6%E4%B9%A0/">
-            <div class="content">
-                <div class="title">
-                    关于Python-Maze模块的学习
-                </div>
-                <div class="excerpt">   
-                </div>
-                <div class="time">
-                    <span>February</span>
-                    <span>&nbsp;7,&nbsp;</span>
-                    <span>2022</span>
-                </div>
-            </div>
-        </a>
-    </article>
-    <article class="post-list-item">
-        <a href="/2022/02/03/SM4-P-Z/">
-            <div class="content">
-                <div class="title">
-                    SM4-P.Z
-                </div>
-                <div class="excerpt">  
-                </div>
-                <div class="time">
-                    <span>February</span>
-                    <span>&nbsp;3,&nbsp;</span>
-                    <span>2022</span>
-                </div>
-            </div>
-        </a>
-    </article>
-</div>
-
-
-<h2 class="section-title">2022.1</h2>
-
-<div class="post-list">
-    <article class="post-list-item">
-        <a href="/2022/01/31/TEA-P-Z/">
-            <div class="content">
-                <div class="title">
-                    TEA-P.Z
-                </div>
-                <div class="excerpt">  
-                </div>
-                <div class="time">
-                    <span>January</span> 
-                    <span>&nbsp;31,&nbsp;</span>
-                    <span>2022</span>
-                </div>
-            </div>
-        </a>
-    </article>
-    <article class="post-list-item">
-        <a href="/2022/01/31/RC4-P-Z/">
-            <div class="content">
-                <div class="title">
-                    RC4-P.Z
-                </div>
-                <div class="excerpt">   
-                </div>
-                <div class="time"> 
-                    <span>January</span>
-                    <span>&nbsp;31,&nbsp;</span>
-                    <span>2022</span>
-                </div>
-            </div>
-        </a>
-    </article>
-    <article class="post-list-item">
-        <a href="/2022/01/31/AES-P-Z/">
-            <div class="content">
-                <div class="title">
-                    AES-P.Z
-                </div>
-                <div class="excerpt">   
-                </div>
-                <div class="time">
-                    <span>January</span>
-                    <span>&nbsp;31,&nbsp;</span>
-                    <span>2022</span>
-                </div>
-            </div>
-        </a>
-    </article>
-    <article class="post-list-item">
-        <a href="/2022/01/21/%E5%85%B3%E4%BA%8EDFS%E4%B8%8EBFS%E7%9A%84%E5%AD%A6%E4%B9%A0/">
-            <div class="content">
-                <div class="title">
-                    关于DFS与BFS的学习
-                </div>
-                <div class="excerpt">   
-                </div>
-                <div class="time">
-                    <span>January</span>  
-                    <span>&nbsp;21,&nbsp;</span>
-                    <span>2022</span>
-                </div>
-            </div>
-        </a>
-    </article>
-    <article class="post-list-item">
-        <a href="/2022/01/04/%E7%A0%B4%E8%A7%A3010Editor%E6%9C%89%E6%84%9F/">
-            <div class="content">
-                <div class="title">
-                    破解010Editor有感
-                </div>
-                <div class="excerpt">    
-                </div>
-                <div class="time">
-                    <span>January</span>
-                    <span>&nbsp;4,&nbsp;</span>
-                    <span>2022</span>
-                </div>
-            </div>
-        </a>
-    </article> 
-</div>
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 
-    <b><span id="/Sundry/Sundry.html" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    <b><span id="/2022/04/12/Squirrel-Waffle/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
     <div id = "frozen-btn" class = "center">
     <button class="green" onclick = "Change()">🎉一杯咖啡~</button>
@@ -379,7 +226,7 @@
   </script>
 </div>
 
-<!-- <span id="/Sundry/Sundry.html" class="leancloud_visitors" data-flag-title="Sundry">
+<!-- <span id="/2022/04/12/Squirrel-Waffle/" class="leancloud_visitors" data-flag-title="Squirrel Waffle">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->
