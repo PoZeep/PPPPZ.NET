@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/Sundry/Sundry.html</loc>
+    
+    <lastmod>2022-04-12</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/CTF/HFCTF2022.html</loc>
     
     <lastmod>2022-04-12</lastmod>
@@ -30,15 +39,6 @@
   
   <url>
     <loc>http://ppppz.net/Book/C++%20Primer%20Plus.html</loc>
-    
-    <lastmod>2022-04-12</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/Sundry/Sundry.html</loc>
     
     <lastmod>2022-04-12</lastmod>
     

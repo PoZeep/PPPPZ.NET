@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>时空飞行 - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            <span>February</span>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>5,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">时空飞行</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <h1 id="0x00-日常查壳"><a href="#0x00-日常查壳" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h1><p>无壳64位</p>
+<p><img src="/2022/02/05/%E6%97%B6%E7%A9%BA%E9%A3%9E%E8%A1%8C/image-20220205104052072.png" alt="image-20220205104052072"></p>
+<h1 id="0x01-分析主函数"><a href="#0x01-分析主函数" class="headerlink" title="0x01 分析主函数"></a>0x01 分析主函数</h1><p>首先简单看下程序行为，就是去找到日期和符来歌</p>
+<p><img src="/2022/02/05/%E6%97%B6%E7%A9%BA%E9%A3%9E%E8%A1%8C/image-20220205104207525.png" alt="image-20220205104207525"></p>
+<p>于是拖进ida一看</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v4[<span class="number">24</span>]; <span class="comment">// [rsp+20h] [rbp-A0h]</span></span><br><span class="line">  <span class="keyword">char</span> flag[<span class="number">32</span>]; <span class="comment">// [rsp+80h] [rbp-40h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> date[<span class="number">20</span>]; <span class="comment">// [rsp+A0h] [rbp-20h] BYREF</span></span><br><span class="line">  <span class="keyword">int</span> v7; <span class="comment">// [rsp+B4h] [rbp-Ch]</span></span><br><span class="line">  <span class="keyword">int</span> j; <span class="comment">// [rsp+B8h] [rbp-8h]</span></span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+BCh] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  _main(argc, argv, envp);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;Come on! Time travel starts now!\n&quot;</span>);</span><br><span class="line">  LinkStart();</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;请放入日期:&quot;</span>);</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>, date);</span><br><span class="line">  SetDate((__int64)dates, (<span class="keyword">unsigned</span> <span class="keyword">int</span> *)date);<span class="comment">// 原型是SM4密钥扩展 去掉了S盒代换</span></span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">3</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( endate[i] != dates[i + <span class="number">28</span>] )           <span class="comment">// 如果不相等就会退出 那么里面的代码不用关心</span></span><br><span class="line">    &#123;</span><br><span class="line">      i = <span class="number">2</span>;</span><br><span class="line">      v7 = <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">while</span> ( i &lt;= <span class="number">3</span> )</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">for</span> ( j = <span class="number">1</span>; j &lt;= <span class="number">4</span>; ++j )</span><br><span class="line">          *((_BYTE *)&amp;C + <span class="number">6</span> * i + j) = date[v7++];</span><br><span class="line">        ++i;</span><br><span class="line">      &#125;</span><br><span class="line">      Door();</span><br><span class="line">      <span class="built_in">printf</span>(asc_405100);</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  PartSuccessful(date);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;请唱出符来歌:&quot;</span>);</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>, flag);</span><br><span class="line">  SingFlag(flags, flag);                        <span class="comment">// 原型是AES密钥扩展 去掉了S盒代换</span></span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">5</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    v4[<span class="number">4</span> * i] = (<span class="keyword">unsigned</span> __int8)flags[i + <span class="number">60</span>];</span><br><span class="line">    v4[<span class="number">4</span> * i + <span class="number">1</span>] = (<span class="keyword">unsigned</span> __int8)BYTE1(flags[i + <span class="number">60</span>]);</span><br><span class="line">    v4[<span class="number">4</span> * i + <span class="number">2</span>] = (<span class="keyword">unsigned</span> __int8)BYTE2(flags[i + <span class="number">60</span>]);</span><br><span class="line">    v4[<span class="number">4</span> * i + <span class="number">3</span>] = HIBYTE(flags[i + <span class="number">60</span>]);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">1</span>; i &lt;= <span class="number">23</span>; ++i )</span><br><span class="line">    v4[i - <span class="number">1</span>] ^= (v4[i - <span class="number">1</span>] % <span class="number">0x12</span>u + v4[i] + <span class="number">5</span>) ^ <span class="number">0x41</span>;<span class="comment">// 这边的异或没法直接逆 需要DFS穷举所有异或可能性来解</span></span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">23</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( v4[i] != enflag[i] )                   <span class="comment">// 如果不相等就会退出 那么里面的代码不用关心</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">5</span>; ++i )</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">for</span> ( j = <span class="number">0</span>; j &lt;= <span class="number">5</span>; ++j )</span><br><span class="line">          *((_BYTE *)&amp;C + <span class="number">6</span> * i + j) = <span class="number">14</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      Door();</span><br><span class="line">      <span class="built_in">printf</span>(asc_405138);</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  EndSuccessful(flag);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="0x02-SetDate"><a href="#0x02-SetDate" class="headerlink" title="0x02 SetDate"></a>0x02 SetDate</h1><p>简单分析一下SetDate函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">SetDate</span><span class="params">(__int64 dates, <span class="keyword">unsigned</span> <span class="keyword">int</span> *date)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  __int64 result; <span class="comment">// rax</span></span><br><span class="line">  <span class="keyword">int</span> v3; <span class="comment">// ebx</span></span><br><span class="line">  <span class="keyword">int</span> k[<span class="number">36</span>]; <span class="comment">// [rsp+20h] [rbp-60h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v5; <span class="comment">// [rsp+B0h] [rbp+30h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v6; <span class="comment">// [rsp+B4h] [rbp+34h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v7; <span class="comment">// [rsp+B8h] [rbp+38h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v8; <span class="comment">// [rsp+BCh] [rbp+3Ch]</span></span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+CCh] [rbp+4Ch]</span></span><br><span class="line">                                                <span class="comment">// 也就是date16位差分为4 4 4 4分别大端序放入</span></span><br><span class="line">  v5 = _byteswap_ulong(*date);                  <span class="comment">// 动调可以得知 这个是每次取4个字节大端序放到v5 v6 v7 v8</span></span><br><span class="line">  v6 = _byteswap_ulong(date[<span class="number">1</span>]);</span><br><span class="line">  v7 = _byteswap_ulong(date[<span class="number">2</span>]);</span><br><span class="line">  v8 = _byteswap_ulong(date[<span class="number">3</span>]);</span><br><span class="line">  k[<span class="number">0</span>] = v5 ^ <span class="number">0xA3B1BAC6</span>;                       <span class="comment">// 每个异或常量</span></span><br><span class="line">  k[<span class="number">1</span>] = v6 ^ <span class="number">0x56AA3350</span>;</span><br><span class="line">  k[<span class="number">2</span>] = v7 ^ <span class="number">0x677D9197</span>;</span><br><span class="line">  result = v8 ^ <span class="number">0xB27022DC</span>;</span><br><span class="line">  k[<span class="number">3</span>] = v8 ^ <span class="number">0xB27022DC</span>;</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">31</span>; ++i )                   <span class="comment">// 然后下面一段异或是完全可逆的 只要实现了CalcRoundKey里的操作即可</span></span><br><span class="line">  &#123;</span><br><span class="line">    v3 = k[i];</span><br><span class="line">    k[i + <span class="number">4</span>] = v3 ^ CalcRoundKey(k[i + <span class="number">3</span>] ^ k[i + <span class="number">2</span>] ^ (<span class="keyword">unsigned</span> <span class="keyword">int</span>)k[i + <span class="number">1</span>] ^ CK[i]);</span><br><span class="line">    result = (<span class="keyword">unsigned</span> <span class="keyword">int</span>)k[i + <span class="number">4</span>];</span><br><span class="line">    *(_DWORD *)(dates + <span class="number">4</span>i64 * i) = result;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="异或等式"><a href="#异或等式" class="headerlink" title="异或等式"></a>异或等式</h2><p>关键还是异或那 写个等式</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">k[<span class="number">5</span>] = k[<span class="number">0</span>] ^ CalcRoundKey( k[<span class="number">3</span>] ^ k[<span class="number">2</span>] ^ k[<span class="number">1</span>] ^ CK[<span class="number">0</span>] )</span><br><span class="line"></span><br><span class="line">k[<span class="number">6</span>] = k[<span class="number">1</span>] ^ CalcRoundKey( k[<span class="number">4</span>] ^ k[<span class="number">3</span>] ^ k[<span class="number">2</span>] ^ CK[<span class="number">1</span>] )</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">k[<span class="number">34</span>] = k[<span class="number">30</span>] ^ CalcRoundKey( k[<span class="number">33</span>] ^ k[<span class="number">32</span>] ^ k[<span class="number">31</span>] ^ CK[<span class="number">30</span>] )</span><br><span class="line"></span><br><span class="line">k[<span class="number">35</span>] = k[<span class="number">31</span>] ^ CalcRoundKey( k[<span class="number">34</span>] ^ k[<span class="number">33</span>] ^ k[<span class="number">32</span>] ^ CK[<span class="number">31</span>] )</span><br></pre></td></tr></table></figure>
+
+<p>那么现在我们有了CK常量和加密后的k[35] k[32] k[33] k[34]（也就是dates[28] [29] [30] [31]）</p>
+<p>不用在意CalcRoundKey怎么操作，只用关心这只是个值</p>
+<p>那么逆回去的就是</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">k[<span class="number">31</span>] = k[<span class="number">35</span>] ^ CalcRoundKey( k[<span class="number">34</span>] ^ k[<span class="number">33</span>] ^ k[<span class="number">32</span>] ^ CK[<span class="number">31</span>] ) <span class="comment">//拿回了k[31]</span></span><br><span class="line"></span><br><span class="line">k[<span class="number">30</span>] = k[<span class="number">31</span>] ^ CalcRoundKey( k[<span class="number">33</span>] ^ k[<span class="number">32</span>] ^ k[<span class="number">31</span>] ^ CK[<span class="number">30</span>] )</span><br></pre></td></tr></table></figure>
+
+<p>于是可以写个等式</p>
+<p>k[i] = k[i + 4] ^ CalcRoundKey( k[i + 3] ^ k[i + 2] ^ k[i + 1] ^ CK[i] )</p>
+<h2 id="CalcRoundKey"><a href="#CalcRoundKey" class="headerlink" title="CalcRoundKey"></a>CalcRoundKey</h2><p>就是数本身异或左移13位和右移9位（右移9位也可以理解成左移23位）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">CalcRoundKey</span><span class="params">(<span class="keyword">int</span> a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> a1 ^ (<span class="keyword">unsigned</span> <span class="keyword">int</span>)(__ROL4__(a1, <span class="number">13</span>) ^ __ROR4__(a1, <span class="number">9</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="GetDate"><a href="#GetDate" class="headerlink" title="GetDate!"></a>GetDate!</h2><p>于是只要写好函数直接开逆</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span>												</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *	作用: 参数 x 左移参数 n 位 </span></span><br><span class="line"><span class="comment"> */</span> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SHL(x, n) ( ((x) &amp; 0xFFFFFFFF) &lt;&lt; n )</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *	作用: 参数 x 逻辑左移参数 n 位 </span></span><br><span class="line"><span class="comment"> */</span> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ROTL(x, n) ( SHL((x), n) | ((x) &gt;&gt; (32 - n)) )</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *	密钥用常量 </span></span><br><span class="line"><span class="comment"> */</span> </span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> FK[<span class="number">4</span>] = &#123;<span class="number">0xa3b1bac6</span>,<span class="number">0x56aa3350</span>,<span class="number">0x677d9197</span>,<span class="number">0xb27022dc</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *	密钥用常量 </span></span><br><span class="line"><span class="comment"> */</span> </span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> CK[<span class="number">32</span>] =</span><br><span class="line">&#123;</span><br><span class="line"><span class="number">0x00070e15</span>,<span class="number">0x1c232a31</span>,<span class="number">0x383f464d</span>,<span class="number">0x545b6269</span>,</span><br><span class="line"><span class="number">0x70777e85</span>,<span class="number">0x8c939aa1</span>,<span class="number">0xa8afb6bd</span>,<span class="number">0xc4cbd2d9</span>,</span><br><span class="line"><span class="number">0xe0e7eef5</span>,<span class="number">0xfc030a11</span>,<span class="number">0x181f262d</span>,<span class="number">0x343b4249</span>,</span><br><span class="line"><span class="number">0x50575e65</span>,<span class="number">0x6c737a81</span>,<span class="number">0x888f969d</span>,<span class="number">0xa4abb2b9</span>,</span><br><span class="line"><span class="number">0xc0c7ced5</span>,<span class="number">0xdce3eaf1</span>,<span class="number">0xf8ff060d</span>,<span class="number">0x141b2229</span>,</span><br><span class="line"><span class="number">0x30373e45</span>,<span class="number">0x4c535a61</span>,<span class="number">0x686f767d</span>,<span class="number">0x848b9299</span>,</span><br><span class="line"><span class="number">0xa0a7aeb5</span>,<span class="number">0xbcc3cad1</span>,<span class="number">0xd8dfe6ed</span>,<span class="number">0xf4fb0209</span>,</span><br><span class="line"><span class="number">0x10171e25</span>,<span class="number">0x2c333a41</span>,<span class="number">0x484f565d</span>,<span class="number">0x646b7279</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">CalcRoundKey</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> ka)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SetKey</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> SK[<span class="number">32</span>], <span class="keyword">unsigned</span> <span class="keyword">char</span> key[<span class="number">16</span>])</span></span>; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> t[<span class="number">36</span>];</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> k[] = &#123; <span class="number">0xFD07C452</span>, <span class="number">0xEC90A488</span>, <span class="number">0x68D33CD1</span>, <span class="number">0x96F64587</span> &#125;;</span><br><span class="line">    <span class="keyword">int</span> i, j;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span> ( i = <span class="number">32</span>; i &lt; <span class="number">36</span>; i++ )</span><br><span class="line">	&#123;</span><br><span class="line">		t[i] = k[i - <span class="number">32</span>];</span><br><span class="line"><span class="comment">//		printf(&quot;0x%X, &quot;, t[i]);</span></span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span> ( i = <span class="number">35</span>; i &gt;= <span class="number">4</span>; i-- )</span><br><span class="line">		t[i - <span class="number">4</span>] = t[i] ^ ( CalcRoundKey(t[i - <span class="number">3</span>] ^ t[i - <span class="number">2</span>] ^ t[i - <span class="number">1</span>] ^ CK[i - <span class="number">4</span>]) );</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++ )</span><br><span class="line">	&#123;</span><br><span class="line"><span class="comment">//		printf(&quot;0x%X, &quot;, t[i] ^ FK[i]);</span></span><br><span class="line">		t[i] ^= FK[i];</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Date:&quot;</span>);</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">char</span> * p = (<span class="keyword">unsigned</span> <span class="keyword">char</span> *)t;</span><br><span class="line">	<span class="keyword">for</span> ( i = <span class="number">1</span>; i &lt;= <span class="number">2</span>; i++ )</span><br><span class="line">		<span class="keyword">for</span> ( j = <span class="number">1</span>; j &lt;= <span class="number">4</span>; j++ )</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, p[i * <span class="number">4</span> - j]);</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">CalcRoundKey</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> ka)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> retval = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">int</span> i;</span><br><span class="line">	</span><br><span class="line">	retval = ka ^ (ROTL(ka, <span class="number">13</span>) ^ ROTL(ka, <span class="number">23</span>));</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> retval;	</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>GetPart!</p>
+<p><img src="/2022/02/05/%E6%97%B6%E7%A9%BA%E9%A3%9E%E8%A1%8C/image-20220205114241182.png" alt="image-20220205114241182"></p>
+<h1 id="0x03-SingFlag"><a href="#0x03-SingFlag" class="headerlink" title="0x03 SingFlag"></a>0x03 SingFlag</h1><p>拿到了正确的日期 于是可以去找符来歌</p>
+<p><img src="/2022/02/05/%E6%97%B6%E7%A9%BA%E9%A3%9E%E8%A1%8C/image-20220205114627234.png" alt="image-20220205114627234"></p>
+<p>从这里是可以得知我们要的符来歌是24位</p>
+<p><img src="/2022/02/05/%E6%97%B6%E7%A9%BA%E9%A3%9E%E8%A1%8C/image-20220205115050791.png" alt="image-20220205115050791"></p>
+<h2 id="异或等式-1"><a href="#异或等式-1" class="headerlink" title="异或等式"></a>异或等式</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> __fastcall <span class="title">SingFlag</span><span class="params">(__int64 flags, __int64 flag)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v2; <span class="comment">// ebx</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v3; <span class="comment">// [rsp+28h] [rbp-58h]</span></span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+2Ch] [rbp-54h]</span></span><br><span class="line">  <span class="keyword">int</span> v5; <span class="comment">// [rsp+2Ch] [rbp-54h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">5</span>; ++i )</span><br><span class="line">    *(_DWORD *)(<span class="number">4</span>i64 * i + flags) = GetWordFromStr((<span class="keyword">char</span> *)(flag + <span class="number">4</span> * i));<span class="comment">// 把字符串转成4字节整形 循环六次</span></span><br><span class="line">  v5 = <span class="number">6</span>;</span><br><span class="line">  v3 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">while</span> ( v5 &lt;= <span class="number">65</span> )                            <span class="comment">// 一共66轮</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( v5 % <span class="number">6</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      *(_DWORD *)(<span class="number">4</span>i64 * v5 + flags) = *(_DWORD *)(<span class="number">4</span>i64 * v5 - <span class="number">24</span> + flags) ^ *(_DWORD *)(<span class="number">4</span>i64 * v5 - <span class="number">4</span> + flags);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>                                        <span class="comment">// 6的倍数进行一个T操作</span></span><br><span class="line">    &#123;</span><br><span class="line">      v2 = *(_DWORD *)(<span class="number">4</span>i64 * v5 - <span class="number">24</span> + flags);</span><br><span class="line">      *(_DWORD *)(<span class="number">4</span>i64 * v5 + flags) = T(*(<span class="keyword">unsigned</span> <span class="keyword">int</span> *)(<span class="number">4</span>i64 * v5 - <span class="number">4</span> + flags), v3++) ^ v2;</span><br><span class="line">    &#125;</span><br><span class="line">    ++v5;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实还是一个异或等式</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">flags[<span class="number">6</span>] = flags[<span class="number">0</span>] ^ T( flags[<span class="number">5</span>], <span class="number">0</span> )</span><br><span class="line"></span><br><span class="line">flags[<span class="number">7</span>] = flags[<span class="number">1</span>] ^ flags[<span class="number">6</span>]</span><br><span class="line"></span><br><span class="line">flags[<span class="number">8</span>] = flags[<span class="number">2</span>] ^ flags[<span class="number">7</span>]</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">flags[<span class="number">64</span>] = flags[<span class="number">58</span>] ^ flags[<span class="number">63</span>]</span><br><span class="line"></span><br><span class="line">flags[<span class="number">65</span>] = flags[<span class="number">59</span>] ^ flags[<span class="number">64</span>]   </span><br></pre></td></tr></table></figure>
+
+<p>那么到最后是有flags[60] flags[61] flags[62] flags[63] flags[64] flags[65]</p>
+<p>同理写出等式 </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">i != <span class="number">6</span>: flags[i] = flags[i + <span class="number">6</span>] ^ flags[i + <span class="number">5</span>] </span><br><span class="line"></span><br><span class="line">i % <span class="number">6</span> == <span class="number">0</span>: flags[i] = flags[i + <span class="number">6</span>] ^ T( flags[i + <span class="number">5</span>], j )</span><br></pre></td></tr></table></figure>
+
+<p>(j 为轮次 第一次为0 第二次为1以此类推) </p>
+<h2 id="T运算"><a href="#T运算" class="headerlink" title="T运算"></a>T运算</h2><p>实现相应操作即可构成数值</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">T</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> a1, <span class="keyword">int</span> a2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> v3[<span class="number">28</span>]; <span class="comment">// [rsp+20h] [rbp-20h] BYREF</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v4; <span class="comment">// [rsp+3Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  SplitIntToArray(a1, v3);                      <span class="comment">// 分割成数组</span></span><br><span class="line">  LeftLoop4Int(v3, <span class="number">1</span>i64);                       <span class="comment">// 行左移</span></span><br><span class="line">  v4 = MergeArrayToInt(v3);                     <span class="comment">// 变回整形</span></span><br><span class="line">  <span class="keyword">return</span> v4 ^ Rcon[a2];                         <span class="comment">// 异或轮常量</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="0x04-DFS"><a href="#0x04-DFS" class="headerlink" title="0x04 DFS"></a>0x04 DFS</h1><p>已经知道上面怎么逆了，现在就是拿回这六个数值（flags[60] flags[61] flags[62] flags[63] flags[64] flags[65]）</p>
+<p>这边就是把六个值顺序放回到t数组</p>
+<p>例如 flags[60] = 0x12345678</p>
+<p>t[0] = 78, t[1] = 56, t[2] = 34, t[3] = 12</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">5</span>; ++i )</span><br><span class="line">&#123;</span><br><span class="line">  t[<span class="number">4</span> * i] = (<span class="keyword">unsigned</span> __int8)flags[i + <span class="number">60</span>];</span><br><span class="line">  t[<span class="number">4</span> * i + <span class="number">1</span>] = (<span class="keyword">unsigned</span> __int8)BYTE1(flags[i + <span class="number">60</span>]);</span><br><span class="line">  t[<span class="number">4</span> * i + <span class="number">2</span>] = (<span class="keyword">unsigned</span> __int8)BYTE2(flags[i + <span class="number">60</span>]);</span><br><span class="line">  t[<span class="number">4</span> * i + <span class="number">3</span>] = HIBYTE(flags[i + <span class="number">60</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> ( i = <span class="number">1</span>; i &lt;= <span class="number">23</span>; ++i )</span><br><span class="line">  t[i - <span class="number">1</span>] ^= (t[i - <span class="number">1</span>] % <span class="number">0x12</span>u + t[i] + <span class="number">5</span>) ^ <span class="number">0x41</span>;<span class="comment">// 这边的异或没法直接逆 需要DFS穷举所有异或可能性来解</span></span><br></pre></td></tr></table></figure>
+
+<p>于是就这是个破坏性的异或，我们无法直接靠爆破逆回去，因为值分叉了，需要穷举所有异或的可能性解决</p>
+<p>（最后一个值t[23]是没有变的，突破口就在这）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DFS</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> * flag, <span class="keyword">int</span> deep)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i;</span><br><span class="line">	<span class="keyword">if</span> ( deep == <span class="number">0</span> ) <span class="comment">//如果恢复了整条链子</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">24</span>; i++ )</span><br><span class="line">		&#123;</span><br><span class="line">			flags[x][i] = flag[i]; <span class="comment">//存入flag集</span></span><br><span class="line"><span class="comment">//			printf(&quot;0x%X, &quot;, flag[i]);</span></span><br><span class="line">		&#125;</span><br><span class="line">		x++;</span><br><span class="line"><span class="comment">//		puts(&quot;\n&quot;);</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;	<span class="comment">//这里的核心就是 每当恢复了一条链子递归回溯又到这个循环 就会继续遍历其他的可能性</span></span><br><span class="line">		<span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">0xFF</span>; i++ ) <span class="comment">//尝试每一个数据</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> ( ((i ^ <span class="number">0x41</span>) ^ (i % <span class="number">0x12</span> + flag[deep] + <span class="number">0x05</span>)) == enc[deep - <span class="number">1</span>] ) <span class="comment">//i为我们构造的值</span></span><br><span class="line">			&#123;</span><br><span class="line">				flag[deep - <span class="number">1</span>] = i; <span class="comment">//恢复一条就放到其中的一条链子</span></span><br><span class="line"><span class="comment">//				printf(&quot;0x%X, &quot;, flag[deep - 1]);</span></span><br><span class="line">				DFS(flag, deep - <span class="number">1</span>); <span class="comment">//继续恢复</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">		</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过输入正确的日期 我们可以拿到真正的密文串（我把恢复数值放到PartSuccessful里面）</p>
+<p><img src="/2022/02/05/%E6%97%B6%E7%A9%BA%E9%A3%9E%E8%A1%8C/image-20220205142914739.png" alt="image-20220205142914739"></p>
+<h1 id="0x05-GetFlag"><a href="#0x05-GetFlag" class="headerlink" title="0x05 GetFlag"></a>0x05 GetFlag</h1><p>于是与逆符来歌合并一下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> Rcon[<span class="number">10</span>] = </span><br><span class="line">&#123; </span><br><span class="line">	<span class="number">0x01000000</span>, <span class="number">0x02000000</span>,</span><br><span class="line">	<span class="number">0x04000000</span>, <span class="number">0x08000000</span>,</span><br><span class="line">	<span class="number">0x10000000</span>, <span class="number">0x20000000</span>,</span><br><span class="line">	<span class="number">0x40000000</span>, <span class="number">0x80000000</span>,</span><br><span class="line">	<span class="number">0x1b000000</span>, <span class="number">0x36000000</span> </span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">GetIntFromChar</span><span class="params">(<span class="keyword">char</span> c)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">GetWordFromStr</span><span class="params">(<span class="keyword">char</span> * str)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">MergeArrayToInt</span><span class="params">(<span class="keyword">int</span> <span class="built_in">array</span>[<span class="number">4</span>])</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SplitIntToArray</span><span class="params">(<span class="keyword">int</span> num, <span class="keyword">int</span> <span class="built_in">array</span>[<span class="number">4</span>])</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">LeftLoop4Int</span><span class="params">(<span class="keyword">int</span> <span class="built_in">array</span>[<span class="number">4</span>], <span class="keyword">int</span> step)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">T</span><span class="params">(<span class="keyword">int</span> num, <span class="keyword">int</span> round)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DFS</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> * flag, <span class="keyword">int</span> deep)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> flags[<span class="number">30</span>][<span class="number">24</span>];				<span class="comment">//已经控制数据在30个以内 你们多设点也可以 </span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> enc[<span class="number">24</span>] = &#123; <span class="number">0x25</span>, <span class="number">0x15</span>, <span class="number">0xDF</span>, <span class="number">0xA2</span>, <span class="number">0xC0</span>, <span class="number">0x93</span>, <span class="number">0xAD</span>, <span class="number">0x14</span>, <span class="number">0x46</span>, <span class="number">0xC5</span>, <span class="number">0xF</span>, <span class="number">0x2E</span>, <span class="number">0x9A</span>, <span class="number">0xEB</span>, <span class="number">0x30</span>, <span class="number">0xF8</span>, <span class="number">0x20</span>, <span class="number">0xE9</span>, <span class="number">0xCB</span>, <span class="number">0x88</span>, <span class="number">0xC6</span>, <span class="number">0xBE</span>, <span class="number">0x8D</span>, <span class="number">0xE3</span> &#125;; </span><br><span class="line"><span class="keyword">int</span> x;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i, j, c;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> t[<span class="number">66</span>];	</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">char</span> flag[<span class="number">24</span>];</span><br><span class="line">	flag[<span class="number">23</span>] = <span class="number">0xE3</span>;</span><br><span class="line">	DFS(flag, <span class="number">23</span>); <span class="comment">//找到所有可能性放到flags </span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> * pi = (<span class="keyword">unsigned</span> <span class="keyword">int</span> *)flags; <span class="comment">//已无符号整形来访问 宽度为24 于4字节访问一次 所以为6 </span></span><br><span class="line"><span class="comment">//	for ( i = 0; i &lt; 30 * 6; i++ )</span></span><br><span class="line"><span class="comment">//	&#123;</span></span><br><span class="line"><span class="comment">//		printf(&quot;0x%X, &quot;, pi[i]);</span></span><br><span class="line"><span class="comment">//		if ( (i + 1) % 6 == 0 )</span></span><br><span class="line"><span class="comment">//			printf(&quot;\n&quot;);</span></span><br><span class="line"><span class="comment">//	&#125;</span></span><br><span class="line">		</span><br><span class="line">	<span class="keyword">for</span> ( c = <span class="number">0</span>; c &lt;= <span class="number">30</span> * <span class="number">6</span>; c += <span class="number">6</span> )</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> ( i = <span class="number">60</span>; i &lt; <span class="number">66</span>; i++ )	<span class="comment">//填好数据 </span></span><br><span class="line">			t[i] = pi[c + i - <span class="number">60</span>];</span><br><span class="line">		<span class="keyword">for</span> ( i = <span class="number">59</span>, j = <span class="number">9</span>; i &gt;= <span class="number">0</span>; i-- )	<span class="comment">//利用等式逆回去 </span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> ( i % <span class="number">6</span> == <span class="number">0</span> )</span><br><span class="line">			&#123;</span><br><span class="line">				t[i] = t[i + <span class="number">6</span>] ^ T(t[i + <span class="number">5</span>], j);</span><br><span class="line">				j--;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				t[i] = t[i + <span class="number">6</span>] ^ t[i + <span class="number">5</span>];</span><br><span class="line"><span class="comment">//			printf(&quot;t[%d] = 0x%X, &quot;,i, t[i]);</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">unsigned</span> <span class="keyword">char</span> * p = (<span class="keyword">unsigned</span> <span class="keyword">char</span> *)t;</span><br><span class="line">		<span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">24</span>; i += <span class="number">4</span> )</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;%c%c%c%c&quot;</span>, p[i + <span class="number">3</span>], p[i + <span class="number">2</span>], p[i + <span class="number">1</span>], p[i]);<span class="comment">//注意小端序 </span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DFS</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> * flag, <span class="keyword">int</span> deep)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i;</span><br><span class="line">	<span class="keyword">if</span> ( deep == <span class="number">0</span> )</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">24</span>; i++ )</span><br><span class="line">		&#123;</span><br><span class="line">			flags[x][i] = flag[i];</span><br><span class="line"><span class="comment">//			printf(&quot;0x%X, &quot;, flag[i]);</span></span><br><span class="line">		&#125;</span><br><span class="line">		x++;</span><br><span class="line"><span class="comment">//		puts(&quot;\n&quot;);</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">0xFF</span>; i++ ) </span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> ( ((i ^ <span class="number">0x41</span>) ^ (i % <span class="number">0x12</span> + flag[deep] + <span class="number">0x05</span>)) == enc[deep - <span class="number">1</span>] )</span><br><span class="line">			&#123;</span><br><span class="line">				flag[deep - <span class="number">1</span>] = i;</span><br><span class="line"><span class="comment">//				printf(&quot;0x%X, &quot;, flag[deep - 1]);</span></span><br><span class="line">				DFS(flag, deep - <span class="number">1</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">		</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">GetIntFromChar</span><span class="params">(<span class="keyword">char</span> c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> result = (<span class="keyword">int</span>) c;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> result &amp; <span class="number">0x000000FF</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">GetWordFromStr</span><span class="params">(<span class="keyword">char</span> * str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> one = GetIntFromChar(str[<span class="number">0</span>]);</span><br><span class="line">	one = one &lt;&lt; <span class="number">24</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">int</span> two = GetIntFromChar(str[<span class="number">1</span>]);</span><br><span class="line">	two = two &lt;&lt; <span class="number">16</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">int</span> three = GetIntFromChar(str[<span class="number">2</span>]);</span><br><span class="line">	three = three &lt;&lt; <span class="number">8</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">int</span> four = GetIntFromChar(str[<span class="number">3</span>]);</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> one | two | three | four;	</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">MergeArrayToInt</span><span class="params">(<span class="keyword">int</span> <span class="built_in">array</span>[<span class="number">4</span>])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> one = <span class="built_in">array</span>[<span class="number">0</span>] &lt;&lt; <span class="number">24</span>;</span><br><span class="line">	<span class="keyword">int</span> two = <span class="built_in">array</span>[<span class="number">1</span>] &lt;&lt; <span class="number">16</span>;</span><br><span class="line">	<span class="keyword">int</span> three = <span class="built_in">array</span>[<span class="number">2</span>] &lt;&lt; <span class="number">8</span>;</span><br><span class="line">	<span class="keyword">int</span> four = <span class="built_in">array</span>[<span class="number">3</span>];</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> one | two | three | four;	</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SplitIntToArray</span><span class="params">(<span class="keyword">int</span> num, <span class="keyword">int</span> <span class="built_in">array</span>[<span class="number">4</span>])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> one = num &gt;&gt; <span class="number">24</span>;</span><br><span class="line">	<span class="built_in">array</span>[<span class="number">0</span>] = one &amp; <span class="number">0x000000FF</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">int</span> two = num &gt;&gt; <span class="number">16</span>;</span><br><span class="line">	<span class="built_in">array</span>[<span class="number">1</span>] = two &amp; <span class="number">0x000000FF</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">int</span> three = num &gt;&gt; <span class="number">8</span>;</span><br><span class="line">	<span class="built_in">array</span>[<span class="number">2</span>] = three &amp; <span class="number">0x000000FF</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">array</span>[<span class="number">3</span>] = num &amp; <span class="number">0x000000FF</span>;	</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">LeftLoop4Int</span><span class="params">(<span class="keyword">int</span> <span class="built_in">array</span>[<span class="number">4</span>], <span class="keyword">int</span> step)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> tmp[<span class="number">4</span>];</span><br><span class="line">	<span class="keyword">int</span> i;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++ )</span><br><span class="line">		tmp[i] = <span class="built_in">array</span>[i];</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">int</span> index = step;</span><br><span class="line">	<span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++ )</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">array</span>[i] = tmp[index];</span><br><span class="line">		index++;</span><br><span class="line">		index = index % <span class="number">4</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">T</span><span class="params">(<span class="keyword">int</span> num, <span class="keyword">int</span> round)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> NumArray[<span class="number">4</span>];</span><br><span class="line">	</span><br><span class="line">	SplitIntToArray(num, NumArray);		</span><br><span class="line">	</span><br><span class="line">	LeftLoop4Int(NumArray, <span class="number">1</span>);			</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">int</span> result = MergeArrayToInt(NumArray);		</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> result ^ Rcon[round];		</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>Get符来歌</p>
+<p><img src="/2022/02/05/%E6%97%B6%E7%A9%BA%E9%A3%9E%E8%A1%8C/image-20220205145237180.png" alt="image-20220205145237180"></p>
+<p>结束了？还没有，我们继续输入得到这串符来歌</p>
+<p><img src="/2022/02/05/%E6%97%B6%E7%A9%BA%E9%A3%9E%E8%A1%8C/image-20220205150045708.png" alt="image-20220205150045708"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Flag: VNCTF&#123;TimeFl20211205ightMachine&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    <p style= "text-align:center">
+        让我看看我被读了 
+    <b><span id="/2022/02/05/时空飞行/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    
+    <div id = "frozen-btn" class = "center">
+    <button class="green" onclick = "Change()">🎉一杯咖啡~</button>
+    <button class="purple" onclick = "Change()">☕</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        支付宝
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        微信
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-5rvxh62nz-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '评论什么好呢',   //占位符
+    });
+  </script>
+</div>
+
+<!-- <span id="/2022/02/05/时空飞行/" class="leancloud_visitors" data-flag-title="时空飞行">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2022 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
