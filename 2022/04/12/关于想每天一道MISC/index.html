@@ -144,6 +144,20 @@
 <p><img src="/%E5%85%B3%E4%BA%8E%E6%83%B3%E6%AF%8F%E5%A4%A9%E4%B8%80%E9%81%93MISC/image-20220412184601886.png" alt="image-20220412184601886"></p>
 <h2 id="方法三"><a href="#方法三" class="headerlink" title="方法三"></a>方法三</h2><p>PS安装ing</p>
 <h1 id="二维码"><a href="#二维码" class="headerlink" title="二维码"></a>二维码</h1><p>准备把之前的kali扬了再来一遍</p>
+<p>二维码扫描发现并没有东西，直接binwalk看一下</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E6%83%B3%E6%AF%8F%E5%A4%A9%E4%B8%80%E9%81%93MISC/image-20220415165830310.png" alt="image-20220415165830310"></p>
+<p>直接binwalk -e分离png，发现两个文件，zip是有密码的，后面那个4number就是按时四个数字了</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E6%83%B3%E6%AF%8F%E5%A4%A9%E4%B8%80%E9%81%93MISC/image-20220415171218951.png" alt="image-20220415171218951"></p>
+<p>于是直接fcrackzip爆破，<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45728231/article/details/120988424">参考文章</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">参数解释：</span><br><span class="line">-b：			使用暴力破解</span><br><span class="line">-c 1：		使用字符集，1指数字集合</span><br><span class="line">-l 4-4：		指定密码长度，最小长度-最大长度</span><br><span class="line">-u：			不显示错误密码，仅显示最终正确密码</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E5%85%B3%E4%BA%8E%E6%83%B3%E6%AF%8F%E5%A4%A9%E4%B8%80%E9%81%93MISC/image-20220415171447647.png" alt="image-20220415171447647"></p>
+<p>输入密码直接获取flag</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E6%83%B3%E6%AF%8F%E5%A4%A9%E4%B8%80%E9%81%93MISC/image-20220415171524591.png" alt="image-20220415171524591"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CTF&#123;vjpw_wnoei&#125;</span><br></pre></td></tr></table></figure>
+
+
+
 <h1 id="你竟然赶我走"><a href="#你竟然赶我走" class="headerlink" title="你竟然赶我走"></a>你竟然赶我走</h1><p>拉进010即出</p>
 <p><img src="/%E5%85%B3%E4%BA%8E%E6%83%B3%E6%AF%8F%E5%A4%A9%E4%B8%80%E9%81%93MISC/image-20220412190127209.png" alt="image-20220412190127209"></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;stego_is_s0_bor1ing&#125;</span><br></pre></td></tr></table></figure>
@@ -168,8 +182,8 @@
     <b><span id="/2022/04/12/关于想每天一道MISC/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
     <div id = "frozen-btn" class = "center">
-    <button class="green" onclick = "Change()">🎉一杯咖啡~</button>
-    <button class="purple" onclick = "Change()">☕</button>
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🎉</button>
     </div>
     
     <div class = "hide" id = "img">

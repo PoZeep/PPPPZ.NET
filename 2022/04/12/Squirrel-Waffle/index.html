@@ -131,27 +131,55 @@
     <div class="divider"></div>
 
     <div class="content">
-        <p>松鼠华夫饼！看起来很好吃的Malware</p>
+        <p>This learning by <a target="_blank" rel="noopener" href="https://malware-traffic-analysis.net/2021/09/17/index.html">OALab’s</a>!</p>
+<h1 id="分析病毒行为"><a href="#分析病毒行为" class="headerlink" title="分析病毒行为"></a>分析病毒行为</h1><p>下载邮件链接下载</p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220415123436034.png" alt="image-20220415123436034"></p>
+<p>下载并解压，然后就是关键的恶意宏，只要一启用就中招了</p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220415123646413.png" alt="image-20220415123646413"></p>
+<p>会自动下载这几个</p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220415123807375.png" alt="image-20220415123807375"></p>
+<p>来分析一下流量</p>
+<p>首先是从包含doc文档的流量</p>
+<p>其次就是打开了doc文档会启动了，从头https下载了dll files</p>
+<p>最后squirrel waffle <a target="_blank" rel="noopener" href="https://www.varonis.com/blog/what-is-c2#:~:text=Command%20and%20Control%20Infrastructure%2C%20also%20known%20as%20C2,maintain%20communication%20with%20compromised%20devices%20following%20initial%20exploitation.">c2</a> （command and control）</p>
+<p>攻击者使用这些工具和技术在初始利用后保持<strong>与受感染设备的通信</strong>，不同攻击的具体机制差异很大，但C2通常由受感染组织的设备与攻击者的控制的平台之间的<strong>一个或多个隐蔽通信通道组成</strong>，这些通信通道用于<strong>向受感染的设备发出指令</strong>，<strong>下载额外的恶意负载</strong>，并将被盗的<strong>数据通过管道传回给攻击者</strong>。<img src="/2022/04/12/Squirrel-Waffle/image-20220415124230160.png" alt="image-20220415124230160"></p>
+<p>squirrel waffle之后的C2流量,之后就是额外恶意负载和数据传回</p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220415125154347.png" alt="image-20220415125154347"></p>
+<p>整个病毒的流程图</p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220415125211239.png" alt="image-20220415125211239"></p>
+<p>现在来分析一下松鼠华夫饼！看起来很好吃的Malware</p>
 <h1 id="0x00-日常查壳"><a href="#0x00-日常查壳" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h1><p>无壳32位</p>
-<p><img src="/Squirrel-Waffle/image-20220412114720589.png" alt="image-20220412114720589"></p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220412114720589.png" alt="image-20220412114720589"></p>
 <h1 id="0x01-分析流程"><a href="#0x01-分析流程" class="headerlink" title="0x01 分析流程"></a>0x01 分析流程</h1><p>这是个dll，分别是加载器入口点和DllEnterPoint</p>
 <p><strong>ldr这里是加载函数入口点导出dll</strong></p>
-<p><img src="/Squirrel-Waffle/image-20220412114923238.png" alt="image-20220412114923238"></p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220412114923238.png" alt="image-20220412114923238"></p>
 <p>可以通过生成C文件，来让I<strong>DA反编译整个文件</strong>，有助于<strong>修复一些参数</strong>之类（很有用！</p>
-<p><img src="/Squirrel-Waffle/image-20220412115230232.png" alt="image-20220412115230232"></p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220412115230232.png" alt="image-20220412115230232"></p>
 <p>通过对第一个函数的逛街，发现引用字符串的奇怪函数</p>
 <p>于是进去尝试解析可以发现<strong>C++的未被解析好的结构体</strong></p>
 <p>于是我们去修复他，这里可以看到gap4[12]，可以进行修改一下，因为一开始我们并不确定这到底是类型，我们可以<strong>先从DWORD开始</strong></p>
 <p>如果确定了是字符串还是什么，再去修改</p>
-<p><img src="/Squirrel-Waffle/image-20220412154633147.png" alt="image-20220412154633147"></p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220412154633147.png" alt="image-20220412154633147"></p>
 <p>改成3个DWORD，再改下命名</p>
-<p><img src="/Squirrel-Waffle/image-20220412154924108.png" alt="image-20220412154924108"></p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220412154924108.png" alt="image-20220412154924108"></p>
 <p>继续分析可以发现，每两串奇怪数据就会进入这个函数</p>
-<p><img src="/Squirrel-Waffle/image-20220412162021638.png" alt="image-20220412162021638"></p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220412162021638.png" alt="image-20220412162021638"></p>
 <p>进入这个函数，发现一个有趣的循环解密，而就是这两串数据</p>
-<p><img src="/Squirrel-Waffle/image-20220412163016951.png" alt="image-20220412163016951"></p>
-<p>正好学习下CyberChef的使用</p>
-<p><img src="/Squirrel-Waffle/image-20220412163109509.png" alt="image-20220412163109509"></p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220412163016951.png" alt="image-20220412163016951"></p>
+<h1 id="0x02-提取数据"><a href="#0x02-提取数据" class="headerlink" title="0x02 提取数据"></a>0x02 提取数据</h1><p>正好学习下CyberChef的使用</p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220412163109509.png" alt="image-20220412163109509"></p>
+<p>通过看rdata段可以发现，密钥总是在密文的后面，所以就在怀疑制<strong>作者用了某种加载器让密钥在数据后面而且在rdata段</strong></p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220415120126975.png" alt="image-20220415120126975"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pefile</span><br><span class="line"><span class="keyword">from</span> yaml <span class="keyword">import</span> BlockMappingStartToken</span><br><span class="line"></span><br><span class="line">data = <span class="built_in">open</span>(<span class="string">&#x27;X:\\Malware\\Squirrel Waffle\\squirre.bin&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>).read()</span><br><span class="line"></span><br><span class="line">pe = pefile.PE(data = data)</span><br><span class="line">rdata = <span class="literal">None</span></span><br><span class="line"><span class="keyword">for</span> s <span class="keyword">in</span> pe.sections:</span><br><span class="line">    <span class="keyword">if</span> <span class="string">b&#x27;.rdata&#x27;</span> <span class="keyword">in</span> s.Name:</span><br><span class="line">        rdata = s.get_data()</span><br><span class="line"></span><br><span class="line">blocks = rdata.split(<span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">blocks = [x <span class="keyword">for</span> x <span class="keyword">in</span> blocks <span class="keyword">if</span> x != <span class="string">b&#x27;&#x27;</span>]</span><br><span class="line">blocks_sorted = <span class="built_in">sorted</span>(blocks, key = <span class="built_in">len</span>)     <span class="comment"># 根据长度进行排序</span></span><br><span class="line"><span class="comment"># print(blocks_sorted)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Decrypt</span>(<span class="params">key, data</span>):</span></span><br><span class="line">    out = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(data)):</span><br><span class="line">        out += <span class="built_in">chr</span>(data[i] ^ key[i % <span class="built_in">len</span>(key)])</span><br><span class="line">    <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(blocks)):</span><br><span class="line">    <span class="keyword">if</span> blocks[i] == blocks_sorted[-<span class="number">2</span>]: <span class="comment">#找是否是大数据倒数第一个是c2地址 倒数第二个是配置命令</span></span><br><span class="line">        out = Decrypt(blocks[i + <span class="number">1</span>], blocks[i]) <span class="comment"># 而数据的后一位就是密钥 制作者肯定用了某种加载器，让数据和密钥都是以这种方式排列</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(out)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x03-动调提取"><a href="#0x03-动调提取" class="headerlink" title="0x03 动调提取"></a>0x03 动调提取</h1><p>先打开DLL入口选项，于是当我们的dll一运行就会断住</p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220415121255457.png" alt="image-20220415121255457"></p>
+<p>经历几次F9才会到达这个地方，也就是我们要调试的地方</p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220415121218000.png" alt="image-20220415121218000"></p>
+<p>由于我们知道dll载入函数没什么有趣的代码，所以直接到我们的ldr载入地址</p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220415121557654.png" alt="image-20220415121557654"></p>
+<p>直接跑到运行到解密函数之后可直接提取配置</p>
+<p><img src="/2022/04/12/Squirrel-Waffle/image-20220415121847867.png" alt="image-20220415121847867"></p>
 
     </div>
 
@@ -160,8 +188,8 @@
     <b><span id="/2022/04/12/Squirrel-Waffle/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
     <div id = "frozen-btn" class = "center">
-    <button class="green" onclick = "Change()">🎉一杯咖啡~</button>
-    <button class="purple" onclick = "Change()">☕</button>
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🎉</button>
     </div>
     
     <div class = "hide" id = "img">

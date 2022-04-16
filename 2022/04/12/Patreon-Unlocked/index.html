@@ -165,6 +165,8 @@
 <p><img src="/Patreon-Unlocked/image-20220412152941984.png" alt="image-20220412152941984"></p>
 <p>在这可以看自己创建的结构体，之前做的login是去本地结构库（shift + F9）去添加结构，这里是我们自己创建的</p>
 <p><img src="/Patreon-Unlocked/image-20220412153744045.png" alt="image-20220412153744045"></p>
+<h1 id="Debugging-a-DLL-Export"><a href="#Debugging-a-DLL-Export" class="headerlink" title="Debugging a DLL Export"></a>Debugging a DLL Export</h1><p>主要就是记录如何调试dll，首先要开始dll入口，这样就会停在加载dll的入口，后面通过查找关键函数的地址，直接改eip跳过去，然后提取数据即可 </p>
+<p><img src="/Patreon-Unlocked/image-20220415130000597.png" alt="image-20220415130000597"></p>
 
     </div>
 
@@ -173,8 +175,8 @@
     <b><span id="/2022/04/12/Patreon-Unlocked/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
     <div id = "frozen-btn" class = "center">
-    <button class="green" onclick = "Change()">🎉一杯咖啡~</button>
-    <button class="purple" onclick = "Change()">☕</button>
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🎉</button>
     </div>
     
     <div class = "hide" id = "img">
