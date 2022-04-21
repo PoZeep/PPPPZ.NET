@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>STARCTF2022-Simple File System - P.Z&#39;s Blog</title>
+  <title>BlackMatter Ransomware - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -120,47 +120,23 @@
             
             
             
-            <span>18,</span>
+            <span>21,</span>
             <span>2022</span>
         </div>
         
 
-        <h2 class="title">STARCTF2022-Simple File System</h2>
+        <h2 class="title">BlackMatter Ransomware</h2>
     </div>
 
     <div class="divider"></div>
 
     <div class="content">
-        <p>好吧，全部都是ELF文件，但依然想</p>
-<h1 id="0x00-日常查壳"><a href="#0x00-日常查壳" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h1><p>给了三个文件，如题名一样，简单的文件系统，不过主逻辑在这个文件</p>
-<p><img src="/2022/04/18/STARCTF2022-Simple-File-System/image-20220418192736295.png" alt="image-20220418192736295"></p>
-<h1 id="0x01-分析simlefs"><a href="#0x01-分析simlefs" class="headerlink" title="0x01 分析simlefs"></a>0x01 分析simlefs</h1><p>浏览了一遍主函数无疑我们关心的是plantflag</p>
-<p>随机数出来的v21和v22我们无法逆，不过关键点就是在参数1的那次进去</p>
-<p><img src="/2022/04/18/STARCTF2022-Simple-File-System/image-20220418193323238.png" alt="image-20220418193323238"></p>
-<p>注意在这打开了我们的flag文件，然后进入了关键的函数，像参数为2调用了rand根本没法逆</p>
-<p><img src="/2022/04/18/STARCTF2022-Simple-File-System/image-20220418193926873.png" alt="image-20220418193926873"></p>
-<p>观看这个Encode函数完全可逆，v4动调即得，密文通过观察image.flag获得（毕竟在这个文件找不到</p>
-<p> <img src="/2022/04/18/STARCTF2022-Simple-File-System/image-20220418193939286.png" alt="image-20220418193939286"></p>
-<h1 id="0x02-GetData"><a href="#0x02-GetData" class="headerlink" title="0x02 GetData!"></a>0x02 GetData!</h1><p>设置好参数，起飞（开调</p>
-<p><img src="/2022/04/18/STARCTF2022-Simple-File-System/image-20220418194139609.png" alt="image-20220418194139609"></p>
-<p>输入好参数</p>
-<p><img src="/2022/04/18/STARCTF2022-Simple-File-System/image-20220418194524815.png" alt="image-20220418194524815"></p>
-<p>动调可以直接拿到v4的值和加密后的*CTF{后的值，于是我们可以通过这个值去找密文</p>
-<p><img src="/2022/04/18/STARCTF2022-Simple-File-System/image-20220418195115666.png" alt="image-20220418195115666"></p>
-<p>即可得到</p>
-<p><img src="/2022/04/18/STARCTF2022-Simple-File-System/image-20220418195214843.png" alt="image-20220418195214843"></p>
-<h1 id="0x03-GetFlag"><a href="#0x03-GetFlag" class="headerlink" title="0x03 GetFlag!"></a>0x03 GetFlag!</h1><p>拿这个密文直接解密即可得到flag</p>
-<p>也可以观察整个文件发现有多出密文，从0x33000开始，每隔0x1000就会有一段密文，读取解密也可</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">def Decrypt(encFLag):</span><br><span class="line">    flag = &quot;&quot;</span><br><span class="line">    for i in range(len(encFLag)):</span><br><span class="line">        v5 = encFLag[i]</span><br><span class="line">        v5 = (v5 &gt;&gt; 3) | (v5 &lt;&lt; 5) &amp; 0xFF</span><br><span class="line">        v5 ^= 0xDE</span><br><span class="line">        v5 = (v5 &gt;&gt; 4) | (v5 &lt;&lt; 4) &amp; 0xFF</span><br><span class="line">        v5 ^= 0xED</span><br><span class="line">        v5 = (v5 &gt;&gt; 5) | (v5 &lt;&lt; 3) &amp; 0xFF</span><br><span class="line">        v5 ^= 0xBE; </span><br><span class="line">        v5 = (v5 &gt;&gt; 6) | (v5 &lt;&lt; 2) &amp; 0xFF</span><br><span class="line">        v5 ^= 0xEF; </span><br><span class="line">        v5 = (v5 &gt;&gt; 7) | (v5 &lt;&lt; 1) &amp; 0xFF</span><br><span class="line">        flag += chr(v5)</span><br><span class="line">    return flag                         </span><br><span class="line">          </span><br><span class="line"></span><br><span class="line">data = open(&#x27;C:\\Users\\Pz\\Desktop\\STARCTF\\Simple File System\\image.flag&#x27;, &#x27;rb&#x27;).read()</span><br><span class="line">encFlags = [list(data[0x33000 + i * 0x1000: 0x33000 + i * 0x1000 + 32]) for i in range(200)]</span><br><span class="line"></span><br><span class="line">for flag in encFlags:</span><br><span class="line">    p = Decrypt(flag)</span><br><span class="line">    if &quot;*CTF&quot; in p:</span><br><span class="line">        print(flag)</span><br><span class="line">        print(p)</span><br><span class="line">        break</span><br><span class="line"></span><br><span class="line"># encFlags = open(&#x27;C:\\Users\\Pz\\Desktop\\STARCTF\\Simple File System\\encFlag.flag&#x27;, &#x27;rb&#x27;).read()</span><br><span class="line"># print(Decrypt(encFlags))</span><br></pre></td></tr></table></figure>
-
-<p>GetFlag!</p>
-<p><img src="/2022/04/18/STARCTF2022-Simple-File-System/image-20220418195454640.png" alt="image-20220418195454640"></p>
-
+        
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 
-    <b><span id="/2022/04/18/STARCTF2022-Simple-File-System/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    <b><span id="/2022/04/21/BlackMatter-Ransomware/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
     <div id = "frozen-btn" class = "center">
     <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
@@ -229,7 +205,7 @@
   </script>
 </div>
 
-<!-- <span id="/2022/04/18/STARCTF2022-Simple-File-System/" class="leancloud_visitors" data-flag-title="STARCTF2022-Simple File System">
+<!-- <span id="/2022/04/21/BlackMatter-Ransomware/" class="leancloud_visitors" data-flag-title="BlackMatter Ransomware">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->
