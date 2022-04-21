@@ -131,7 +131,7 @@
     <div class="divider"></div>
 
     <div class="content">
-        <p>系列小教程，病毒分析的little tips!（还没搞懂名字是什么意思</p>
+        <p><a target="_blank" rel="noopener" href="https://www.youtube.com/c/OALabs/videos">OALABS系列小教程</a>，病毒分析的little tips!（还没搞懂名字是什么意思</p>
 <h1 id="How-to-Identify-Dynamic-Imports-In-Malware"><a href="#How-to-Identify-Dynamic-Imports-In-Malware" class="headerlink" title="How to Identify Dynamic Imports In Malware"></a>How to Identify Dynamic Imports In Malware</h1><p>一个函数指向的地方是个空s的地方，那么可能以动态解析的形式填入</p>
 <p>当调用这个地址时，这个地址会已经填入了函数地址</p>
 <p>我们通过交叉引用查看这个地方的引用</p>
@@ -179,7 +179,59 @@
 <p>当jmp到这seh时，会有一长串代码，在<strong>去掉符号表的情况下很难理解</strong></p>
 <p>然而在这里面就是调用main函数的地方，而<strong>32位和64位的main函数原型都是固有</strong>的</p>
 <p><img src="/Patreon-Unlocked/image-20220418172114020.png" alt="image-20220418172114020"></p>
-<h1 id="Bypassing-BlackMatter-Anti-Debug"><a href="#Bypassing-BlackMatter-Anti-Debug" class="headerlink" title="Bypassing BlackMatter Anti-Debug"></a>Bypassing BlackMatter Anti-Debug</h1>
+<h1 id="Bypassing-BlackMatter-Anti-Debug"><a href="#Bypassing-BlackMatter-Anti-Debug" class="headerlink" title="Bypassing BlackMatter Anti-Debug"></a>Bypassing BlackMatter Anti-Debug</h1><p>先记录个简单小技巧，关于x64dbg的快捷键G</p>
+<p><img src="/Patreon-Unlocked/image-20220420205845185.png" alt="image-20220420205845185"></p>
+<p>在BlackMatter中调用了此API，我们只要F7跟一下就能找到，不过要<strong>装个插件silehide</strong>（先复现Jump去了</p>
+<h3 id="NtSetInformationThread-Anti-Debug"><a href="#NtSetInformationThread-Anti-Debug" class="headerlink" title="NtSetInformationThread() Anti Debug"></a>NtSetInformationThread() Anti Debug</h3><p><a target="_blank" rel="noopener" href="https://anti-debug.checkpoint.com/techniques/interactive.html#ntsetinformationthread">参考此文章</a></p>
+<p>该API会对调试器<strong>隐藏线程</strong>，当隐藏后，它将继续运行，但<strong>调试器不会收到任何该线程的相关事件</strong></p>
+<p><strong>该线程可以执行反调试检查，例如代码校验和调试标志验证等</strong></p>
+<p>但是，如果<strong>隐藏线程中有断点</strong>，或者我们对调试器隐藏了主线程，那么进程就会崩溃，调试器就会卡住</p>
+<p>（出个题不错嘿嘿，还想自己写Hook题）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NtCurrentThread ((HANDLE)-2)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">AntiDebug</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    NTSTATUS status = ntdll::<span class="built_in">NtSetInformationThread</span>(</span><br><span class="line">        NtCurrentThread, </span><br><span class="line">        ntdll::THREAD_INFORMATION_CLASS::ThreadHideFromDebugger, </span><br><span class="line">        <span class="literal">NULL</span>, </span><br><span class="line">        <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> status &gt;= <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="What-is-a-Breakpoint"><a href="#What-is-a-Breakpoint" class="headerlink" title="What is a Breakpoint"></a>What is a Breakpoint</h1><p>What is a breakpoint and how does it work under the hood(在底层) of debugger</p>
+<p>This tips both of hardware and software breakpoints work!</p>
+<h2 id="Software-Breakpoint"><a href="#Software-Breakpoint" class="headerlink" title="Software Breakpoint"></a>Software Breakpoint</h2><p>每当有一个软件断点在windows内核中就有一个异常断点带有异常断点类型的异常调试事件</p>
+<p>关于软件断点实质是向<strong>目标进程要断下的字节改变成0xCC</strong></p>
+<p><img src="/Patreon-Unlocked/image-20220420223328249.png" alt="image-20220420223328249"></p>
+<p><strong>当我们要设置一个软件断点</strong></p>
+<ol>
+<li> 调试器将读取要设置断点的位置，并存储在断点表中</li>
+<li> 再在断点的位置设置成0xCC，然后继续运行</li>
+<li> 于是当CPU遇到CC值，就会触发INT 3，并将异常断点引发到debug</li>
+<li> 然后debug发现这个是个用户</li>
+<li> 当要继续执行时，将断点表中保存的值放回目标进程  </li>
+<li>  然后再将把指令指针寄存器向回移动一格</li>
+<li>  再执行原来要执行的代码</li>
+</ol>
+<p>如果在做一些反调试什么，这实质上是在改变目标进程所执行代码，非常容易被检查到，这也就是软件断点的一个坏处</p>
+<p>10 minutes + 1 hour + 1 hour 30 minutes + 2 hours + 3 hours + all the time left, Tomorrow will be hard. But I can do it! –4.20</p>
+<h2 id="Hardware-Breakpoints"><a href="#Hardware-Breakpoints" class="headerlink" title="Hardware Breakpoints"></a>Hardware Breakpoints</h2><p><strong>硬件断点实际上是CPU完成的</strong>，并设置在CPU的寄存器中，有四个寄存器<strong>DR0, DR1, DR2, DR3</strong>，专门来存放硬件断点的地址</p>
+<p>硬件断点有几个优点</p>
+<ol>
+<li> 就算程序处于未解密状态，只要在该地方设置，当CPU运行就会断住</li>
+<li> 不会改变目标进程的内存，所以更隐秘</li>
+</ol>
+<p><strong>这些断点是注册在DR7寄存器</strong>，使用一组标志控制，这些标志会记录每个断点如何设置已经是如何触发的</p>
+<p><img src="/Patreon-Unlocked/image-20220420225306296.png" alt="image-20220420225306296"></p>
+<p>DR7的低八位以启用DR0 to DR3作为本地或全局断点</p>
+<p>而在windows上是没有全局断点的，所以只用来设置本地断点</p>
+<p><img src="/Patreon-Unlocked/image-20220420231724850.png" alt="image-20220420231724850"></p>
+<p>DR7的高十六位来设置</p>
+<ol>
+<li> 断点类型</li>
+<li> 断点如何触发 </li>
+<li> 断点大小</li>
+</ol>
+<p>低两位来告诉你断点的类型和断点如何触发</p>
+<p><img src="/Patreon-Unlocked/image-20220420232103155.png" alt="image-20220420232103155"></p>
+<p>高两位来告诉你这个地址大小</p>
+<p><img src="/Patreon-Unlocked/image-20220420232121959.png" alt="image-20220420232121959"></p>
+<p>但对于下一个硬件执行断点，就要设置一个本地断点、一个字节的可执行断点</p>
+<p><img src="/Patreon-Unlocked/image-20220420232459446.png" alt="image-20220420232459446"></p>
+
     </div>
 
     <p style= "text-align:center">
