@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2022/04/27/PWNHUB-LetsGo/</loc>
+    
+    <lastmod>2022-04-27</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/04/26/DASCTF2022-X-FATE-%E5%A5%87%E6%80%AA%E7%9A%84%E4%BA%A4%E6%98%93/</loc>
+    
+    <lastmod>2022-04-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/04/26/Sandboxs-Tricks/</loc>
+    
+    <lastmod>2022-04-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2022/04/25/Week-of-4-18/</loc>
     
     <lastmod>2022-04-25</lastmod>
@@ -859,7 +886,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-04-26</lastmod>
+    <lastmod>2022-04-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
