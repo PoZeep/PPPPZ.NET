@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2022/05/02/Week-of-4-25/</loc>
+    
+    <lastmod>2022-05-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/Diary/Diary.html</loc>
+    
+    <lastmod>2022-05-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2022/05/02/STARCTF2022-Jump/</loc>
     
     <lastmod>2022-05-02</lastmod>
@@ -138,15 +156,6 @@
   
   <url>
     <loc>http://ppppz.net/2022/04/25/Week-of-4-18/</loc>
-    
-    <lastmod>2022-04-25</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/Diary/Diary.html</loc>
     
     <lastmod>2022-04-25</lastmod>
     
