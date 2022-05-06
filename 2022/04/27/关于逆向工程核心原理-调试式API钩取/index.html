@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>关于逆向工程核心原理-Notepad WriteFile API钩取 - P.Z&#39;s Blog</title>
+  <title>关于逆向工程核心原理-调试式API钩取 - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -125,7 +125,7 @@
         </div>
         
 
-        <h2 class="title">关于逆向工程核心原理-Notepad WriteFile API钩取</h2>
+        <h2 class="title">关于逆向工程核心原理-调试式API钩取</h2>
     </div>
 
     <div class="divider"></div>
@@ -133,7 +133,7 @@
     <div class="content">
         <p>（简称逆向工程第三十章学习）</p>
 <p>先贴下调试的技术的图表</p>
-<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-Notepad-WriteFile-API%E9%92%A9%E5%8F%96/image-20220427220724582.png" alt="image-20220427220724582"></p>
+<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E8%B0%83%E8%AF%95%E5%BC%8FAPI%E9%92%A9%E5%8F%96/image-20220427220724582.png" alt="image-20220427220724582"></p>
 <h1 id="调试技术"><a href="#调试技术" class="headerlink" title="调试技术"></a>调试技术</h1><p>调试器能逐一执行被调试者的指令，拥有对寄存器与内存的所有访问权限</p>
 <p>平常的软件断点其实就是INT 3，IA-32指令为0xCC，刚好在OALABS里看过</p>
 <p>一般调试的一个流程是</p>
@@ -147,12 +147,12 @@
 <li> 钩子：再次改为0xCC，反复而使（根据需求而来）</li>
 </ol>
 <h1 id="实验环节"><a href="#实验环节" class="headerlink" title="实验环节"></a>实验环节</h1><p>查找PID然后挂钩，随便输入点小写字母，然后保存</p>
-<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-Notepad-WriteFile-API%E9%92%A9%E5%8F%96/image-20220427222048423.png" alt="image-20220427222048423"></p>
+<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E8%B0%83%E8%AF%95%E5%BC%8FAPI%E9%92%A9%E5%8F%96/image-20220427222048423.png" alt="image-20220427222048423"></p>
 <p>保存完会发现，全部转为大写字符！</p>
-<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-Notepad-WriteFile-API%E9%92%A9%E5%8F%96/image-20220427222157803.png" alt="image-20220427222157803"></p>
+<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E8%B0%83%E8%AF%95%E5%BC%8FAPI%E9%92%A9%E5%8F%96/image-20220427222157803.png" alt="image-20220427222157803"></p>
 <h1 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h1><p>用od打开notepad，按F9执行，在Kernel32!WriteFile下个断点，随便输入点的东西再保存</p>
 <p>就会在这断下，这时候我们可以观察栈，<strong>第二个参数就是指向我们的输入</strong></p>
-<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-Notepad-WriteFile-API%E9%92%A9%E5%8F%96/image-20220427223427974.png" alt="image-20220427223427974"></p>
+<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E8%B0%83%E8%AF%95%E5%BC%8FAPI%E9%92%A9%E5%8F%96/image-20220427223427974.png" alt="image-20220427223427974"></p>
 <h2 id="执行流"><a href="#执行流" class="headerlink" title="执行流"></a>执行流</h2><ol>
 <li>当我们在WriteFile设置了一个断点（INT3）</li>
 <li>向目标进程（notepad.exe）保存文件时</li>
@@ -183,13 +183,13 @@
 <h3 id="DEBUG-EVENT"><a href="#DEBUG-EVENT" class="headerlink" title="DEBUG_EVENT"></a>DEBUG_EVENT</h3><p>首先了解一下九大调试事件（九大巨人！雾</p>
 <p>其实都是字如其名，慢慢了解就好了</p>
 <p>WaitForDebugEvent() API是等带目标进程发生调试事件的函数，当发生了就会把相关事件放置到第一个参数的变量</p>
-<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-Notepad-WriteFile-API%E9%92%A9%E5%8F%96/image-20220428121717524.png" alt="image-20220428121717524"></p>
+<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E8%B0%83%E8%AF%95%E5%BC%8FAPI%E9%92%A9%E5%8F%96/image-20220428121717524.png" alt="image-20220428121717524"></p>
 <h2 id="OnCreateProcessDebugEvent"><a href="#OnCreateProcessDebugEvent" class="headerlink" title="OnCreateProcessDebugEvent"></a>OnCreateProcessDebugEvent</h2><p>当目标进程启动（或附加）即在DebugLoop对应，于是调用执行该函数</p>
 <p>（也就是DebugLoop的第一个if语句所对应）</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// OnCreateProcessDebugEvent是CREATE_PROCESS_DEBUG_EVENT事件句柄，即目标进程启动（或附加）时即调用执行该函数</span></span><br><span class="line"><span class="function">BOOL <span class="title">OnCreateProcessDebugEvent</span><span class="params">(LPDEBUG_EVENT pde)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 获取WriteFile() API地址</span></span><br><span class="line">    g_pfWriteFile = <span class="built_in">GetProcAddress</span>(<span class="built_in">GetModuleHandleA</span>(<span class="string">&quot;kernel32.dll&quot;</span>), <span class="string">&quot;WriteFile&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取WriteFile() API的起始地址，虽然不是目标进程，不过Windows OS,系统dll地址都一样</span></span><br><span class="line">    <span class="comment">// g_cpdi是CREATE_PROCESS_DEBUG_INFO结构体</span></span><br><span class="line">    <span class="built_in">memcpy</span>(&amp;g_cpdi, &amp;pde-&gt;u.CreateProcessInfo, <span class="built_in"><span class="keyword">sizeof</span></span>(CREATE_PROCESS_DEBUG_INFO));</span><br><span class="line">    <span class="comment">// 通过结构体的目标进程句柄，备份原起始地址的第一个字节</span></span><br><span class="line">    <span class="built_in">ReadProcessMemory</span>(g_cpdi.hProcess, g_pfWriteFile, </span><br><span class="line">                      &amp;g_chOrgByte, <span class="built_in"><span class="keyword">sizeof</span></span>(BYTE), <span class="literal">NULL</span>);</span><br><span class="line">    <span class="comment">// 再把INT3写到目标进程的地址设置断点</span></span><br><span class="line">    <span class="built_in">WriteProcessMemory</span>(g_cpdi.hProcess, g_pfWriteFile, </span><br><span class="line">                       &amp;g_chINT3, <span class="built_in"><span class="keyword">sizeof</span></span>(BYTE), <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="g-cpdi"><a href="#g-cpdi" class="headerlink" title="g_cpdi"></a>g_cpdi</h3><p>g_cpdi是CREATE_PROCESS_DEBUG_INFO的结构体，这边用到hProcess即目标进程的句柄</p>
-<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-Notepad-WriteFile-API%E9%92%A9%E5%8F%96/image-20220428123037822.png" alt="image-20220428123037822"></p>
+<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E8%B0%83%E8%AF%95%E5%BC%8FAPI%E9%92%A9%E5%8F%96/image-20220428123037822.png" alt="image-20220428123037822"></p>
 <h2 id="OnExceptionDebugEvent"><a href="#OnExceptionDebugEvent" class="headerlink" title="OnExceptionDebugEvent"></a>OnExceptionDebugEvent</h2><p>当目标进程发生EXCEPTION_BREAKPOINT异常运行此函数（除此之外还有19种异常）</p>
 <p>（也就是对应DebugLoop的else if）</p>
 <p>于是一整套流程就是</p>
@@ -209,22 +209,22 @@
 <h1 id="调试TIME"><a href="#调试TIME" class="headerlink" title="调试TIME"></a>调试TIME</h1><p>Scr1pt师傅直接让我GET到一个小tips，xdbg的参数设置</p>
 <p>本此内容是我们要调试调试器调试目标进程的细节（有点绕</p>
 <p>所以我们要dbg hookdbg.exe，所以我们直接先拖进xdbg，由于需要参数，我们选择改变命令行</p>
-<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-Notepad-WriteFile-API%E9%92%A9%E5%8F%96/%7BCF5E8B20-83FF-AD0E-3933-0C2EF2498181%7D.jpg" alt="img"></p>
+<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E8%B0%83%E8%AF%95%E5%BC%8FAPI%E9%92%A9%E5%8F%96/%7BCF5E8B20-83FF-AD0E-3933-0C2EF2498181%7D.jpg" alt="img"></p>
 <p>然后在后面跟上notepad的PID</p>
-<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-Notepad-WriteFile-API%E9%92%A9%E5%8F%96/image-20220428140620270.png" alt="image-20220428140620270"></p>
+<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E8%B0%83%E8%AF%95%E5%BC%8FAPI%E9%92%A9%E5%8F%96/image-20220428140620270.png" alt="image-20220428140620270"></p>
 <p>可以通过字符串查找，分别在我们想要调试的地方设置断点（我分别在主函数和异常处理函数的函数开头设了断点）</p>
-<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-Notepad-WriteFile-API%E9%92%A9%E5%8F%96/image-20220428140824927.png" alt="image-20220428140824927"></p>
+<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E8%B0%83%E8%AF%95%E5%BC%8FAPI%E9%92%A9%E5%8F%96/image-20220428140824927.png" alt="image-20220428140824927"></p>
 <p>接着就去异常处理的地方看看细节，再F9几下让记事本跑起来，再输入数据保存文件（中间可能会断住一下，应该是其他的异常主持但不是我们要的WriteFile）</p>
 <p>注意此时我们打开PZ.TXT还是全空的</p>
-<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-Notepad-WriteFile-API%E9%92%A9%E5%8F%96/image-20220428140954771.png" alt="image-20220428140954771"></p>
+<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E8%B0%83%E8%AF%95%E5%BC%8FAPI%E9%92%A9%E5%8F%96/image-20220428140954771.png" alt="image-20220428140954771"></p>
 <p>然后就可以尽情调试函数细节！</p>
-<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-Notepad-WriteFile-API%E9%92%A9%E5%8F%96/image-20220428141652026.png" alt="image-20220428141652026"></p>
+<p><img src="/2022/04/27/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E8%B0%83%E8%AF%95%E5%BC%8FAPI%E9%92%A9%E5%8F%96/image-20220428141652026.png" alt="image-20220428141652026"></p>
 
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 
-    <b><span id="/2022/04/27/关于逆向工程核心原理-Notepad-WriteFile-API钩取/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    <b><span id="/2022/04/27/关于逆向工程核心原理-调试式API钩取/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
     <div id = "frozen-btn" class = "center">
     <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
@@ -293,7 +293,7 @@
   </script>
 </div>
 
-<!-- <span id="/2022/04/27/关于逆向工程核心原理-Notepad-WriteFile-API钩取/" class="leancloud_visitors" data-flag-title="关于逆向工程核心原理-Notepad WriteFile API钩取">
+<!-- <span id="/2022/04/27/关于逆向工程核心原理-调试式API钩取/" class="leancloud_visitors" data-flag-title="关于逆向工程核心原理-调试式API钩取">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->
