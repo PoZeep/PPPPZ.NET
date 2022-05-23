@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>De1CTF2019-Re_Sign - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            <span>March</span>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>21,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">De1CTF2019-Re_Sign</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <h1 id="0x00-日常查壳"><a href="#0x00-日常查壳" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h1><p>upx，直接脱脱不掉，直接ESP定律脱</p>
+<p>（详细可见 <a href="https://ppppz.net/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/">UPX壳分析</a>）</p>
+<p><img src="/2022/03/21/De1CTF2019-Re-Sign/image-20220321134136748.png" alt="image-20220321134136748"></p>
+<h1 id="0x01-sub-401000"><a href="#0x01-sub-401000" class="headerlink" title="0x01 sub_401000"></a>0x01 sub_401000</h1><p>通过调试发现输入的地方在401000函数</p>
+<p>逻辑还是挺乱的，不过慢慢调试是关键几个函数在干什么（我不理解这是经过什么混淆？）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sub_401000</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> *v0; <span class="comment">// eax</span></span><br><span class="line">  <span class="keyword">char</span> *v1; <span class="comment">// eax</span></span><br><span class="line">  HANDLE v2; <span class="comment">// eax</span></span><br><span class="line">  <span class="keyword">char</span> *v4; <span class="comment">// [esp+0h] [ebp-14h]</span></span><br><span class="line">  <span class="keyword">char</span> *v5; <span class="comment">// [esp+4h] [ebp-10h]</span></span><br><span class="line">  <span class="keyword">void</span> *v6; <span class="comment">// [esp+8h] [ebp-Ch] BYREF</span></span><br><span class="line">  <span class="keyword">void</span> *v7; <span class="comment">// [esp+Ch] [ebp-8h] BYREF</span></span><br><span class="line">  <span class="keyword">void</span> *lp; <span class="comment">// [esp+10h] [ebp-4h]</span></span><br><span class="line"></span><br><span class="line">  v7 = <span class="number">0</span>;</span><br><span class="line">  lp = sub_402BA0(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);                  <span class="comment">// 输入flag</span></span><br><span class="line">  v0 = (<span class="keyword">char</span> *)lp;</span><br><span class="line">  <span class="keyword">if</span> ( !lp )</span><br><span class="line">    v0 = &amp;byte_41E300;</span><br><span class="line">  v6 = (<span class="keyword">void</span> *)sub_402E40(<span class="number">1</span>, (<span class="keyword">int</span>)v0, <span class="number">0</span>, <span class="number">0x80000004</span>);</span><br><span class="line">  v5 = sub_401233(&amp;v6);                         <span class="comment">// 经过对flag的base64变化，不过是变表</span></span><br><span class="line">  <span class="keyword">if</span> ( v6 )</span><br><span class="line">    sub_402258(v6);</span><br><span class="line">  v1 = v5;</span><br><span class="line">  <span class="keyword">if</span> ( !v5 )</span><br><span class="line">    v1 = &amp;byte_41E300;</span><br><span class="line">  v4 = sub_402F80(<span class="number">1</span>, COERCE_DOUBLE((<span class="keyword">unsigned</span> __int64)v1), <span class="number">0x80000004</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v5 )</span><br><span class="line">    sub_402258(v5);</span><br><span class="line">  <span class="keyword">if</span> ( v7 )</span><br><span class="line">    sub_402258(v7);</span><br><span class="line">  v7 = v4;</span><br><span class="line">  <span class="keyword">if</span> ( sub_401F0A((<span class="keyword">char</span> **)&amp;v7) )               <span class="comment">// 判断flag</span></span><br><span class="line">    sub_403220(<span class="number">2u</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, (<span class="keyword">char</span>)aSuccess);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    sub_403220(<span class="number">2u</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, (<span class="keyword">char</span>)aFail);</span><br><span class="line">  v2 = sub_402BA0(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v2 )</span><br><span class="line">    sub_402258(v2);</span><br><span class="line">  <span class="keyword">if</span> ( lp )</span><br><span class="line">    sub_402258(lp);</span><br><span class="line">  <span class="keyword">if</span> ( v7 )</span><br><span class="line">    sub_402258(v7);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为看到后面有base64加密的痕迹，所以大概是判断这几个函数里有base64加密，但不是标准加密，是变表</p>
+<p><img src="/2022/03/21/De1CTF2019-Re-Sign/image-20220321141310708.png" alt="image-20220321141310708"></p>
+<h2 id="sub-401233"><a href="#sub-401233" class="headerlink" title="sub_401233"></a>sub_401233</h2><p>只能说里面乱的不得了，通过到处找，发现这里可以找到码表</p>
+<p><img src="/2022/03/21/De1CTF2019-Re-Sign/image-20220321141028110.png" alt="image-20220321141028110"></p>
+<h1 id="0x02-sub-401F0A"><a href="#0x02-sub-401F0A" class="headerlink" title="0x02 sub_401F0A"></a>0x02 sub_401F0A</h1><p>这里是判断flag的地方，大略阅读可以得知长度为48</p>
+<p>比较关键是的这里，v33是我们加密后的base64，v19是密文</p>
+<p><img src="/2022/03/21/De1CTF2019-Re-Sign/image-20220321141736218.png" alt="image-20220321141736218"></p>
+<h2 id="FindIndex"><a href="#FindIndex" class="headerlink" title="FindIndex"></a>FindIndex</h2><p>第一次传入的是‘E’，每次都会压入正常的base64码表</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">UPX0:<span class="number">00402190</span> loc_402190:                             ; CODE XREF: FindIndex+<span class="number">29</span>↑j</span><br><span class="line">UPX0:<span class="number">00402190</span> push    eax</span><br><span class="line">UPX0:<span class="number">00402191</span> push    <span class="number">80000004</span>h</span><br><span class="line">UPX0:<span class="number">00402196</span> push    <span class="number">0</span></span><br><span class="line">UPX0:<span class="number">00402198</span> push    offset aAbcdefghijklmn_0        ; <span class="string">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklm&quot;</span>...</span><br><span class="line">UPX0:<span class="number">0040219</span>D push    <span class="number">4</span></span><br><span class="line">UPX0:<span class="number">004021</span>A2 mov     ebx, <span class="number">148</span>h</span><br><span class="line">UPX0:<span class="number">004021</span>A7 call    sub_403500</span><br><span class="line">UPX0:<span class="number">004021</span>AC add     esp, <span class="number">34</span>h</span><br><span class="line">UPX0:<span class="number">004021</span>AF jmp     $+<span class="number">5</span></span><br><span class="line">UPX0:<span class="number">004021B</span>4 ; ---------------------------------------------------------------------------</span><br><span class="line">UPX0:<span class="number">004021B</span>4</span><br><span class="line">UPX0:<span class="number">004021B</span>4 loc_4021B4:                             ; CODE XREF: FindIndex+<span class="number">4F</span>↑j</span><br><span class="line">UPX0:<span class="number">004021B</span>4 mov     esp, ebp</span><br><span class="line">UPX0:<span class="number">004021B</span>6 pop     ebp</span><br><span class="line">UPX0:<span class="number">004021B</span>7 retn    <span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+<p>通过多次调试可以发现，会返回数组下标 + 1</p>
+<p>就比如第一个字符是E，返回的是5</p>
+<p><img src="/2022/03/21/De1CTF2019-Re-Sign/image-20220321141958387.png" alt="image-20220321141958387"></p>
+<h1 id="0x03-GetFlag"><a href="#0x03-GetFlag" class="headerlink" title="0x03 GetFlag!"></a>0x03 GetFlag!</h1><p>返回之后再和v19对比，我们把v19里的数组拿出，直接逆即可</p>
+<ol>
+<li> 拿base64表下标减1恢复，经过变表加密的flag</li>
+<li> 拿变表解密字符串</li>
+<li>GetFlag!</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">char</span> Base64Code[] =</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>, <span class="string">&#x27;D&#x27;</span>, <span class="string">&#x27;E&#x27;</span>, <span class="string">&#x27;F&#x27;</span>, <span class="string">&#x27;G&#x27;</span>, <span class="string">&#x27;H&#x27;</span>, <span class="string">&#x27;I&#x27;</span>, <span class="string">&#x27;J&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;K&#x27;</span>, <span class="string">&#x27;L&#x27;</span>, <span class="string">&#x27;M&#x27;</span>, <span class="string">&#x27;N&#x27;</span>, <span class="string">&#x27;O&#x27;</span>, <span class="string">&#x27;P&#x27;</span>, <span class="string">&#x27;Q&#x27;</span>, <span class="string">&#x27;R&#x27;</span>, <span class="string">&#x27;S&#x27;</span>, <span class="string">&#x27;T&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;U&#x27;</span>, <span class="string">&#x27;V&#x27;</span>, <span class="string">&#x27;W&#x27;</span>, <span class="string">&#x27;X&#x27;</span>, <span class="string">&#x27;Y&#x27;</span>, <span class="string">&#x27;Z&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>, </span><br><span class="line">    <span class="string">&#x27;e&#x27;</span>, <span class="string">&#x27;f&#x27;</span>, <span class="string">&#x27;g&#x27;</span>, <span class="string">&#x27;h&#x27;</span>, <span class="string">&#x27;i&#x27;</span>, <span class="string">&#x27;j&#x27;</span>, <span class="string">&#x27;k&#x27;</span>, <span class="string">&#x27;l&#x27;</span>, <span class="string">&#x27;m&#x27;</span>, <span class="string">&#x27;n&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;p&#x27;</span>, <span class="string">&#x27;q&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, <span class="string">&#x27;s&#x27;</span>, <span class="string">&#x27;t&#x27;</span>, <span class="string">&#x27;u&#x27;</span>, <span class="string">&#x27;v&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, <span class="string">&#x27;x&#x27;</span>, </span><br><span class="line">    <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;z&#x27;</span>, <span class="string">&#x27;0&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;2&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;4&#x27;</span>, <span class="string">&#x27;5&#x27;</span>, <span class="string">&#x27;6&#x27;</span>, <span class="string">&#x27;7&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;8&#x27;</span>, <span class="string">&#x27;9&#x27;</span>, <span class="string">&#x27;+&#x27;</span>, <span class="string">&#x27;/&#x27;</span>, <span class="string">&#x27;=&#x27;</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">unsigned</span> <span class="keyword">char</span> CBase64Code[] = <span class="string">&quot;0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm+/&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> input[] = </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="number">0x8</span>, <span class="number">0x3B</span>, <span class="number">0x1</span>, <span class="number">0x20</span>, <span class="number">0x7</span>, <span class="number">0x34</span>, <span class="number">0x9</span>, <span class="number">0x1F</span>, <span class="number">0x18</span>, <span class="number">0x24</span>, <span class="number">0x13</span>, <span class="number">0x3</span>, <span class="number">0x10</span>, <span class="number">0x38</span>, <span class="number">0x9</span>, <span class="number">0x1B</span>, <span class="number">0x8</span>, <span class="number">0x34</span>, <span class="number">0x13</span>, <span class="number">0x2</span>, <span class="number">0x8</span>, <span class="number">0x22</span>, <span class="number">0x12</span>, <span class="number">0x3</span>, <span class="number">0x5</span>, <span class="number">0x6</span>, <span class="number">0x12</span>, <span class="number">0x3</span>, <span class="number">0xF</span>, <span class="number">0x22</span>, <span class="number">0x12</span>, <span class="number">0x17</span>, <span class="number">0x8</span>, <span class="number">0x1</span>, <span class="number">0x29</span>, <span class="number">0x22</span>, <span class="number">0x6</span>, <span class="number">0x24</span>, <span class="number">0x32</span>, <span class="number">0x24</span>, <span class="number">0xF</span>, <span class="number">0x1F</span>, <span class="number">0x2B</span>, <span class="number">0x24</span>, <span class="number">0x3</span>, <span class="number">0x15</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">int</span> len = <span class="keyword">sizeof</span>(input) / <span class="keyword">sizeof</span>(<span class="keyword">unsigned</span> <span class="keyword">char</span>);</span><br><span class="line">    <span class="keyword">char</span> flag[len];</span><br><span class="line">    <span class="keyword">int</span> i, j;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; len; i++ )</span><br><span class="line">        input[i] = Base64Code[input[i] - <span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; len; i++ )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> ( j = <span class="number">0</span>; j &lt; <span class="number">64</span>; j++ )</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> ( input[i] == CBase64Code[j] )</span><br><span class="line">            &#123;</span><br><span class="line">                input[i] = j;</span><br><span class="line"><span class="comment">//                printf(&quot;0x%-2x, &quot;, input[i]);</span></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> ( i = <span class="number">0</span>, j = <span class="number">0</span>; j &lt; len; i += <span class="number">3</span>, j += <span class="number">4</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        flag[i] = (input[j] &lt;&lt; <span class="number">2</span>) | ((input[j + <span class="number">1</span>] &amp; <span class="number">0x30</span>) &gt;&gt; <span class="number">4</span>);</span><br><span class="line">        flag[i + <span class="number">1</span>] = ((input[j + <span class="number">1</span>] &amp; <span class="number">0xF</span>) &lt;&lt; <span class="number">4</span>) | ((input[j + <span class="number">2</span>] &amp; <span class="number">0x3C</span>) &gt;&gt; <span class="number">2</span>);</span><br><span class="line">        flag[i + <span class="number">2</span>] = ((input[j + <span class="number">2</span>] &amp; <span class="number">0x3</span>) &lt;&lt; <span class="number">6</span>) | input[j + <span class="number">3</span>] ;</span><br><span class="line"><span class="comment">//        printf(&quot;%x %x %x &quot;,  flag[i], flag[i + 1], flag[i + 2]);</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">36</span>; i++ )</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, flag[i]);</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line"><span class="comment">/*   标准base64解密  4位变3位*/</span></span><br><span class="line">    <span class="comment">// for (i = 0, j = 0; j &lt; strlen(input); i += 3, j +=4 )</span></span><br><span class="line">    <span class="comment">// &#123;</span></span><br><span class="line">    <span class="comment">//     flag[i] = (input[j] &lt;&lt; 2) | ((input[j + 1] &amp; 0x30) &gt;&gt; 4);</span></span><br><span class="line">    <span class="comment">//     flag[i + 1] = ((input[j + 1] &amp; 0xF) &lt;&lt; 4) | ((input[j + 2] &amp; 0x3C) &gt;&gt; 2);</span></span><br><span class="line">    <span class="comment">//     flag[i + 2] = ((input[j + 2] &amp; 0x3) &lt;&lt; 6) | input[j + 3] ;</span></span><br><span class="line">    <span class="comment">//     printf(&quot;%x %x %x &quot;,  flag[i], flag[i + 1], flag[i + 2]);</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    </span><br><span class="line"><span class="comment">/*  标准base64加密   3位变4位*/</span></span><br><span class="line">    <span class="comment">// for ( i = 0, j = 0; i &lt;= strlen(flag); i += 3, j += 4 )</span></span><br><span class="line">	<span class="comment">// &#123;</span></span><br><span class="line">	<span class="comment">// 	input[j] = (flag[i] &gt;&gt; 2) &amp; 0x3F;</span></span><br><span class="line">	<span class="comment">// 	input[j + 1] = ((flag[i] &amp; 0x3) &lt;&lt; 4) | (flag[i + 1] &amp; 0xF0 ) &gt;&gt; 4;</span></span><br><span class="line">	<span class="comment">// 	input[j + 2] = ((flag[i + 1] &amp; 0xF ) &lt;&lt; 2) | (flag[i + 2] &amp; 0xC0) &gt;&gt; 6;</span></span><br><span class="line">	<span class="comment">// 	input[j + 3] = flag[i + 2] &amp; 0x3F;	</span></span><br><span class="line">	<span class="comment">// &#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>GetFlag!</p>
+<p><img src="/2022/03/21/De1CTF2019-Re-Sign/image-20220321142651699.png" alt="image-20220321142651699"></p>
+
+    </div>
+
+    <p style= "text-align:center">
+        让我看看我被读了 
+    <b><span id="/2022/03/21/De1CTF2019-Re-Sign/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        支付宝
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        微信
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-5rvxh62nz-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '评论什么好呢',   //占位符
+    });
+  </script>
+</div>
+
+<!-- <span id="/2022/03/21/De1CTF2019-Re-Sign/" class="leancloud_visitors" data-flag-title="De1CTF2019-Re_Sign">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2022 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
