@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>Archive: 2022/5 - P.Z&#39;s Blog</title>
+  <title>DASCTF2022 X VOID-JIT - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -102,155 +102,142 @@
         </div>
     </div>
 </nav>
-        <div class="container">
-    
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            <span>May</span>
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>26,</span>
+            <span>2022</span>
+        </div>
+        
 
-    <div class="post-list">
-        
-        <article class="post-list-item">
-            <a href="/2022/05/09/Week-of-5-2/">
-                
-                <div class="content">
-                    <div class="title">
-                        Week of 5.2
-                    </div>
-                    
-                    <div class="excerpt">
-                        
-                    </div>
-                    
-                    <div class="time">
-                        
-                        
-                        
-                        
-                        
-                        <span>May</span>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>&nbsp;9,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-        
-        <article class="post-list-item">
-            <a href="/2022/05/04/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-DLL%E6%B3%A8%E5%85%A5%E5%BC%8FAPI%E9%92%A9%E5%8F%96/">
-                
-                <div class="content">
-                    <div class="title">
-                        关于逆向工程核心原理-DLL注入式API钩取
-                    </div>
-                    
-                    <div class="excerpt">
-                        
-                    </div>
-                    
-                    <div class="time">
-                        
-                        
-                        
-                        
-                        
-                        <span>May</span>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>&nbsp;4,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-        
-        <article class="post-list-item">
-            <a href="/2022/05/02/Week-of-4-25/">
-                
-                <div class="content">
-                    <div class="title">
-                        Week of 4.25
-                    </div>
-                    
-                    <div class="excerpt">
-                        
-                    </div>
-                    
-                    <div class="time">
-                        
-                        
-                        
-                        
-                        
-                        <span>May</span>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>&nbsp;2,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-        
-        <article class="post-list-item">
-            <a href="/2022/05/02/STARCTF2022-Jump/">
-                
-                <div class="content">
-                    <div class="title">
-                        STARCTF2022-Jump
-                    </div>
-                    
-                    <div class="excerpt">
-                        
-                    </div>
-                    
-                    <div class="time">
-                        
-                        
-                        
-                        
-                        
-                        <span>May</span>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>&nbsp;2,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-        
+        <h2 class="title">DASCTF2022 X VOID-JIT</h2>
     </div>
 
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>（得去尝试学学其他架构的题，不能只玩PE和Python！）</p>
+<h1 id="0x00-日常查壳"><a href="#0x00-日常查壳" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h1><p>吼吼题目一个JIT，完全没接触过，不过才5KB，也许这题会很简单？于是开赛那天在这题坐牢</p>
+<p>拉进010可以发现是.LJ开头，那么这题就是luajit逆向了！</p>
+<h1 id="0x01-反编译"><a href="#0x01-反编译" class="headerlink" title="0x01 反编译"></a>0x01 反编译</h1><p>经过多个版本测试最后得知是LuaJit2.1.0Beta3版本，呜呜呜呜呜呜，可是我还是看不懂这题是汇编（可能需要花段时间慢慢看）</p>
+<p>不过先记录下如何反编译这类文件</p>
+<blockquote>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-1378796-1-1.html">https://www.52pojie.cn/thread-1378796-1-1.html</a></p>
+</blockquote>
+<h2 id="1-编译LuaJit2-1-0Beta3"><a href="#1-编译LuaJit2-1-0Beta3" class="headerlink" title="1. 编译LuaJit2.1.0Beta3"></a>1. 编译LuaJit2.1.0Beta3</h2><p>去下载<a target="_blank" rel="noopener" href="http://luajit.org/download.html">官网</a>下载该版本（题目对应版本</p>
+<p><img src="/2022/05/26/DASCTF2022-X-VOID-JIT/image-20220526134726182.png" alt="image-20220526134726182"></p>
+<h2 id="2-VC本地编译"><a href="#2-VC本地编译" class="headerlink" title="2. VC本地编译"></a>2. VC本地编译</h2><p>去本地找到x64 Native Tools Command Prompt for VS 2022，不同版本的不一样建议装个everything找到自己本地的</p>
+<p>然后这里要注意的几个点</p>
+<ul>
+<li>下载过来的luajit要和本地编译器的盘符一致（要不然cd过不去</li>
+<li>msvcbuild.bat gc64编译出的64位（题目的64位</li>
+<li>msvcbuild.bat编译出的是32位</li>
+</ul>
+<p><img src="/2022/05/26/DASCTF2022-X-VOID-JIT/image-20220526134913436.png" alt="image-20220526134913436"></p>
+<h2 id="3-反编译！"><a href="#3-反编译！" class="headerlink" title="3. 反编译！"></a>3. 反编译！</h2><blockquote>
+<p>反编译工具：<a target="_blank" rel="noopener" href="https://github.com/bobsayshilol/luajit-decomp/tree/deprecated">https://github.com/bobsayshilol/luajit-decomp/tree/deprecated</a></p>
+</blockquote>
+<p>编译后Luajit的<strong>src目录</strong>会有三个文件需要拿到<strong>该工具的根目录</strong>下</p>
+<p><img src="/2022/05/26/DASCTF2022-X-VOID-JIT/image-20220526135246533.png" alt="image-20220526135246533"></p>
+<p>然后将我们的题目附件改名为test.lua，再按下decoder_new.exe该文件就出现了out.lua和out2.lua</p>
+<p>于是可以开逆了！</p>
+<p><img src="/2022/05/26/DASCTF2022-X-VOID-JIT/image-20220526135356523.png" alt="image-20220526135356523"></p>
+<p>（留个坑）</p>
+
+    </div>
+
+    <p style= "text-align:center">
+        让我看看我被读了 
+    <b><span id="/2022/05/26/DASCTF2022-X-VOID-JIT/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
-<div class="paginator">
-    <a class="extend prev" rel="prev" href="/archives/2022/05/">Prev</a><a class="page-number" href="/archives/2022/05/">1</a><span class="page-number current">2</span>
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        支付宝
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        微信
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-5rvxh62nz-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '评论什么好呢',   //占位符
+    });
+  </script>
 </div>
 
-</div>
+<!-- <span id="/2022/05/26/DASCTF2022-X-VOID-JIT/" class="leancloud_visitors" data-flag-title="DASCTF2022 X VOID-JIT">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
         <footer>
     <div class="inner">
         <div class="links">

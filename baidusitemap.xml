@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://PPPPZ.net/2022/05/26/DASCTF2022-X-VOID-JIT/</loc>
+    <lastmod>2022-05-26</lastmod>
+  </url>
+  <url>
+    <loc>http://PPPPZ.net/2022/05/24/DASCTF2022-X-VOID-WER/</loc>
+    <lastmod>2022-05-26</lastmod>
+  </url>
+  <url>
+    <loc>http://PPPPZ.net/2022/05/26/DASCTF2022-X-VOID-CEF/</loc>
+    <lastmod>2022-05-26</lastmod>
+  </url>
+  <url>
     <loc>http://PPPPZ.net/2022/05/23/Week-of-5-16/</loc>
     <lastmod>2022-05-23</lastmod>
   </url>
