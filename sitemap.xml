@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://ppppz.net/2022/06/05/About-6-5-This-Week/</loc>
+    <loc>http://ppppz.net/Diary/Diary.html</loc>
     
     <lastmod>2022-06-05</lastmod>
     
@@ -11,9 +11,9 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/Diary/Diary.html</loc>
+    <loc>http://ppppz.net/2022/06/05/About-6-5-This-Week/</loc>
     
-    <lastmod>2022-05-30</lastmod>
+    <lastmod>2022-06-05</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
