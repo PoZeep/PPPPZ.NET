@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>关于逆向工程核心原理-代码注入 - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            <span>April</span>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>19,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">关于逆向工程核心原理-代码注入</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>（简称逆向工程第二十七章学习）</p>
+<h1 id="代码注入"><a href="#代码注入" class="headerlink" title="代码注入"></a>代码注入</h1><p>代码注入是一种<strong>向目标进程插入独立运行代码</strong>并使之运行的技术，一般调用<strong>CreateRemoteThread()</strong> API远程线程形式运行插入代码（万能的CreateRemoteThread</p>
+<p>所以也被称为线程注入</p>
+<p>注意，代码注入以<strong>线程过程形式注入</strong>，而代码中的数据则以<strong>线程参数传入</strong>，也就是说<strong>代码和数据分别注入</strong>。</p>
+<h2 id="使用代码注入的原因"><a href="#使用代码注入的原因" class="headerlink" title="使用代码注入的原因"></a>使用代码注入的原因</h2><ol>
+<li> 占用内存少</li>
+<li> 难以查找痕迹（比如<strong>恶意代码</strong>中就喜欢使用</li>
+<li> <strong>DLL注入技术主要用于代码量大且复杂</strong>的时候，而<strong>代码注入则适合用于代码量小且简单</strong></li>
+</ol>
+<h1 id="实验环节"><a href="#实验环节" class="headerlink" title="实验环节"></a>实验环节</h1><p>填上进程号，注进去咯</p>
+<p><img src="/2022/04/19/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5/image-20220419211655928.png" alt="image-20220419211655928"></p>
+<h1 id="审计代码"><a href="#审计代码" class="headerlink" title="审计代码"></a>审计代码</h1><p>开审！</p>
+<h2 id="main"><a href="#main" class="headerlink" title="main"></a>main</h2><p>把PID作为参数传入InjectionCode函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    DWORD dwPID     = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>( argc != <span class="number">2</span> )</span><br><span class="line">	&#123;</span><br><span class="line">	    <span class="built_in">printf</span>(<span class="string">&quot;\n USAGE  : %s &lt;pid&gt;\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// change privilege</span></span><br><span class="line">	<span class="keyword">if</span>( !<span class="built_in">SetPrivilege</span>(SE_DEBUG_NAME, TRUE) )</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// code injection</span></span><br><span class="line">    dwPID = (DWORD)<span class="built_in">atol</span>(argv[<span class="number">1</span>]);</span><br><span class="line">    <span class="built_in">InjectCode</span>(dwPID);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="ThreadProc"><a href="#ThreadProc" class="headerlink" title="ThreadProc"></a>ThreadProc</h2><ol>
+<li>可以先不传递LoadLibrary和GetProcAddress的地址，直接传递MessageBoxA地址也可以</li>
+</ol>
+<p>​    但原则上是要的这两个API，这种方式好处在于可以把<strong>相关库准确加载</strong>到指定进制</p>
+<ol start="2">
+<li> ThreadPrco函数是可以<strong>独立运行的代码</strong>（<strong>不是直接引用的硬编码地址</strong>）</li>
+<li> 同时要注意Release/Debug代码所产生的优化是不同的（早已深熟于心</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个结构体以线程参数的形式传递使用</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">THREAD_PARAM</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    FARPROC pFunc[<span class="number">2</span>];               <span class="comment">// LoadLibraryA(), GetProcAddress()</span></span><br><span class="line">    <span class="keyword">char</span>    szBuf[<span class="number">4</span>][<span class="number">128</span>];          <span class="comment">// &quot;user32.dll&quot;, &quot;MessageBoxA&quot;, &quot;www.reversecore.com&quot;, &quot;ReverseCore&quot;</span></span><br><span class="line">&#125; THREAD_PARAM, *PTHREAD_PARAM;</span><br><span class="line"></span><br><span class="line"><span class="comment">// LoadLibrary暂时函数原型?</span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">HMODULE</span> <span class="params">(WINAPI *PFLOADLIBRARYA)</span></span></span><br><span class="line"><span class="function"><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    LPCSTR lpLibFileName</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// GetProcAddress暂时函数原?</span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">FARPROC</span> <span class="params">(WINAPI *PFGETPROCADDRESS)</span></span></span><br><span class="line"><span class="function"><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    HMODULE hModule,</span></span></span><br><span class="line"><span class="params"><span class="function">    LPCSTR lpProcName</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// MessageBoxA暂时函数原型?</span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(WINAPI *PFMESSAGEBOXA)</span></span></span><br><span class="line"><span class="function"><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    HWND hWnd,</span></span></span><br><span class="line"><span class="params"><span class="function">    LPCSTR lpText,</span></span></span><br><span class="line"><span class="params"><span class="function">    LPCSTR lpCaption,</span></span></span><br><span class="line"><span class="params"><span class="function">    UINT uType</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD WINAPI <span class="title">ThreadProc</span><span class="params">(LPVOID lParam)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    PTHREAD_PARAM   pParam      = (PTHREAD_PARAM)lParam;</span><br><span class="line">    HMODULE         hMod        = <span class="literal">NULL</span>;</span><br><span class="line">    FARPROC         pFunc       = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// hMod = LoadLibrary(&quot;user32.dll&quot;)</span></span><br><span class="line">    hMod = ((PFLOADLIBRARYA)pParam-&gt;pFunc[<span class="number">0</span>])(pParam-&gt;szBuf[<span class="number">0</span>]);    <span class="comment">// &quot;user32.dll&quot;</span></span><br><span class="line">    <span class="keyword">if</span>( !hMod )</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// pFunc = GetProcAddress(hMod, &quot;MessageBoxA&quot;)</span></span><br><span class="line">    pFunc = (FARPROC)((PFGETPROCADDRESS)pParam-&gt;pFunc[<span class="number">1</span>])(hMod, pParam-&gt;szBuf[<span class="number">1</span>]);  <span class="comment">// &quot;MessageBoxA&quot;</span></span><br><span class="line">    <span class="keyword">if</span>( !pFunc )</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// MessageBoxA(NULL, &quot;P.Z!&quot;, &quot;PPPPZ.NET&quot;, MB_OK)</span></span><br><span class="line">    ((PFMESSAGEBOXA)pFunc)(<span class="literal">NULL</span>, pParam-&gt;szBuf[<span class="number">2</span>], pParam-&gt;szBuf[<span class="number">3</span>], MB_OK);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="InjectionCode"><a href="#InjectionCode" class="headerlink" title="InjectionCode"></a>InjectionCode</h2><ol>
+<li> 先向目标进程写入所需的参数param</li>
+<li> 再写入要执行的代码ThreadProc(注意这个大小是两个函数地址相见)</li>
+<li> 再使用CreateRemoteThread远程执行ThreadProc 参数是param</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL <span class="title">InjectCode</span><span class="params">(DWORD dwPID)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    HMODULE         hMod            = <span class="literal">NULL</span>;</span><br><span class="line">    THREAD_PARAM    param           = &#123;<span class="number">0</span>,&#125;;</span><br><span class="line">    HANDLE          hProcess        = <span class="literal">NULL</span>;</span><br><span class="line">    HANDLE          hThread         = <span class="literal">NULL</span>;</span><br><span class="line">    LPVOID          pRemoteBuf[<span class="number">2</span>]   = &#123;<span class="number">0</span>,&#125;;</span><br><span class="line">    DWORD           dwSize          = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 加载指定库返回句柄</span></span><br><span class="line">    hMod = <span class="built_in">GetModuleHandleA</span>(<span class="string">&quot;kernel32.dll&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 通过库的句柄获取库中的地址获取指定API的值</span></span><br><span class="line">    param.pFunc[<span class="number">0</span>] = <span class="built_in">GetProcAddress</span>(hMod, <span class="string">&quot;LoadLibraryA&quot;</span>);</span><br><span class="line">    param.pFunc[<span class="number">1</span>] = <span class="built_in">GetProcAddress</span>(hMod, <span class="string">&quot;GetProcAddress&quot;</span>);</span><br><span class="line">    <span class="comment">// 放入结构库的必要参数</span></span><br><span class="line">    <span class="built_in">strcpy_s</span>(param.szBuf[<span class="number">0</span>], <span class="string">&quot;user32.dll&quot;</span>);</span><br><span class="line">    <span class="built_in">strcpy_s</span>(param.szBuf[<span class="number">1</span>], <span class="string">&quot;MessageBoxA&quot;</span>);</span><br><span class="line">    <span class="built_in">strcpy_s</span>(param.szBuf[<span class="number">2</span>], <span class="string">&quot;www.reversecore.com&quot;</span>);</span><br><span class="line">    <span class="built_in">strcpy_s</span>(param.szBuf[<span class="number">3</span>], <span class="string">&quot;ReverseCore&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 通过进程PID找到进程句柄</span></span><br><span class="line">    <span class="keyword">if</span> ( !(hProcess = <span class="built_in">OpenProcess</span>(PROCESS_ALL_ACCESS,   <span class="comment">// dwDesiredAccess</span></span><br><span class="line">                                  FALSE,                <span class="comment">// bInheritHandle</span></span><br><span class="line">                                  dwPID)) )             <span class="comment">// dwProcessId</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;OpenProcess() fail : err_code = %d\n&quot;</span>, <span class="built_in">GetLastError</span>());</span><br><span class="line">        <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 算出结构体的大小</span></span><br><span class="line">    dwSize = <span class="built_in"><span class="keyword">sizeof</span></span>(THREAD_PARAM);</span><br><span class="line">    <span class="comment">// 开指定进程的指定大小的内存空间，经典VirtualAllocEx开申请内存空间</span></span><br><span class="line">    <span class="keyword">if</span>( !(pRemoteBuf[<span class="number">0</span>] = <span class="built_in">VirtualAllocEx</span>(hProcess,          <span class="comment">// hProcess</span></span><br><span class="line">                                      <span class="literal">NULL</span>,                 <span class="comment">// lpAddress</span></span><br><span class="line">                                      dwSize,               <span class="comment">// dwSize</span></span><br><span class="line">                                      MEM_COMMIT,           <span class="comment">// flAllocationType</span></span><br><span class="line">                                      PAGE_READWRITE)) )    <span class="comment">// flProtect</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;VirtualAllocEx() fail : err_code = %d\n&quot;</span>, <span class="built_in">GetLastError</span>());</span><br><span class="line">        <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在指定进程hProcess的 申请了空间的地址pRemoteBuf 写入数据param 还有大小dwSize</span></span><br><span class="line">    <span class="keyword">if</span>( !<span class="built_in">WriteProcessMemory</span>(hProcess,                       <span class="comment">// hProcess</span></span><br><span class="line">                            pRemoteBuf[<span class="number">0</span>],                  <span class="comment">// lpBaseAddress</span></span><br><span class="line">                            (LPVOID)&amp;param,                 <span class="comment">// lpBuffer</span></span><br><span class="line">                            dwSize,                         <span class="comment">// nSize</span></span><br><span class="line">                            <span class="literal">NULL</span>) )                         <span class="comment">// [out] lpNumberOfBytesWritten</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;WriteProcessMemory() fail : err_code = %d\n&quot;</span>, <span class="built_in">GetLastError</span>());</span><br><span class="line">        <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这边是算出ThreadProc函数大小</span></span><br><span class="line">    <span class="comment">// 在MS Visual C++使用C++的Release模式编译程序后，源代码中的函数顺序与二进制代码一样</span></span><br><span class="line">    <span class="comment">// 又函数名称就是函数地址，所以InjectionCode - ThreadProc做减法运算，就是ThreadProc函数的大小</span></span><br><span class="line">    dwSize = (DWORD)InjectCode - (DWORD)ThreadProc;</span><br><span class="line">    <span class="comment">// 在指定进程开了个ThreadProc函数大小的内存空间</span></span><br><span class="line">    <span class="keyword">if</span>( !(pRemoteBuf[<span class="number">1</span>] = <span class="built_in">VirtualAllocEx</span>(hProcess,          <span class="comment">// hProcess</span></span><br><span class="line">                                      <span class="literal">NULL</span>,                 <span class="comment">// lpAddress</span></span><br><span class="line">                                      dwSize,               <span class="comment">// dwSize</span></span><br><span class="line">                                      MEM_COMMIT,           <span class="comment">// flAllocationType</span></span><br><span class="line">                                      PAGE_EXECUTE_READWRITE)) )    <span class="comment">// flProtect</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;VirtualAllocEx() fail : err_code = %d\n&quot;</span>, <span class="built_in">GetLastError</span>());</span><br><span class="line">        <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将线程函数写入目标进程</span></span><br><span class="line">    <span class="keyword">if</span>( !<span class="built_in">WriteProcessMemory</span>(hProcess,                       <span class="comment">// hProcess</span></span><br><span class="line">                            pRemoteBuf[<span class="number">1</span>],                  <span class="comment">// lpBaseAddress</span></span><br><span class="line">                            (LPVOID)ThreadProc,             <span class="comment">// lpBuffer</span></span><br><span class="line">                            dwSize,                         <span class="comment">// nSize</span></span><br><span class="line">                            <span class="literal">NULL</span>) )                         <span class="comment">// [out] lpNumberOfBytesWritten</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;WriteProcessMemory() fail : err_code = %d\n&quot;</span>, <span class="built_in">GetLastError</span>());</span><br><span class="line">        <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这里在指定线程 远程执行了pRemoteBuf[1] 参数是pRemoteBuf[0]</span></span><br><span class="line">    <span class="keyword">if</span>( !(hThread = <span class="built_in">CreateRemoteThread</span>(hProcess,            <span class="comment">// hProcess</span></span><br><span class="line">                                       <span class="literal">NULL</span>,                <span class="comment">// lpThreadAttributes</span></span><br><span class="line">                                       <span class="number">0</span>,                   <span class="comment">// dwStackSize</span></span><br><span class="line">                                       (LPTHREAD_START_ROUTINE)pRemoteBuf[<span class="number">1</span>],     <span class="comment">// dwStackSize</span></span><br><span class="line">                                       pRemoteBuf[<span class="number">0</span>],       <span class="comment">// lpParameter</span></span><br><span class="line">                                       <span class="number">0</span>,                   <span class="comment">// dwCreationFlags</span></span><br><span class="line">                                       <span class="literal">NULL</span>)) )             <span class="comment">// lpThreadId</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;CreateRemoteThread() fail : err_code = %d\n&quot;</span>, <span class="built_in">GetLastError</span>());</span><br><span class="line">        <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">WaitForSingleObject</span>(hThread, INFINITE);	</span><br><span class="line"></span><br><span class="line">    <span class="built_in">CloseHandle</span>(hThread);</span><br><span class="line">    <span class="built_in">CloseHandle</span>(hProcess);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="Debug-InjectionCode"><a href="#Debug-InjectionCode" class="headerlink" title="Debug InjectionCode"></a>Debug InjectionCode</h1><p>先拖入notepad，然后运行起来，再开启这个如果有新线程就停在线程函数开始的代码位置</p>
+<p><img src="/2022/04/19/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5/image-20220419232051664.png" alt="image-20220419232051664"></p>
+<p>再代码注入我们的notepad</p>
+<p><img src="/2022/04/19/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5/image-20220419232219281.png" alt="image-20220419232219281"></p>
+<p>一注入就会成功停在线程代码开始处（有时候只是调试器到这，EIP没到这，只要F9几次让EIP到这即可</p>
+<p><img src="/2022/04/19/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5/image-20220419232635947.png" alt="image-20220419232635947"></p>
+<p>P.Z!</p>
+<p><img src="/2022/04/19/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5/image-20220419232726473.png" alt="image-20220419232726473"></p>
+<p>今天录了*CTF的前两题，难得录的快了一次，要加油把后面的题也录了，今天这里的代码审起来舒服多了，也可能是今天的API都是见过的，比一开始一个API查一次做一下笔记的快多了，好耶！–4.19 PM 11:28</p>
+
+    </div>
+
+    <p style= "text-align:center">
+        让我看看我被读了 
+    <b><span id="/2022/04/19/关于逆向工程核心原理-代码注入/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        支付宝
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        微信
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-5rvxh62nz-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '评论什么好呢',   //占位符
+    });
+  </script>
+</div>
+
+<!-- <span id="/2022/04/19/关于逆向工程核心原理-代码注入/" class="leancloud_visitors" data-flag-title="关于逆向工程核心原理-代码注入">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2022 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
