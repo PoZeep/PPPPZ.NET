@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2022/06/18/miniL2022-NotRC4/</loc>
+    
+    <lastmod>2022-06-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/06/15/Ghidra-learning/</loc>
+    
+    <lastmod>2022-06-15</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/Diary/Diary.html</loc>
     
     <lastmod>2022-06-12</lastmod>
@@ -1174,7 +1192,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-06-12</lastmod>
+    <lastmod>2022-06-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>

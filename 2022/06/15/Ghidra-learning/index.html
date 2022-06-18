@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>Archive: 2022/6 - P.Z&#39;s Blog</title>
+  <title>Ghidra learning - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -102,219 +102,129 @@
         </div>
     </div>
 </nav>
-        <div class="container">
-    
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            <span>June</span>
+            
+            
+            
+            
+            
+            
+            
+            <span>15,</span>
+            <span>2022</span>
+        </div>
+        
 
-    <div class="post-list">
-        
-        <article class="post-list-item">
-            <a href="/2022/06/18/miniL2022-NotRC4/">
-                
-                <div class="content">
-                    <div class="title">
-                        miniL2022-NotRC4
-                    </div>
-                    
-                    <div class="excerpt">
-                        
-                    </div>
-                    
-                    <div class="time">
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>June</span>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>&nbsp;18,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-        
-        <article class="post-list-item">
-            <a href="/2022/06/15/Ghidra-learning/">
-                
-                <div class="content">
-                    <div class="title">
-                        Ghidra learning
-                    </div>
-                    
-                    <div class="excerpt">
-                        
-                    </div>
-                    
-                    <div class="time">
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>June</span>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>&nbsp;15,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-        
-        <article class="post-list-item">
-            <a href="/2022/06/12/About-6-12-This-Week/">
-                
-                <div class="content">
-                    <div class="title">
-                        About 6.12 This Week
-                    </div>
-                    
-                    <div class="excerpt">
-                        
-                    </div>
-                    
-                    <div class="time">
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>June</span>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>&nbsp;12,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-        
-        <article class="post-list-item">
-            <a href="/2022/06/12/Reverse-Tips/">
-                
-                <div class="content">
-                    <div class="title">
-                        Reverse-Tips
-                    </div>
-                    
-                    <div class="excerpt">
-                        
-                    </div>
-                    
-                    <div class="time">
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>June</span>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>&nbsp;12,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-        
-        <article class="post-list-item">
-            <a href="/2022/06/12/%E5%85%B3%E4%BA%8E%E6%83%B3%E6%AF%8F%E5%A4%A9%E4%B8%80%E9%81%93MISC/">
-                
-                <div class="content">
-                    <div class="title">
-                        关于想每天一道MISC
-                    </div>
-                    
-                    <div class="excerpt">
-                        
-                    </div>
-                    
-                    <div class="time">
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>June</span>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>&nbsp;12,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-        
-        <article class="post-list-item">
-            <a href="/2022/06/05/About-6-5-This-Week/">
-                
-                <div class="content">
-                    <div class="title">
-                        About 6.5 This Week
-                    </div>
-                    
-                    <div class="excerpt">
-                        
-                    </div>
-                    
-                    <div class="time">
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>June</span>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        <span>&nbsp;5,&nbsp;</span>
-                        <span>2022</span>
-                    </div>
-                </div>
-            </a>
-        </article>
-        
+        <h2 class="title">Ghidra learning</h2>
     </div>
 
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>关于拖了这么久，今天在课综上终于装完了（指装个JDK），其实是为了复现miniL的NotRC4，拖的有亿点久，这几天课综的每天早上要把这两个月拖的事情全部干完！（早上要把最害怕的事情解决）</p>
+<p>那么这篇笔记主要是记录自己学习Ghidra了，有些事情上雀氏的Ghidra好用些，所以留篇长篇笔记持续更新</p>
+<h1 id="0x00-Git-Ghidra"><a href="#0x00-Git-Ghidra" class="headerlink" title="0x00 Git Ghidra"></a>0x00 Git Ghidra</h1><p>吼，拖了两个月，早上做英语阅读般看了遍就装完了</p>
+<p>Github项目地址： <a target="_blank" rel="noopener" href="https://github.com/NationalSecurityAgency/ghidra">https://github.com/NationalSecurityAgency/ghidra</a></p>
+<p>Windows下装个JDK11 64位设置下环境变量即可（链接里面有，环境变量就像之前的那样）</p>
+<h1 id="0x01-Basic-Use"><a href="#0x01-Basic-Use" class="headerlink" title="0x01 Basic Use"></a>0x01 Basic Use</h1><p>搜了几篇，暂且够用</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1732204">https://cloud.tencent.com/developer/article/1732204</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.secrss.com/articles/8829">https://www.secrss.com/articles/8829</a></p>
+</blockquote>
+<p>ALT + 方向键（左和右）Back &amp; Forward</p>
+<p>L 重命名</p>
+<p>[ 创建数组</p>
+<p>好康的快捷键官方文档在主目录 docs\CheatSheet.html</p>
+
+    </div>
+
+    <p style= "text-align:center">
+        让我看看我被读了 
+    <b><span id="/2022/06/15/Ghidra-learning/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        支付宝
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        微信
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-5rvxh62nz-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '评论什么好呢',   //占位符
+    });
+  </script>
 </div>
+
+<!-- <span id="/2022/06/15/Ghidra-learning/" class="leancloud_visitors" data-flag-title="Ghidra learning">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
         <footer>
     <div class="inner">
         <div class="links">
