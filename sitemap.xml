@@ -2,9 +2,36 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://ppppz.net/2022/06/18/Dest0ge2022/</loc>
+    <loc>http://ppppz.net/2022/06/19/About-6-19-This-Week/</loc>
     
-    <lastmod>2022-06-18</lastmod>
+    <lastmod>2022-06-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/CTF/CTF.html</loc>
+    
+    <lastmod>2022-06-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/CTF/Dest0ge2022.html</loc>
+    
+    <lastmod>2022-06-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/06/18/Dest0ge2022-EZMATH/</loc>
+    
+    <lastmod>2022-06-19</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -102,15 +129,6 @@
   
   <url>
     <loc>http://ppppz.net/CTF/DASCTF2022%20X%20VOID.html</loc>
-    
-    <lastmod>2022-05-26</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/CTF/CTF.html</loc>
     
     <lastmod>2022-05-26</lastmod>
     
@@ -1201,7 +1219,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-06-18</lastmod>
+    <lastmod>2022-06-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
