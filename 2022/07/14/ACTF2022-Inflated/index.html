@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>Ghidra LEARNING - P.Z&#39;s Blog</title>
+  <title>ACTF2022-Inflated - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -112,45 +112,84 @@
             
             
             
-            <span>June</span>
+            
+            <span>July</span>
             
             
             
             
             
             
-            
-            <span>15,</span>
+            <span>14,</span>
             <span>2022</span>
         </div>
         
 
-        <h2 class="title">Ghidra LEARNING</h2>
+        <h2 class="title">ACTF2022-Inflated</h2>
     </div>
 
     <div class="divider"></div>
 
     <div class="content">
-        <p>关于拖了这么久，今天在课综上终于装完了（指装个JDK），其实是为了复现miniL的NotRC4，拖的有亿点久，这几天课综的每天早上要把这两个月拖的事情全部干完！（早上要把最害怕的事情解决）</p>
-<p>那么这篇笔记主要是记录自己学习Ghidra了，有些事情上雀氏的Ghidra好用些，所以留篇长篇笔记持续更新</p>
-<h1 id="0x00-Git-Ghidra"><a href="#0x00-Git-Ghidra" class="headerlink" title="0x00 Git Ghidra"></a>0x00 Git Ghidra</h1><p>吼，拖了两个月，早上做英语阅读般看了遍就装完了</p>
-<p>Github项目地址： <a target="_blank" rel="noopener" href="https://github.com/NationalSecurityAgency/ghidra">https://github.com/NationalSecurityAgency/ghidra</a></p>
-<p>Windows下装个JDK11 64位设置下环境变量即可（链接里面有，环境变量就像之前的那样）</p>
-<h1 id="0x01-Basic-Use"><a href="#0x01-Basic-Use" class="headerlink" title="0x01 Basic Use"></a>0x01 Basic Use</h1><p>搜了几篇，暂且够用</p>
+        <p>看ltlly师傅的心路历程复现感觉挺不错，边学习边整理！<br>由于此题真的涉及我的很多知识盲区，所以这篇Write up就主要以我的视角为主</p>
+<h1 id="Key-Points"><a href="#Key-Points" class="headerlink" title="Key Points"></a>Key Points</h1><ol>
+<li> C++异常化处理</li>
+<li> OLLVM-控制流平坦化</li>
+<li> Two Puzzles</li>
+</ol>
+<h2 id="Exception"><a href="#Exception" class="headerlink" title="Exception"></a>Exception</h2><p>一般碰到C++异常逆向，又在同一块，直接把call throw改为jmp catch块，再F5即可</p>
+<p>PS: 多个catch块根据rdx来当为异常处理数值决定哪个为对应的catch块</p>
+<p>（关于以上，这篇讲的很详细）</p>
 <blockquote>
-<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1732204">https://cloud.tencent.com/developer/article/1732204</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.secrss.com/articles/8829">https://www.secrss.com/articles/8829</a></p>
+<p><a target="_blank" rel="noopener" href="https://4nsw3r.top/2022/02/03/SCTF-REVERSE-CplusExceptionEncrypt-%E8%B5%9B%E5%90%8E%E5%A4%8D%E7%8E%B0/#Clang-x64">https://4nsw3r.top/2022/02/03/SCTF-REVERSE-CplusExceptionEncrypt-%E8%B5%9B%E5%90%8E%E5%A4%8D%E7%8E%B0/#Clang-x64</a></p>
 </blockquote>
-<p>ALT + 方向键（左和右）Back &amp; Forward</p>
-<p>L 重命名</p>
-<p>[ 创建数组</p>
-<p>好康的快捷键官方文档在主目录 docs\CheatSheet.html</p>
+<p>然而，这题没这么简单，套了个ollvm！？基于异常处理的ollvm，无论从哪个角度都没法使用之前的老套路</p>
+<p>于是又去补文章</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/catch/p/3604516.html">https://www.cnblogs.com/catch/p/3604516.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/catch/p/3619379.html">https://www.cnblogs.com/catch/p/3619379.html</a></p>
+</blockquote>
+<p>以下是上面两篇文章的笔记：</p>
+<h3 id="C-异常处理（1）"><a href="#C-异常处理（1）" class="headerlink" title="C++异常处理（1）"></a>C++异常处理（1）</h3><h4 id="异常抛出后，发生了什么事情？"><a href="#异常抛出后，发生了什么事情？" class="headerlink" title="异常抛出后，发生了什么事情？"></a>异常抛出后，发生了什么事情？</h4><ol>
+<li>  如果当前函数没有catch，就沿着函数的调用链继续往上抛，然后出现两种情况</li>
+</ol>
+<ul>
+<li>在某个函数中找到相应的catch</li>
+<li>没找到相应的catch，调用 std::terminate() （这个函数是把程序abort）</li>
+</ul>
+<ol start="2">
+<li><p>  如果想找到了相应的catch，执行相应的操作    - 程序中<strong>catch的代码块</strong>有个专有名词：<strong>Landing pad</strong></p>
+</li>
+<li><p> 从抛异常到开始 -&gt; 执行Landing pad代码 这整个过程叫作<strong>Stack unwind</strong></p>
+</li>
+</ol>
+<p><strong>Stack unwind</strong></p>
+<ol>
+<li> 从抛异常函数开始，对调用链上的函数逐个往前查找Landing pad</li>
+<li> 如果没有找到Landing pad则把程序abort，如果找到则记下Landing pad的位置，再重新回到抛异常的函数那里开始，一帧一帧地清理调用链上各个函数内部的局部变量，直到 landing pad 所在的函数为止</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func1</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  cs a; <span class="comment">// stack unwind时被析构。</span></span><br><span class="line">  <span class="keyword">throw</span> <span class="number">3</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func2</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  cs b;</span><br><span class="line">  <span class="built_in">func1</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func3</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  cs c;</span><br><span class="line">  <span class="keyword">try</span> </span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">func2</span>();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in"><span class="keyword">catch</span></span> (<span class="keyword">int</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">//进入这里之前， func1, func2已经被unwind.</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>stack unwind的过程可以简单看成函数调用的逆过程，这个过程在实现上由一个专门的stack unwind库来实现</p>
+<ul>
+<li><p>stack unwind库在intel平台上</p>
+</li>
+<li><p>属于Itanium ABI 接口中的一部分</p>
+</li>
+<li><p>与具体的语言无关，由系统实现</p>
+</li>
+<li><p><strong>任何上层语言都可以通过这个接口的基础实现各自的异常处理</strong></p>
+</li>
+<li><p>GCC就是通过这个接口实现C++的异常处理</p>
+</li>
+</ul>
+<p>（估计作者就是通过这个接口自写的异常处理）</p>
+<h4 id="Itanium-C-ABI"><a href="#Itanium-C-ABI" class="headerlink" title="Itanium C++ ABI"></a><strong>Itanium C++ ABI</strong></h4>
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 
-    <b><span id="/2022/06/15/Ghidra-LEARNING/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    <b><span id="/2022/07/14/ACTF2022-Inflated/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
     <div id = "frozen-btn" class = "center">
     <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
@@ -219,7 +258,7 @@
   </script>
 </div>
 
-<!-- <span id="/2022/06/15/Ghidra-LEARNING/" class="leancloud_visitors" data-flag-title="Ghidra LEARNING">
+<!-- <span id="/2022/07/14/ACTF2022-Inflated/" class="leancloud_visitors" data-flag-title="ACTF2022-Inflated">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->

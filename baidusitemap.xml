@@ -1,11 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://PPPPZ.net/2022/07/10/About-7-10-This-Week/</loc>
-    <lastmod>2022-07-10</lastmod>
+    <loc>http://PPPPZ.net/2022/07/17/About-7-17-This-Week/</loc>
+    <lastmod>2022-07-17</lastmod>
   </url>
   <url>
-    <loc>http://PPPPZ.net/2022/07/10/REVERSE-VM/</loc>
+    <loc>http://PPPPZ.net/2022/07/14/ACTF2022-Inflated/</loc>
+    <lastmod>2022-07-16</lastmod>
+  </url>
+  <url>
+    <loc>http://PPPPZ.net/2022/07/15/UBUNTU-LEARNING/</loc>
+    <lastmod>2022-07-15</lastmod>
+  </url>
+  <url>
+    <loc>http://PPPPZ.net/2022/07/13/OLLVM-LEARNING/</loc>
+    <lastmod>2022-07-14</lastmod>
+  </url>
+  <url>
+    <loc>http://PPPPZ.net/2022/07/10/VM-LEARNING/</loc>
+    <lastmod>2022-07-13</lastmod>
+  </url>
+  <url>
+    <loc>http://PPPPZ.net/2022/06/15/Ghidra-LEARNING/</loc>
+    <lastmod>2022-07-13</lastmod>
+  </url>
+  <url>
+    <loc>http://PPPPZ.net/2022/07/10/About-7-10-This-Week/</loc>
     <lastmod>2022-07-10</lastmod>
   </url>
   <url>
@@ -39,10 +59,6 @@
   <url>
     <loc>http://PPPPZ.net/2022/06/18/miniL2022-NotRC4/</loc>
     <lastmod>2022-06-18</lastmod>
-  </url>
-  <url>
-    <loc>http://PPPPZ.net/2022/06/15/Ghidra-learning/</loc>
-    <lastmod>2022-06-15</lastmod>
   </url>
   <url>
     <loc>http://PPPPZ.net/2022/06/12/About-6-12-This-Week/</loc>

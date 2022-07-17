@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>Ghidra LEARNING - P.Z&#39;s Blog</title>
+  <title>UBUNTU LEARNING - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -112,8 +112,8 @@
             
             
             
-            <span>June</span>
             
+            <span>July</span>
             
             
             
@@ -125,32 +125,44 @@
         </div>
         
 
-        <h2 class="title">Ghidra LEARNING</h2>
+        <h2 class="title">UBUNTU LEARNING</h2>
     </div>
 
     <div class="divider"></div>
 
     <div class="content">
-        <p>关于拖了这么久，今天在课综上终于装完了（指装个JDK），其实是为了复现miniL的NotRC4，拖的有亿点久，这几天课综的每天早上要把这两个月拖的事情全部干完！（早上要把最害怕的事情解决）</p>
-<p>那么这篇笔记主要是记录自己学习Ghidra了，有些事情上雀氏的Ghidra好用些，所以留篇长篇笔记持续更新</p>
-<h1 id="0x00-Git-Ghidra"><a href="#0x00-Git-Ghidra" class="headerlink" title="0x00 Git Ghidra"></a>0x00 Git Ghidra</h1><p>吼，拖了两个月，早上做英语阅读般看了遍就装完了</p>
-<p>Github项目地址： <a target="_blank" rel="noopener" href="https://github.com/NationalSecurityAgency/ghidra">https://github.com/NationalSecurityAgency/ghidra</a></p>
-<p>Windows下装个JDK11 64位设置下环境变量即可（链接里面有，环境变量就像之前的那样）</p>
-<h1 id="0x01-Basic-Use"><a href="#0x01-Basic-Use" class="headerlink" title="0x01 Basic Use"></a>0x01 Basic Use</h1><p>搜了几篇，暂且够用</p>
+        <p>现在已经逐渐离不开使用UBUNTU，各类研究都在UBUNTU上分析好用，于是正式开篇笔记来记录搭环境！之前的几台都是应付式使用，这次装22要记录我的报错之旅！</p>
+<h1 id="2022"><a href="#2022" class="headerlink" title="2022"></a>2022</h1><h2 id="7-15"><a href="#7-15" class="headerlink" title="7.15"></a>7.15</h2><p>想把21.04升级成22，还要先升到21.10</p>
+<p>Q：</p>
+<ul>
+<li>Your python3 install is corrupted. Please fix the ‘/usr/bin/python3’ symlink</li>
+</ul>
+<p>A:</p>
+<ul>
+<li>sudo ln -sf /usr/bin/python3.9 /usr/bin/python3</li>
+</ul>
+<p>然后由于硬盘不够，我又懒得装载个新的（不得不说1T的电脑不够用），又有了22的镜像文件就直接装22了</p>
+<p>一路安装过来，这次绝对纯英文.jpg（没反应就是reboot）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"># 安装VMTools</span><br><span class="line">sudo apt install open-vm-tools-desktop open-vm-tools</span><br><span class="line"></span><br><span class="line"># 设置root密码</span><br><span class="line">sudo passwd root</span><br><span class="line"></span><br><span class="line"># 注释掉UBUNTU原先的源，然后随便找个国内源放进去</span><br><span class="line">sudo gedit /etc/apt/sources.list</span><br><span class="line"></span><br><span class="line"># 更新源</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get upgrade</span><br><span class="line"></span><br><span class="line"># 装oh-my-zsh</span><br><span class="line">apt install zsh</span><br><span class="line">apt install curl</span><br><span class="line">apt-get install git</span><br><span class="line">sh -c &quot;$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;</span><br><span class="line">chsh -s /bin/zsh</span><br><span class="line"></span><br><span class="line"># 装zsh插件</span><br><span class="line">git clone https://github.com/zsh-users/zsh-autosuggestions $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-autosuggestions</span><br><span class="line">git clone https://gitee.com/Annihilater/zsh-syntax-highlighting.git $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-syntax-highlighting</span><br><span class="line"></span><br><span class="line"># zsh配置文件</span><br><span class="line">open ~/.zshrc</span><br><span class="line">ZSH_THEME=&quot;random&quot;</span><br><span class="line"></span><br><span class="line"># 配置要使用的插件</span><br><span class="line">plugins=(</span><br><span class="line">        git</span><br><span class="line">        extract</span><br><span class="line">        zsh-autosuggestions</span><br><span class="line">        zsh-syntax-highlighting</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#防止中文乱码</span><br><span class="line">export LC_ALL=en_US.UTF-8</span><br><span class="line">export LANG=en_US.UTF-8</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="LIST"><a href="#LIST" class="headerlink" title="LIST"></a>LIST</h1><p>平常管理经常需要管理多版本的gcc python等</p>
+<p>拿python举例的文章</p>
+<ul>
+<li>sudo update-alternatives <em>–config python3</em></li>
+</ul>
 <blockquote>
-<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1732204">https://cloud.tencent.com/developer/article/1732204</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.secrss.com/articles/8829">https://www.secrss.com/articles/8829</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/DaqianC/article/details/101135872">https://blog.csdn.net/DaqianC/article/details/101135872</a></p>
 </blockquote>
-<p>ALT + 方向键（左和右）Back &amp; Forward</p>
-<p>L 重命名</p>
-<p>[ 创建数组</p>
-<p>好康的快捷键官方文档在主目录 docs\CheatSheet.html</p>
 
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 
-    <b><span id="/2022/06/15/Ghidra-LEARNING/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    <b><span id="/2022/07/15/UBUNTU-LEARNING/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
     <div id = "frozen-btn" class = "center">
     <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
@@ -219,7 +231,7 @@
   </script>
 </div>
 
-<!-- <span id="/2022/06/15/Ghidra-LEARNING/" class="leancloud_visitors" data-flag-title="Ghidra LEARNING">
+<!-- <span id="/2022/07/15/UBUNTU-LEARNING/" class="leancloud_visitors" data-flag-title="UBUNTU LEARNING">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->

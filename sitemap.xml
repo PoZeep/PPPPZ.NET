@@ -2,16 +2,61 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://ppppz.net/2022/07/10/About-7-10-This-Week/</loc>
+    <loc>http://ppppz.net/2022/07/17/About-7-17-This-Week/</loc>
     
-    <lastmod>2022-07-10</lastmod>
+    <lastmod>2022-07-17</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://ppppz.net/2022/07/10/REVERSE-VM/</loc>
+    <loc>http://ppppz.net/2022/07/14/ACTF2022-Inflated/</loc>
+    
+    <lastmod>2022-07-16</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/07/15/UBUNTU-LEARNING/</loc>
+    
+    <lastmod>2022-07-15</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/07/13/OLLVM-LEARNING/</loc>
+    
+    <lastmod>2022-07-14</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/07/10/VM-LEARNING/</loc>
+    
+    <lastmod>2022-07-13</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/06/15/Ghidra-LEARNING/</loc>
+    
+    <lastmod>2022-07-13</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/07/10/About-7-10-This-Week/</loc>
     
     <lastmod>2022-07-10</lastmod>
     
@@ -149,15 +194,6 @@
     <loc>http://ppppz.net/2022/06/18/miniL2022-NotRC4/</loc>
     
     <lastmod>2022-06-18</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/2022/06/15/Ghidra-learning/</loc>
-    
-    <lastmod>2022-06-15</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1300,7 +1336,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-07-10</lastmod>
+    <lastmod>2022-07-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>

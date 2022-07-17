@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>Ghidra LEARNING - P.Z&#39;s Blog</title>
+  <title>About 7.17 This Week - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -112,45 +112,51 @@
             
             
             
-            <span>June</span>
+            
+            <span>July</span>
             
             
             
             
             
             
-            
-            <span>15,</span>
+            <span>17,</span>
             <span>2022</span>
         </div>
         
 
-        <h2 class="title">Ghidra LEARNING</h2>
+        <h2 class="title">About 7.17 This Week</h2>
     </div>
 
     <div class="divider"></div>
 
     <div class="content">
-        <p>关于拖了这么久，今天在课综上终于装完了（指装个JDK），其实是为了复现miniL的NotRC4，拖的有亿点久，这几天课综的每天早上要把这两个月拖的事情全部干完！（早上要把最害怕的事情解决）</p>
-<p>那么这篇笔记主要是记录自己学习Ghidra了，有些事情上雀氏的Ghidra好用些，所以留篇长篇笔记持续更新</p>
-<h1 id="0x00-Git-Ghidra"><a href="#0x00-Git-Ghidra" class="headerlink" title="0x00 Git Ghidra"></a>0x00 Git Ghidra</h1><p>吼，拖了两个月，早上做英语阅读般看了遍就装完了</p>
-<p>Github项目地址： <a target="_blank" rel="noopener" href="https://github.com/NationalSecurityAgency/ghidra">https://github.com/NationalSecurityAgency/ghidra</a></p>
-<p>Windows下装个JDK11 64位设置下环境变量即可（链接里面有，环境变量就像之前的那样）</p>
-<h1 id="0x01-Basic-Use"><a href="#0x01-Basic-Use" class="headerlink" title="0x01 Basic Use"></a>0x01 Basic Use</h1><p>搜了几篇，暂且够用</p>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1732204">https://cloud.tencent.com/developer/article/1732204</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.secrss.com/articles/8829">https://www.secrss.com/articles/8829</a></p>
-</blockquote>
-<p>ALT + 方向键（左和右）Back &amp; Forward</p>
-<p>L 重命名</p>
-<p>[ 创建数组</p>
-<p>好康的快捷键官方文档在主目录 docs\CheatSheet.html</p>
+        <p>Motivation:</p>
+<ol>
+<li><p>ACTF</p>
+</li>
+<li><p>RE-PPT</p>
+</li>
+</ol>
+<h2 id="7-17"><a href="#7-17" class="headerlink" title="7.17"></a>7.17</h2><p>bravo! bravo! 我的评价只有bravo!刚刚和VN的队友们开完第一个分享会，这才是我想要的分享会！听到了很多有用的知识，视野直接变广了！</p>
+<p>今天与诸葛 宏伟 阿龙久违的聚了一次，也不是下次是什么时候了，感觉今天说了些不该说的话，感觉大家也长大了，聊的话题都变了，哈哈哈哈不过还是期待下次见面。</p>
+<p>这周还和VN的队友一起做了逆向题，太爽了，这就是多人一起做题的感觉，队友们tql，关于最后1s出题得分（等烨的KFC.jpg），拿到线下赛名额，这才是真正的爆菊！！！</p>
+<p>关于这周到底干了什么？没写list表！因为出上海给隔离，然后又到一个新地方住，这周比赛也好多，突然就题目飞了过来开做，也有点想不起来这周具体做了什么，下周继续列表！不得不说现在住的地方好爽，生产力++，anyway，写完这周的总结，开始启我的下周计划！</p>
+<h1 id="树洞随笔"><a href="#树洞随笔" class="headerlink" title="树洞随笔"></a>树洞随笔</h1><h2 id="7-11"><a href="#7-11" class="headerlink" title="7.11"></a>7.11</h2><p>昨晚的雷阵雨可真不错，昨天复现Inflated的第一部分异常化处理头快调晕了，今天继续！</p>
+<p>然而早上一起来看了两篇ABI的文章，随后接到温师傅的电话，问我去不去三亚？！然而和VN团建时间撞了，讲的也不是我的专长，就没有去了，呜呜呜呜呜呜，又错过一次线下，本来周三就飞三亚了，完美错过所有线下，下个月的成都出差希望疫情不要出岔子（没疫情现在应该在西安，团建完直接去三亚，淦！！！</p>
+<p>随后就排了讲课，课又完美的排到周四（至今为止所有的讲课都是在周四），突然发现我不太会拒绝，要不是温师傅知道我25号有培训21号前有团建就可能被排上了，得学会拒绝！</p>
+<h2 id="7-13"><a href="#7-13" class="headerlink" title="7.13"></a>7.13</h2><p>昨日，12号，刚落地，没想到就进了WZ的特情航班的落地核酸检，后续一系列让我进了酒店隔离，不得不说这是第一次酒店隔离…不过说实话这酒店还好，就是我19年底技能考的连锁酒店，和我当初定房型都一样，还蛮不错的！？就隔离三天，不过还是有些难以描述的心情，本来我妈已经做了顿大餐等我回去了，也有半年没回来了…而且午餐也没吃就等着回去放下行李就慢慢的吃顿大餐，然而中午在滚着热浪的机场路道等待社区给我的安排，直到四五点才到隔离酒店，丢下行李开始想象接下来的两三天，饿了一天等来的一餐特别难吃的隔离餐（菜品全踩我雷区，想想就当减肥好了，前段时间每天吃的都还不错</p>
+<p>然而在这给隔离躺平思考人生emmmm的一天，收到二氢茉莉酮酸甲酯师傅的赞扬，关于我7.10发的周记，没想到真的有人在看我周记.jpg，那篇周记发出来，高中同学甚至给我道了个歉，意料之外情理之中，这些都是我证明出来的结果，不是吗</p>
+<p>在高中不会想象到高中同学会因为质疑我给我道歉，在打CTF之前不会想象到二氢茉莉酮酸甲酯等师傅的赞扬，一切都是努力的结果，这感觉不错，感觉打CTF认识这么多平常接触不到甚至有些遥不可及的各种师傅，比起以别人的质疑为动力，为什么不以别人的赞扬为动力！</p>
+<p>这几天在看命运石之门，几年前根本没那个耐心去看，现在知道去合理的看一部剧的角度，虽然这部剧的色调让我感觉很难受，但或许就是这部剧的本身，这部剧让我想起海马，经典开始几集一直蛮伏笔，然后再一点点填完，不过这部剧的细节很多，至少我第一遍不能全部记住之前的细节，看似不合理，但只要稍微思考下就能意识故事情节的合理性，就是很喜欢这种剧，等过一两年就要二刷！</p>
+<h2 id="7-14"><a href="#7-14" class="headerlink" title="7.14"></a>7.14</h2><p>隔离的第三天，人已经快疯了，每天平均1.5顿，我感觉呼吸不到新鲜的空气，在这昏暗的灯光，虽然是我平常喜欢的暖色调，但是连续三天在同一个房间，我只想看看明亮的白色，和太阳，铁咩，我连太阳都看不到，每天下午只能看到窗外的一点阳光。</p>
+<h2 id="7-16"><a href="#7-16" class="headerlink" title="7.16"></a>7.16</h2><p>昨日隔离结束了！！回家真是太爽了，几乎每顿都是狼吞虎咽…感觉半年没有好好吃饭了，果然还是家里好，虽然换了个新房间，但感觉新房间比那个旧房间更舒服，当初不愿意回来就是因为换了个房间，再想想之前的住的各个地方，感觉新房间真是太爽了，神奇的符合上了我的所有需求，桌子和椅子高度也刚刚好，还有个水平线较低的大床，与比较喜欢的柔和光，简而言之！太爽了，好好珍惜这个七月份。</p>
 
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 
-    <b><span id="/2022/06/15/Ghidra-LEARNING/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    <b><span id="/2022/07/17/About-7-17-This-Week/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
     <div id = "frozen-btn" class = "center">
     <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
@@ -219,7 +225,7 @@
   </script>
 </div>
 
-<!-- <span id="/2022/06/15/Ghidra-LEARNING/" class="leancloud_visitors" data-flag-title="Ghidra LEARNING">
+<!-- <span id="/2022/07/17/About-7-17-This-Week/" class="leancloud_visitors" data-flag-title="About 7.17 This Week">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->
