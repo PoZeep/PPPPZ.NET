@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://PPPPZ.net/2022/07/17/About-7-17-This-Week/</loc>
+    <loc>http://PPPPZ.net/2022/07/21/ACTF2022-Inflated/</loc>
+    <lastmod>2022-07-20</lastmod>
+  </url>
+  <url>
+    <loc>http://PPPPZ.net/2022/07/18/C-EXCEPTION-LEARNING/</loc>
+    <lastmod>2022-07-20</lastmod>
+  </url>
+  <url>
+    <loc>http://PPPPZ.net/2022/07/19/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-PE%E6%96%87%E4%BB%B6/</loc>
+    <lastmod>2022-07-19</lastmod>
+  </url>
+  <url>
+    <loc>http://PPPPZ.net/2022/06/15/GHIDRA-LEARNING/</loc>
     <lastmod>2022-07-17</lastmod>
   </url>
   <url>
-    <loc>http://PPPPZ.net/2022/07/14/ACTF2022-Inflated/</loc>
-    <lastmod>2022-07-16</lastmod>
+    <loc>http://PPPPZ.net/2022/07/17/About-7-17-This-Week/</loc>
+    <lastmod>2022-07-17</lastmod>
   </url>
   <url>
     <loc>http://PPPPZ.net/2022/07/15/UBUNTU-LEARNING/</loc>
@@ -18,10 +30,6 @@
   </url>
   <url>
     <loc>http://PPPPZ.net/2022/07/10/VM-LEARNING/</loc>
-    <lastmod>2022-07-13</lastmod>
-  </url>
-  <url>
-    <loc>http://PPPPZ.net/2022/06/15/Ghidra-LEARNING/</loc>
     <lastmod>2022-07-13</lastmod>
   </url>
   <url>
@@ -282,10 +290,6 @@
   </url>
   <url>
     <loc>http://PPPPZ.net/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/</loc>
-    <lastmod>2022-03-14</lastmod>
-  </url>
-  <url>
-    <loc>http://PPPPZ.net/2022/02/23/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-PE%E6%96%87%E4%BB%B6/</loc>
     <lastmod>2022-03-14</lastmod>
   </url>
   <url>
