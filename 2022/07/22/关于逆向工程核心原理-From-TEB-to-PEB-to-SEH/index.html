@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>关于逆向工程核心原理-From TEB to PEB to SEH - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            
+            <span>July</span>
+            
+            
+            
+            
+            
+            
+            <span>22,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">关于逆向工程核心原理-From TEB to PEB to SEH</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>之前一直没机会整理下这部分知识，这次刚好要做课件了，开始梳理一下。– 2022.7.22</p>
+<h1 id="TEB"><a href="#TEB" class="headerlink" title="TEB"></a>TEB</h1><h2 id="Introduction-of-TEB"><a href="#Introduction-of-TEB" class="headerlink" title="Introduction of TEB"></a>Introduction of TEB</h2><p>TEB（Thread Environment Block）指的是线程环境块：</p>
+<ul>
+<li>该结构体包含<strong>进程中运行线程的各种信息</strong></li>
+<li>进程中的每个线程都有对应的TEB结构体</li>
+</ul>
+<blockquote>
+<p>进程：一个在内存中运行的应用程序。每个进程都有自己独立的一块内存空间，一个进程可以有多个线程，比如在Windows系统中，一个运行的xx.exe就是一个进程</p>
+<p>线程：进程中的一个执行任务（控制单元），负责当前进程中程序的执行。一个进程至少有一个线程，一个进程可以运行多个线程，多个线程可共享数据。</p>
+</blockquote>
+<p>MSDN给出的结构体，然而描述其实太过简单，想了解更多细节得借助WINDBG</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722155319976.png" alt="image-20220722155319976"></p>
+<p>（借助WINDBG的符号文件可以查看TEB结构体的所有成员，太多了就不截图了）</p>
+<h2 id="Important-Members-Of-The-TEB-Structure"><a href="#Important-Members-Of-The-TEB-Structure" class="headerlink" title="Important Members Of The TEB  Structure"></a>Important Members Of The TEB  Structure</h2><p>TEB 结构体的成员多而复杂，在用户模式调试中起着重要作用的成员有2个</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722160931981.png" alt="image-20220722160931981"></p>
+<h3 id="ProcessEnvironmentBlock"><a href="#ProcessEnvironmentBlock" class="headerlink" title="ProcessEnvironmentBlock"></a>ProcessEnvironmentBlock</h3><p>首先是Offset 30处的 ProcessEnvironmentBlock 成员，它是指向PEB（Process Environment Block，进程环境块），结构体的指针。</p>
+<p>PEB 是进程环境块，每个进程对应1个PEB结构体，一会再细说</p>
+<h3 id="NitTib"><a href="#NitTib" class="headerlink" title="NitTib"></a>NitTib</h3><p>TEB 结构体的第一个成员为 NT_TIB 结构体（TIB 是 Thread Infomation Block 的简称，意味线程信息块）</p>
+<p>结构体如下，比较关心的成员有</p>
+<ul>
+<li><p>ExceptionList 指向 _EXCEPTION_REGISTRATION_RECORD 结构体组成的链表，就是Windows OS的SEH</p>
+</li>
+<li><p>Self 指向 _NT_TIB 结构体自引用指针</p>
+<ul>
+<li>也是 TEB 结构体指针（因为 TEB 结构体的第一个成员就是 _NT_TEB 结构体）</li>
+</ul>
+</li>
+</ul>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722192748806.png" alt="image-20220722192748806"></p>
+<h2 id="TEB-Access-Method"><a href="#TEB-Access-Method" class="headerlink" title="TEB Access Method"></a>TEB Access Method</h2><p>借助 WINDBG 很容易访问 TEB 结构体，那么我们在用户模式下怎么问题？</p>
+<p>通过 OS 提供的相关 API 访问</p>
+<p>PS: 调试的地址会随计算机环境的不同而不同</p>
+<h3 id="Ntdll-NtCurrentTeb"><a href="#Ntdll-NtCurrentTeb" class="headerlink" title="Ntdll.NtCurrentTeb()"></a>Ntdll.NtCurrentTeb()</h3><p>Ctrl + G 或者 Search for Name in all modules 跳到该API</p>
+<p>可以发现 FS:[18] 就是返回TEB地址，这就是就是Self指针</p>
+<p>这里我们可以得知 TEB 与 FS 段寄存器有关系！</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722195435055.png" alt="image-20220722195435055"></p>
+<h3 id="FS-Segment-Register"><a href="#FS-Segment-Register" class="headerlink" title="FS Segment Register"></a>FS Segment Register</h3><h4 id="SDT"><a href="#SDT" class="headerlink" title="SDT"></a>SDT</h4><p>其实，FS 寄存器用来指示当前线程的 TEB 结构体</p>
+<p>然而这种段寄存器只有十六位，如何在 IA-32 系统中32位的指针表示？</p>
+<p>实际上，FS段寄存器并非直接指向 TEB 结构体的位置，它<strong>持有 SDT 的索引</strong>，而该索引持有实际 TEB 地址</p>
+<blockquote>
+<p>SDT 位于内核内存区域，其地址存储在 GDTR (Global Descriptor Table Resiger，全局描述符号表)</p>
+</blockquote>
+<p>由于段寄存器实际存储的是 SDT 的索引，所以它也被称为 “段选择符” (Segment Selector)</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722202149185.png" alt="image-20220722202149185"></p>
+<h2 id="SUMMARY"><a href="#SUMMARY" class="headerlink" title="SUMMARY"></a>SUMMARY</h2><ul>
+<li><p>FS[0x18] = TEB 起始地址</p>
+</li>
+<li><p>FS[0x30] = PEB 起始地址</p>
+</li>
+<li><p>FS[0] = SEH 起始地址</p>
+</li>
+</ul>
+<h1 id="PEB"><a href="#PEB" class="headerlink" title="PEB"></a>PEB</h1><h2 id="Introduction-of-PEB"><a href="#Introduction-of-PEB" class="headerlink" title="Introduction of PEB"></a>Introduction of PEB</h2><p>PEB (Process Environment Block，进程环境块)，这是存放进程信息的结构体，尺寸非常大。</p>
+<h2 id="PEB-Access-Method"><a href="#PEB-Access-Method" class="headerlink" title="PEB Access Method"></a>PEB Access Method</h2><p>那么访问其实就是 FS:[30] 即可，可以有多种方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MOV EAX, DWORD PTR FS:[30] ; FS[30] = ADDRESS OF PEB</span><br><span class="line"></span><br><span class="line">MOV EAX, DWORD PTR FS:[18] ; FS[18] = ADDRESS OF TEB</span><br><span class="line">MOV EAX, DWORD PTR FS:[EAX + 30] ; DS[EAX + 30] = ADDRESS OF PEB</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Important-Members-Of-The-PEB-Structure"><a href="#Important-Members-Of-The-PEB-Structure" class="headerlink" title="Important Members Of The PEB Structure"></a>Important Members Of The PEB Structure</h2><p>MSDN 提供的 PEB 结构体如下</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722204751164.png" alt="image-20220722204751164"></p>
+<p>（那么经过WINDBG可以详细查看 PEB 结构体成员，太长了就不贴了）</p>
+<p>关注几个重点成员</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722205015799.png" alt="image-20220722205015799"></p>
+<h3 id="PEB-BeingDebugged"><a href="#PEB-BeingDebugged" class="headerlink" title="PEB.BeingDebugged"></a>PEB.BeingDebugged</h3><p>Kenerl32.dll 中有个名为 Kernel32IsDebuggerPresent() 的API，普通程序我们一般不用到</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL WINAPI <span class="title">IsDebuggerPresent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>该 API 函数用于判断当前进程是否处于调试状态，并返回判断结果。</p>
+<p>该 API 通过检测 PEB.BeingDebuggered 成员确定是否正在调试进程（是，返回1；否，返回0）</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722210750425.png" alt="image-20220722210750425"></p>
+<p>该图中</p>
+<ul>
+<li>获取 FS:[18] 的 TEB 地址</li>
+<li>然后通过 DS:[TEB + 30] 处的 TEB.Process-EnvironmentBlock 成员访问 PEB 结构体</li>
+<li>查看 PEB.BeingDebuggered 成员的地址的值</li>
+</ul>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722211000787.png" alt="image-20220722211000787"></p>
+<h3 id="PEB-ImageBaseAddress"><a href="#PEB-ImageBaseAddress" class="headerlink" title="PEB.ImageBaseAddress"></a>PEB.ImageBaseAddress</h3><p>PEB.ImageBaseAddress 成员用来表示进程的 ImageBase</p>
+<p>GetModuleHandle() API 用来获取 ImageBase</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">HMODULE WINAPI <span class="title">GetModuleHandle</span><span class="params">(__in_opt LPCSTR lpModuleName)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>向 lpModuleHandle 参数赋值为 NULL，调用 GetModuleHandle() 函数将返回进程被加载的 ImageBase</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722211954276.png" alt="image-20220722211954276"></p>
+<h3 id="PEB-Ldr"><a href="#PEB-Ldr" class="headerlink" title="PEB.Ldr"></a>PEB.Ldr</h3><p>PEB.Ldr 成员是指向 _PEB_LDR_DATA 结构体的指针。借助 WinDbg 查看可知</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722212920103.png" alt="image-20220722212920103"></p>
+<p>当模块（DLL）加载到进程后，通过 PEB.Ldr 成员可以直接获取该模块的加载地址，所以这是非常重要的成员。</p>
+<p>_PEB_LDR_DATA 结构体成员中有3个 _LIST_ENTRY 成员，该又是个结构体</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722213140086.png" alt="image-20220722213140086"></p>
+<p>从该结构体看出这是个双向链表，那么该链表又保存着什么信息？</p>
+<p>_LDR_DATA_TABLE_ENTRY 结构体</p>
+<ul>
+<li><p><strong>每个加载到进程中的 DLL 模块都有与之相应的 _LDR_DATA_TABLE_ENTRY 结构体</strong></p>
+</li>
+<li><p>这些结构体互相链接，最终形成 _LIST_ENTRY 双向链表</p>
+</li>
+<li><p>需要注意的是，_PEB_LDR_DATA 结构体中存在3种链表</p>
+<ul>
+<li>也就是说，存在多个 _LDR_DATA_TABLE_ENTRY 结构体，并且有三种方法链接起来</li>
+</ul>
+</li>
+</ul>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722213432869.png" alt="image-20220722213432869"></p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722213446471.png" alt="image-20220722213446471"></p>
+<h3 id="PEB-ProcessHeap-amp-PEB-NtGlobalFlag"><a href="#PEB-ProcessHeap-amp-PEB-NtGlobalFlag" class="headerlink" title="PEB.ProcessHeap &amp; PEB.NtGlobalFlag"></a>PEB.ProcessHeap &amp; PEB.NtGlobalFlag</h3><p>这两个成员都是应用于反调试，若进程处于调试状态，两个成员都有特定值。</p>
+
+    </div>
+
+    <p style= "text-align:center">
+        让我看看我被读了 
+    <b><span id="/2022/07/22/关于逆向工程核心原理-From-TEB-to-PEB-to-SEH/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        支付宝
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        微信
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-5rvxh62nz-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '评论什么好呢',   //占位符
+    });
+  </script>
+</div>
+
+<!-- <span id="/2022/07/22/关于逆向工程核心原理-From-TEB-to-PEB-to-SEH/" class="leancloud_visitors" data-flag-title="关于逆向工程核心原理-From TEB to PEB to SEH">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2022 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
