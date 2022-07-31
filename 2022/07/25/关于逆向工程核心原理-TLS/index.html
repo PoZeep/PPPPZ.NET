@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>关于逆向工程核心原理-TLS - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            
+            <span>July</span>
+            
+            
+            
+            
+            
+            
+            <span>25,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">关于逆向工程核心原理-TLS</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>又是没整理的一个知识点，做PPT真是强制帮我整理知识点了。</p>
+<h1 id="TLS"><a href="#TLS" class="headerlink" title="TLS"></a>TLS</h1><h2 id="Introduction-Of-TLS"><a href="#Introduction-Of-TLS" class="headerlink" title="Introduction  Of TLS"></a>Introduction  Of TLS</h2><p>TLS ( Thread Local Storage，线程局部存储 ) 回调函数（Callback Function），常用于反调试。</p>
+<p>TLS 是各线程的独立数据存储空间，使用 TLS 技术可在线程内部独立使用或修改进程的全局数据或静态数据，就像对待自己的局部变量一样（编程中这种功能非常有用）。</p>
+<h2 id="IMAGE-DATA-DIRECTORY-9"><a href="#IMAGE-DATA-DIRECTORY-9" class="headerlink" title="IMAGE_DATA_DIRECTORY[9]"></a>IMAGE_DATA_DIRECTORY[9]</h2><p>这 IMAGE_DATA_DIRECTORY 保存着 TLS TABLE</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-TLS/image-20220725144614163.png"></p>
+<h3 id="IMAGE-TLS-DIRECTORY"><a href="#IMAGE-TLS-DIRECTORY" class="headerlink" title="IMAGE_TLS_DIRECTORY"></a>IMAGE_TLS_DIRECTORY</h3><p>分别有 32位 版本和 64位 版本</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-TLS/image-20220725144740323.png" alt="image-20220725144740323"></p>
+<p>而该结构体比较重要的是成员是 AddressOfCallbacks ，该值指向含有 TLS 回调函数的地址的数组，这意味着同一个程序可以注册多个 TLS 回调函数（数组以 NULL 结束）。</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-TLS/image-20220725145238921.png" alt="image-20220725145238921"></p>
+<p>可以发现注册了两个 TLS 函数，进程启动运行时，系统会逐一调用存储该数组中的函数</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-TLS/image-20220725145552652.png" alt="image-20220725145552652"></p>
+<h2 id="IMAGE-TLS-CALLBACK"><a href="#IMAGE-TLS-CALLBACK" class="headerlink" title="IMAGE_TLS_CALLBACK"></a>IMAGE_TLS_CALLBACK</h2><p>从技术层面来讲，所谓 TLS 回调函数是指，每当创建/终止进程的线程时会自动调用执行的函数，有意思的是创建进程的主线程时也会自动调用回调函数，且其调用先于 EP 代码。</p>
+<p>TLS 回调函数定义如下</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-TLS/image-20220725151128175.png" alt="image-20220725151128175"></p>
+<p>可以发现与 DllMain() 函数定义相似</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-TLS/image-20220725151443657.png" alt="image-20220725151443657"></p>
+<p>可以发现这两个定义的顺序与含义都是一样的</p>
+<ul>
+<li>其中 DllHandle 为模块句柄（即加载地址）</li>
+<li>参数 Reason 表示调用 TLS 回调函数的原因</li>
+</ul>
+<p>其中原因有四种</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-TLS/image-20220725151657394.png" alt="image-20220725151657394"></p>
+<h2 id="TLSTest-exe"><a href="#TLSTest-exe" class="headerlink" title="TLSTest.exe"></a>TLSTest.exe</h2><p>Resource code:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> comment(linker, <span class="meta-string">&quot;/INCLUDE:__tls_used&quot;</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_console</span><span class="params">(<span class="keyword">char</span>* szMsg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    HANDLE hStdout = <span class="built_in">GetStdHandle</span>(STD_OUTPUT_HANDLE);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">WriteConsoleA</span>(hStdout, szMsg, <span class="built_in">strlen</span>(szMsg), <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> NTAPI <span class="title">TLS_CALLBACK1</span><span class="params">(PVOID DllHandle, DWORD Reason, PVOID Reserved)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> szMsg[<span class="number">80</span>] = &#123;<span class="number">0</span>,&#125;;</span><br><span class="line">    <span class="built_in">wsprintfA</span>(szMsg, <span class="string">&quot;TLS_CALLBACK1() : DllHandle = %X, Reason = %d\n&quot;</span>, DllHandle, Reason);</span><br><span class="line">    <span class="built_in">print_console</span>(szMsg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> NTAPI <span class="title">TLS_CALLBACK2</span><span class="params">(PVOID DllHandle, DWORD Reason, PVOID Reserved)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> szMsg[<span class="number">80</span>] = &#123;<span class="number">0</span>,&#125;;</span><br><span class="line">    <span class="built_in">wsprintfA</span>(szMsg, <span class="string">&quot;TLS_CALLBACK2() : DllHandle = %X, Reason = %d\n&quot;</span>, DllHandle, Reason);</span><br><span class="line">    <span class="built_in">print_console</span>(szMsg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> data_seg(<span class="meta-string">&quot;.CRT$XLX&quot;</span>)</span></span><br><span class="line">    PIMAGE_TLS_CALLBACK pTLS_CALLBACKs[] = &#123; TLS_CALLBACK1, TLS_CALLBACK2, <span class="number">0</span> &#125;;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> data_seg()</span></span><br><span class="line"></span><br><span class="line"><span class="function">DWORD WINAPI <span class="title">ThreadProc</span><span class="params">(LPVOID lParam)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">print_console</span>(<span class="string">&quot;ThreadProc() start\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print_console</span>(<span class="string">&quot;ThreadProc() end\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    HANDLE hThread = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print_console</span>(<span class="string">&quot;main() start\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    hThread = <span class="built_in">CreateThread</span>(<span class="literal">NULL</span>, <span class="number">0</span>, ThreadProc, <span class="literal">NULL</span>, <span class="number">0</span>, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="built_in">WaitForSingleObject</span>(hThread, <span class="number">60</span>*<span class="number">1000</span>);</span><br><span class="line">    <span class="built_in">CloseHandle</span>(hThread);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print_console</span>(<span class="string">&quot;main() end\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该源码中注册两个 TLS 回调函数</p>
+<p>TLS_CALLBACK1 与 TLS_CALLBACK2</p>
+<ul>
+<li>该回调函数的功能为打印 DllHandle 与 Reason 这两个参数</li>
+</ul>
+<p>main 函数功能为创建用户线程 ThreadProc 后中止</p>
+<p>效果如下</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-TLS/image-20220725152409051.png" alt="image-20220725152409051"></p>
+<h3 id="DLL-PROCESS-ATTACH"><a href="#DLL-PROCESS-ATTACH" class="headerlink" title="DLL_PROCESS_ATTACH"></a>DLL_PROCESS_ATTACH</h3><p>进程的主线程调用 main() 函数前，已经注册的 TLS 回调函数（TLS_CALLBACK1、TLS_CALLBACK2）会被先执行，此时 Reason 的值为 1 (DLL_PROCESS_ATTACH)</p>
+<h3 id="DLL-THREAD-ATTACH"><a href="#DLL-THREAD-ATTACH" class="headerlink" title="DLL_THREAD_ATTACH"></a>DLL_THREAD_ATTACH</h3><p>所有 TLS 回调函数完成调用后，main 函数开始调用执行，创建用户线程（ThreadProc）前，TLS 回调函数会被再次调用，此时 Reason = 2 (DLL_THREAD_ATTACH)</p>
+<h3 id="DLL-THREAD-DETACH"><a href="#DLL-THREAD-DETACH" class="headerlink" title="DLL_THREAD_DETACH"></a>DLL_THREAD_DETACH</h3><p>TLS 回调函数全部执行完，ThreadProc() 线程函数开始执行，该用户起的线程函数结束后再度调用 TLS 函数，其 Reason = 3（DLL_THREAD_DETACH）</p>
+<h3 id="DLL-PROCESS-DETACH"><a href="#DLL-PROCESS-DETACH" class="headerlink" title="DLL_PROCESS_DETACH"></a>DLL_PROCESS_DETACH</h3><p>ThreadProc 函数执行完毕后，一直等待线程终止的 main 函数也就是主线程终止，这时候再度调用 TLS 回调函数（DLL_PROCESS_DETACH）</p>
+<p>两个 TLS 函数分别调用执行了 4 次，总共为 8 次</p>
+<blockquote>
+<p>源代码中并未使用 printf 函数，因为开启特定编译选项（/MT）编译源程序时，先于主线程调用执行的 TLS 回调函数可能会引用 Run-Time Error（运行时错误），所以用了 WriteConsole API 以防万一</p>
+</blockquote>
+
+    </div>
+
+    <p style= "text-align:center">
+        让我看看我被读了 
+    <b><span id="/2022/07/25/关于逆向工程核心原理-TLS/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        支付宝
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        微信
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-5rvxh62nz-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '评论什么好呢',   //占位符
+    });
+  </script>
+</div>
+
+<!-- <span id="/2022/07/25/关于逆向工程核心原理-TLS/" class="leancloud_visitors" data-flag-title="关于逆向工程核心原理-TLS">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2022 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
