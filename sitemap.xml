@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2022/08/03/QWB2022-GameMaster-EasyRe/</loc>
+    
+    <lastmod>2022-08-03</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/08/02/LMB2022-LOADER/</loc>
+    
+    <lastmod>2022-08-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/08/02/DSCTF2022-FFunction-CatchMe/</loc>
+    
+    <lastmod>2022-08-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2022/07/31/About-7-31-This-Week/</loc>
     
     <lastmod>2022-07-31</lastmod>
@@ -32,15 +59,6 @@
     <loc>http://ppppz.net/2022/07/24/About-7-24-This-Week/</loc>
     
     <lastmod>2022-07-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/2022/07/23/DSCTF2022-FFunction-CatchMe/</loc>
-    
-    <lastmod>2022-07-23</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1408,7 +1426,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-07-31</lastmod>
+    <lastmod>2022-08-03</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
