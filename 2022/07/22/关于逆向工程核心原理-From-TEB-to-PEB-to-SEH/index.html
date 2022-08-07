@@ -132,7 +132,7 @@
 
     <div class="content">
         <p>之前一直没机会整理下这部分知识，这次刚好要做课件了，开始梳理一下。– 2022.7.22</p>
-<h1 id="TEB"><a href="#TEB" class="headerlink" title="TEB"></a>TEB</h1><h2 id="Introduction-of-TEB"><a href="#Introduction-of-TEB" class="headerlink" title="Introduction of TEB"></a>Introduction of TEB</h2><p>TEB（Thread Environment Block）指的是线程环境块：</p>
+<h1 id="TEB"><a href="#TEB" class="headerlink" title="TEB"></a>TEB</h1><h2 id="Introduction-Of-TEB"><a href="#Introduction-Of-TEB" class="headerlink" title="Introduction Of TEB"></a>Introduction Of TEB</h2><p>TEB（Thread Environment Block）指的是线程环境块：</p>
 <ul>
 <li>该结构体包含<strong>进程中运行线程的各种信息</strong></li>
 <li>进程中的每个线程都有对应的TEB结构体</li>
@@ -183,7 +183,7 @@
 <li><p>FS[0] = SEH 起始地址</p>
 </li>
 </ul>
-<h1 id="PEB"><a href="#PEB" class="headerlink" title="PEB"></a>PEB</h1><h2 id="Introduction-of-PEB"><a href="#Introduction-of-PEB" class="headerlink" title="Introduction of PEB"></a>Introduction of PEB</h2><p>PEB (Process Environment Block，进程环境块)，这是存放进程信息的结构体，尺寸非常大。</p>
+<h1 id="PEB"><a href="#PEB" class="headerlink" title="PEB"></a>PEB</h1><h2 id="Introduction-Of-PEB"><a href="#Introduction-Of-PEB" class="headerlink" title="Introduction Of PEB"></a>Introduction Of PEB</h2><p>PEB (Process Environment Block，进程环境块)，这是存放进程信息的结构体，尺寸非常大。</p>
 <h2 id="PEB-Access-Method"><a href="#PEB-Access-Method" class="headerlink" title="PEB Access Method"></a>PEB Access Method</h2><p>那么访问其实就是 FS:[30] 即可，可以有多种方法</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MOV EAX, DWORD PTR FS:[30] ; FS[30] = ADDRESS OF PEB</span><br><span class="line"></span><br><span class="line">MOV EAX, DWORD PTR FS:[18] ; FS[18] = ADDRESS OF TEB</span><br><span class="line">MOV EAX, DWORD PTR FS:[EAX + 30] ; DS[EAX + 30] = ADDRESS OF PEB</span><br></pre></td></tr></table></figure>
 
@@ -234,6 +234,95 @@
 <p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722213432869.png" alt="image-20220722213432869"></p>
 <p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722213446471.png" alt="image-20220722213446471"></p>
 <h3 id="PEB-ProcessHeap-amp-PEB-NtGlobalFlag"><a href="#PEB-ProcessHeap-amp-PEB-NtGlobalFlag" class="headerlink" title="PEB.ProcessHeap &amp; PEB.NtGlobalFlag"></a>PEB.ProcessHeap &amp; PEB.NtGlobalFlag</h3><p>这两个成员都是应用于反调试，若进程处于调试状态，两个成员都有特定值。</p>
+<h1 id="SEH"><a href="#SEH" class="headerlink" title="SEH"></a>SEH</h1><h2 id="Introduction-Of-SEH"><a href="#Introduction-Of-SEH" class="headerlink" title="Introduction Of SEH"></a>Introduction Of SEH</h2><p>SEH 是 Windows 操作系统默认的异常处理机制，在程序源代码中使用 try except finally 关键字来具体实现</p>
+<blockquote>
+<p>SEH 与 Windows 中的 try、catch 具有不同结构！！</p>
+</blockquote>
+<h2 id="When-An-Exception-Occurs"><a href="#When-An-Exception-Occurs" class="headerlink" title="When An Exception Occurs"></a>When An Exception Occurs</h2><p><strong>发生异常时调试器运行</strong></p>
+<p>会出现警告语句</p>
+<blockquote>
+<p>“Access violation when writing to [00000000]- use Shift+F7/F8/F9 to pass exception to program·在内存0处发生写入异常，若想将异常抛给程序，请使用Shift+F7/F8/F9组合键。</p>
+</blockquote>
+<h3 id="OS-Exception-Handle"><a href="#OS-Exception-Handle" class="headerlink" title="OS Exception Handle"></a>OS Exception Handle</h3><p>同一程序在<strong>正常运行时</strong>与<strong>调试运行时</strong>表现出的行为行动是不同的，这是由于 Windows OS 的异常处理方法不同</p>
+<h4 id="正常运行时的异常处理方法"><a href="#正常运行时的异常处理方法" class="headerlink" title="正常运行时的异常处理方法"></a>正常运行时的异常处理方法</h4><ul>
+<li>进程运行时若发生异常，OS 委托进程进行处理，若进程代码中存在具体的异常处理代码，则能顺利完成，程序继续运行</li>
+<li>但如果进行内部没有具体的实现 SEH，OS 就会启动默认的异常处理机制，终止程序运行</li>
+</ul>
+<h4 id="调试运行时的异常处理方法"><a href="#调试运行时的异常处理方法" class="headerlink" title="调试运行时的异常处理方法"></a>调试运行时的异常处理方法</h4><p>若被调试进程内部发生异常，OS 会首先把异常抛给调试进程处理。</p>
+<ul>
+<li><p>调试器几乎拥有被调试者的所有权限</p>
+</li>
+<li><p>需要特别指出的是，被调试者内部发生的所有异常（错误）都由调试器处理</p>
+</li>
+<li><p>所以调试过程中发生的所有异常（错误）都要由调试器管理（被调试者的 SEH 依据优先顺序推给调试器）</p>
+</li>
+</ul>
+<p>像这样，被调试者发生异常时，调试器就会暂停运行，必须采取某种措施，完成后继续调试</p>
+<p>处理方法如下</p>
+<p>1）直接修改异常：代码、寄存器、内存</p>
+<p>修改引发异常的位置让其不再异常</p>
+<p>2）将异常抛给 被调试者 处理</p>
+<p>如果 被调试者 内部存在 SEH（异常处理函数）能够处理异常，那么异常通知会发送给 被调试者，由被调试器自行处理。</p>
+<p>如果当前进程在被我们的调试器所调试，我们可以按 SHIFT + F7/F8/F9 命令可以直接将当前异常抛还给 被调试者</p>
+<p>3）OS 默认的异常处理机制</p>
+<p>若调试器与被调试者都无法处理（或故意不处理）当前异常，则 OS 的默认异常处理机制会触发，终止进程。</p>
+<h2 id="Exception"><a href="#Exception" class="headerlink" title="Exception"></a>Exception</h2><p>学习异常处理前，有必要了解操作系统中定义的异常</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220806131536651.png" alt="image-20220806131536651"></p>
+<h3 id="EXCEPTION-ACCESS-VIOLATION-C000-0005"><a href="#EXCEPTION-ACCESS-VIOLATION-C000-0005" class="headerlink" title="EXCEPTION_ACCESS_VIOLATION (C000 0005)"></a>EXCEPTION_ACCESS_VIOLATION (C000 0005)</h3><p>试图访问不存在或不具有访问权限的内存区域，就会发生 EXCEPTION_ACCESS_VLOLATION（非法访问异常，改该异常最常见）。</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220806212646438.png" alt="image-20220806212646438"></p>
+<h3 id="EXCEPTION-BREAKPOINT-8000-0003"><a href="#EXCEPTION-BREAKPOINT-8000-0003" class="headerlink" title="EXCEPTION_BREAKPOINT (8000 0003)"></a>EXCEPTION_BREAKPOINT (8000 0003)</h3><p>在运行代码中设置断点后，CPU 尝试执行该地址处的指令时，将会发生 EXCEPTION_BREAKPOINT 异常</p>
+<p><strong>INT3</strong></p>
+<p>设置该断点的汇编指令为 INT3，对应机器码（IA-32 指令） 0xCC</p>
+<p>调试器就是利用该功能实现断点功能</p>
+<h3 id="EXCEPTION-ILLGAL-INSTRUCTION-C000-001D"><a href="#EXCEPTION-ILLGAL-INSTRUCTION-C000-001D" class="headerlink" title="EXCEPTION_ILLGAL_INSTRUCTION (C000 001D)"></a>EXCEPTION_ILLGAL_INSTRUCTION (C000 001D)</h3><p>CPU 遇到无法解析的指令的时候，比如 “0FFF” 指令在 x86 CPU 中未定义，CPU遇到该指令将引发 EXCEPTION_ILLEGAL_INSTRUCTION 异常</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220806213650384.png" alt="image-20220806213650384"></p>
+<h3 id="EXCETION-INT-DIVIDE-BY-ZERO-C000-0094"><a href="#EXCETION-INT-DIVIDE-BY-ZERO-C000-0094" class="headerlink" title="EXCETION_INT_DIVIDE_BY_ZERO (C000 0094)"></a>EXCETION_INT_DIVIDE_BY_ZERO (C000 0094)</h3><p>INTEGER（整数）除法运算中，若分母为0（即除0）。</p>
+<h3 id="EXCEPTION-SINGLE-STEP-8000-0004"><a href="#EXCEPTION-SINGLE-STEP-8000-0004" class="headerlink" title="EXCEPTION_SINGLE_STEP (8000 0004)"></a>EXCEPTION_SINGLE_STEP (8000 0004)</h3><p>Single Step（单步）的含义是执行一条指令，然后暂停。</p>
+<p>CPU 进入单步模式后，每执行一条指令就会引发 EXCEPTION_SINGLE_STEP 异常，暂停运行。</p>
+<p>将 EFLAGS 寄存器的 TF (Trap Flag, 陷阱标志) 位设置为0，CPU就会进入单步工作模式。</p>
+<h2 id="SEH-链"><a href="#SEH-链" class="headerlink" title="SEH 链"></a>SEH 链</h2><p>SEH 以链的形式存在，第一个异常处理器中若未处理相关异常，就会传递到下个异常处理器，直到得到处理。</p>
+<p>从技术层面来看，SEH 是 _EXCEPTION_REGISTRATION_RECORD 结构体组成的链表</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220806231301323.png" alt="image-20220806231301323"></p>
+<p>Next 成员是指向下一个 _EXCEPTION_REGISTRATION_RECORD 结构体的指针，Handler 成员是异常处理函数（异常处理器）</p>
+<p>若 Next 成员的值为 FFFF FFFF，则表示它是链表的最后一个结点</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807180348413.png" alt="image-20220807180348413"></p>
+<p>异常发生时，该异常则会按照 （A）-&gt;（B）-&gt;（C）的顺序依次传递，直到有异常处理器处理</p>
+<h3 id="SEH-异常处理函数的定义-except-handler"><a href="#SEH-异常处理函数的定义-except-handler" class="headerlink" title="SEH 异常处理函数的定义 _except_handler"></a>SEH 异常处理函数的定义 _except_handler</h3><p>函数定义如下</p>
+<ul>
+<li>异常处理函数接收这4个参数</li>
+<li>返回值为 EXCEPTION_DISPOSITION 的枚举类型</li>
+</ul>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807190056601.png" alt="image-20220807190056601"></p>
+<h4 id="except-handler-gt-pRecord"><a href="#except-handler-gt-pRecord" class="headerlink" title="_except_handler-&gt; pRecord"></a>_except_handler-&gt; pRecord</h4><p><strong>首先第一个参数的结构体为 EXCEPTION_RECORD</strong></p>
+<p>定义如下，关注两个重要成员</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ExceptionCode // 异常类型</span><br><span class="line">ExceptionAddress // 发生异常的地址</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807190439883.png" alt="image-20220807190439883"></p>
+<h4 id="except-handler-gt-pContext"><a href="#except-handler-gt-pContext" class="headerlink" title="_except_handler-&gt; pContext"></a>_except_handler-&gt; pContext</h4><p><strong>其次该结构体中的第三个参数是指向 CONTEXT 结构体的指针</strong></p>
+<p>CONTEXT 是用来保存 CPU 寄存器的值，因为多线程环境下需要这样做，当切换去其他线程时，需要保存当前的线程的 CONTEXT 结构体</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807191220349.png" alt="image-20220807191220349"></p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807191233700.png" alt="image-20220807191233700"></p>
+<p>于是有趣的事情来了，当异常发生时，执行异常代码的线程就会中断运行，转而执行 SEH，OS 就会把线程的 CONTEXT 发送给异常处理函数的相应参数。</p>
+<p>该 CONTEXT 结构体的一个成员 EIP（偏移量：B8），注意该成员经常在反调试技术中应用</p>
+<p>用法如，在异常处理函数中把 CONTEXT.EIP 设置为其他地址，然后成功返回异常处理函数，这时候就成功执行到了我设置的新 EIP 的位置。</p>
+<h4 id="EXCEPTION-DISPOSITION"><a href="#EXCEPTION-DISPOSITION" class="headerlink" title="EXCEPTION_DISPOSITION"></a>EXCEPTION_DISPOSITION</h4><p>该枚举类型具体含义</p>
+<p>成功处理异常后返回 ExceptionContinueExecution(0)</p>
+<p>当前异常无法处理异常返回 ExceptionContinueSearch(1)</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807192403802.png" alt="image-20220807192403802"></p>
+<h2 id="TEB-NtTib-ExceptionList"><a href="#TEB-NtTib-ExceptionList" class="headerlink" title="TEB.NtTib.ExceptionList"></a>TEB.NtTib.ExceptionList</h2><p>通过 TEB 结构体的 NitTib 成员可以直接访问到 SEH 链</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TEB.NtTib.ExceptionList = FS:[0]</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="SEH-安装方法"><a href="#SEH-安装方法" class="headerlink" title="SEH 安装方法"></a>SEH 安装方法</h2><p>C语言中通过使用 try except finally，而汇编中更加轻松</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PUSH @MyHandler	; 异常处理器</span><br><span class="line">PUSH DWORD PTR FS:[0] ; 原先的异常列表</span><br><span class="line">MOV DWORD PTR FS:[0], ESP ; 添加链表</span><br></pre></td></tr></table></figure>
+
+<p>这就是把自身的异常处理器添加到已有的 SEH 链表</p>
+<p>从技术层面来讲就是将自身的 EXCEPTION_REGISRATION_RECORD 结构体链接到 EXCEPTION_REGISTATION_RECORD 结构体链表</p>
+<h2 id="Debugger-SEH"><a href="#Debugger-SEH" class="headerlink" title="Debugger SEH"></a>Debugger SEH</h2><p>如果忽略异常全开的话，就会直接往下跑，如果没有忽略异常，那么会询问你的操作，然后这个时候可以做点什么也可以按 SHIFT + F9 将异常还给被调试者处理</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807205757155.png" alt="image-20220807205757155"></p>
+<h2 id="Delete-SEH"><a href="#Delete-SEH" class="headerlink" title="Delete SEH"></a>Delete SEH</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POP DWORD PTR FS:[0]</span><br><span class="line">ADD ESP, 4</span><br></pre></td></tr></table></figure>
+
 
     </div>
 

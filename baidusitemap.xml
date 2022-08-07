@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://PPPPZ.net/2022/08/07/About-8-7-This-Week/</loc>
+    <lastmod>2022-08-07</lastmod>
+  </url>
+  <url>
+    <loc>http://PPPPZ.net/2022/07/22/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/</loc>
+    <lastmod>2022-08-07</lastmod>
+  </url>
+  <url>
     <loc>http://PPPPZ.net/2022/08/03/QWB2022-GameMaster-EasyRe/</loc>
     <lastmod>2022-08-03</lastmod>
   </url>
@@ -27,10 +35,6 @@
   <url>
     <loc>http://PPPPZ.net/2022/07/24/About-7-24-This-Week/</loc>
     <lastmod>2022-07-24</lastmod>
-  </url>
-  <url>
-    <loc>http://PPPPZ.net/2022/07/22/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/</loc>
-    <lastmod>2022-07-22</lastmod>
   </url>
   <url>
     <loc>http://PPPPZ.net/2022/07/21/ACTF2022-Inflated/</loc>
