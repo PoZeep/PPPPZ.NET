@@ -268,7 +268,7 @@
 <p>若调试器与被调试者都无法处理（或故意不处理）当前异常，则 OS 的默认异常处理机制会触发，终止进程。</p>
 <h2 id="Exception"><a href="#Exception" class="headerlink" title="Exception"></a>Exception</h2><p>学习异常处理前，有必要了解操作系统中定义的异常</p>
 <p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220806131536651.png" alt="image-20220806131536651"></p>
-<h3 id="EXCEPTION-ACCESS-VIOLATION-C000-0005"><a href="#EXCEPTION-ACCESS-VIOLATION-C000-0005" class="headerlink" title="EXCEPTION_ACCESS_VIOLATION (C000 0005)"></a>EXCEPTION_ACCESS_VIOLATION (C000 0005)</h3><p>试图访问不存在或不具有访问权限的内存区域，就会发生 EXCEPTION_ACCESS_VLOLATION（非法访问异常，改该异常最常见）。</p>
+<h3 id="EXCEPTION-ACCESS-VIOLATION-C000-0005"><a href="#EXCEPTION-ACCESS-VIOLATION-C000-0005" class="headerlink" title="EXCEPTION_ACCESS_VIOLATION (C000 0005)"></a>EXCEPTION_ACCESS_VIOLATION (C000 0005)</h3><p>试图访问不存在或不具有访问权限的内存区域，就会发生 EXCEPTION_ACCESS_VLOLATION（非法访问异常，该异常最常见）。</p>
 <p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220806212646438.png" alt="image-20220806212646438"></p>
 <h3 id="EXCEPTION-BREAKPOINT-8000-0003"><a href="#EXCEPTION-BREAKPOINT-8000-0003" class="headerlink" title="EXCEPTION_BREAKPOINT (8000 0003)"></a>EXCEPTION_BREAKPOINT (8000 0003)</h3><p>在运行代码中设置断点后，CPU 尝试执行该地址处的指令时，将会发生 EXCEPTION_BREAKPOINT 异常</p>
 <p><strong>INT3</strong></p>
@@ -315,14 +315,34 @@
 
 
 <h2 id="SEH-安装方法"><a href="#SEH-安装方法" class="headerlink" title="SEH 安装方法"></a>SEH 安装方法</h2><p>C语言中通过使用 try except finally，而汇编中更加轻松</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PUSH @MyHandler	; 异常处理器</span><br><span class="line">PUSH DWORD PTR FS:[0] ; 原先的异常列表</span><br><span class="line">MOV DWORD PTR FS:[0], ESP ; 添加链表</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PUSH @MyHandler	; 要添加的异常处理器</span><br><span class="line">PUSH DWORD PTR FS:[0] ; 原先的异常列表</span><br><span class="line">MOV DWORD PTR FS:[0], ESP ; 将添加后的链表设置到链表</span><br></pre></td></tr></table></figure>
 
 <p>这就是把自身的异常处理器添加到已有的 SEH 链表</p>
 <p>从技术层面来讲就是将自身的 EXCEPTION_REGISRATION_RECORD 结构体链接到 EXCEPTION_REGISTATION_RECORD 结构体链表</p>
-<h2 id="Debugger-SEH"><a href="#Debugger-SEH" class="headerlink" title="Debugger SEH"></a>Debugger SEH</h2><p>如果忽略异常全开的话，就会直接往下跑，如果没有忽略异常，那么会询问你的操作，然后这个时候可以做点什么也可以按 SHIFT + F9 将异常还给被调试者处理</p>
+<h2 id="Debugger-SEH"><a href="#Debugger-SEH" class="headerlink" title="Debugger SEH"></a>Debugger SEH</h2><p>首先是异常处理函数的注册，这里相当于直接添加一个自己写的</p>
 <p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807205757155.png" alt="image-20220807205757155"></p>
-<h2 id="Delete-SEH"><a href="#Delete-SEH" class="headerlink" title="Delete SEH"></a>Delete SEH</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POP DWORD PTR FS:[0]</span><br><span class="line">ADD ESP, 4</span><br></pre></td></tr></table></figure>
-
+<p>接下来的代码就是触发异常，现在可以自己处理异常，或者 SHIFT + F9 将异常抛给被调试进程处理</p>
+<p>（记得此时要在异常处理函数 40105A 下个断点，因为调试器会一直跑完整个程序）</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220808225953086.png" alt="image-20220808225953086"></p>
+<p>随后调试异常处理函数</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220808230600986.png" alt="image-20220808230600986"></p>
+<p>随后删除已注册的 SEH 函数</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220808230827124.png" alt="image-20220808230827124"></p>
+<p>最后执行的到这就会跳回设置的当时所存放的context</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220808230929523.png" alt="image-20220808230929523"></p>
+<p>Hello :)</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220808231159924.png" alt="image-20220808231159924"></p>
+<p>今天被老师一carry刚觉得很轻松的心又有些吊起来了，继续加油8 –2022.8.8</p>
+<h1 id="CTF-SEH"><a href="#CTF-SEH" class="headerlink" title="CTF SEH"></a>CTF SEH</h1><p>本来该笔记已经结束，但是 CTF 中的 SEH 好像并不是这个形式，不过意思都是一样的，于是我要补充一个知识点，就是 IDA 中的 SEH 识别与确认执行流</p>
+<p>参考文章</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-252152.htm">https://bbs.pediy.com/thread-252152.htm</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/debug/exception-handler-syntax">https://docs.microsoft.com/en-us/windows/win32/debug/exception-handler-syntax</a></p>
+</blockquote>
+<p>要注意IDA自从生成的 filter</p>
+<p>4016D1 的 filter 返回1，即 EXCEPTION_EXECUTE_HANDLER，意思是捕获该异常，也就是无论发生什么异常，都会被 401687 异常处理捕获</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220810133924996.png" alt="image-20220810133924996"></p>
+<p>（关于 EXCEPTION_EXECUTE_HANDLER 的更多在微软的文档里说明）</p>
 
     </div>
 
