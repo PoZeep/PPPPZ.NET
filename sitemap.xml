@@ -2,6 +2,87 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/Friends/Friends.html</loc>
+    
+    <lastmod>2022-09-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/CTF/CTF.html</loc>
+    
+    <lastmod>2022-09-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/CTF/2022/QWB2022.html</loc>
+    
+    <lastmod>2022-09-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/CTF/2022/DSCTF2022.html</loc>
+    
+    <lastmod>2022-09-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/CTF/2022/LMB2022.html</loc>
+    
+    <lastmod>2022-09-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/Sundry/Sundry.html</loc>
+    
+    <lastmod>2022-09-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/Diary/Diary.html</loc>
+    
+    <lastmod>2022-09-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/Book/Reverse%20Engineering.html</loc>
+    
+    <lastmod>2022-09-01</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/08/31/PYD-LEARNING/</loc>
+    
+    <lastmod>2022-08-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2022/08/28/About-8-28-This-Week/</loc>
     
     <lastmod>2022-08-28</lastmod>
@@ -110,52 +191,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/Diary/Diary.html</loc>
-    
-    <lastmod>2022-07-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/Friends/Friends.html</loc>
-    
-    <lastmod>2022-07-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/CTF/CTF.html</loc>
-    
-    <lastmod>2022-07-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/CTF/DSCTF2022.html</loc>
-    
-    <lastmod>2022-07-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/Sundry/Sundry.html</loc>
-    
-    <lastmod>2022-07-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/CTF/ACTF2022.html</loc>
+    <loc>http://ppppz.net/CTF/2022/ACTF2022.html</loc>
     
     <lastmod>2022-07-22</lastmod>
     
@@ -290,7 +326,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/GS2022.html</loc>
+    <loc>http://ppppz.net/CTF/2022/GS2022.html</loc>
     
     <lastmod>2022-06-23</lastmod>
     
@@ -308,7 +344,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/Dest0ge2022.html</loc>
+    <loc>http://ppppz.net/CTF/2022/Dest0ge2022.html</loc>
     
     <lastmod>2022-06-19</lastmod>
     
@@ -326,7 +362,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/miniLCTF2022.html</loc>
+    <loc>http://ppppz.net/CTF/2022/miniLCTF2022.html</loc>
     
     <lastmod>2022-06-18</lastmod>
     
@@ -398,7 +434,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/DASCTF2022%20X%20VOID.html</loc>
+    <loc>http://ppppz.net/CTF/2022/DASCTF2022%20X%20VOID.html</loc>
     
     <lastmod>2022-05-26</lastmod>
     
@@ -434,7 +470,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/DASCTF2022%20X%20FATE.html</loc>
+    <loc>http://ppppz.net/CTF/2022/DASCTF2022%20X%20FATE.html</loc>
     
     <lastmod>2022-05-24</lastmod>
     
@@ -461,7 +497,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/KCTF2022%20%E6%98%A5%E5%AD%A3%E8%B5%9B.html</loc>
+    <loc>http://ppppz.net/CTF/2022/KCTF2022%20%E6%98%A5%E5%AD%A3%E8%B5%9B.html</loc>
     
     <lastmod>2022-05-18</lastmod>
     
@@ -479,7 +515,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/NS2022.html</loc>
+    <loc>http://ppppz.net/CTF/2022/NS2022.html</loc>
     
     <lastmod>2022-05-18</lastmod>
     
@@ -500,15 +536,6 @@
     <loc>http://ppppz.net/2022/05/16/Week-of-5-9/</loc>
     
     <lastmod>2022-05-16</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/Book/Reverse%20Engineering.html</loc>
-    
-    <lastmod>2022-05-15</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -560,7 +587,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/STARCTF2022.html</loc>
+    <loc>http://ppppz.net/CTF/2022/STARCTF2022.html</loc>
     
     <lastmod>2022-05-03</lastmod>
     
@@ -596,7 +623,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/WRB2022.html</loc>
+    <loc>http://ppppz.net/CTF/2022/WRB2022.html</loc>
     
     <lastmod>2022-04-28</lastmod>
     
@@ -605,7 +632,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/PWNHUB2022%20%E6%98%A5%E5%AD%A3%E8%B5%9B.html</loc>
+    <loc>http://ppppz.net/CTF/2022/PWNHUB2022%20%E6%98%A5%E5%AD%A3%E8%B5%9B.html</loc>
     
     <lastmod>2022-04-28</lastmod>
     
@@ -740,7 +767,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/HFCTF2022.html</loc>
+    <loc>http://ppppz.net/CTF/2022/HFCTF2022.html</loc>
     
     <lastmod>2022-04-14</lastmod>
     
@@ -839,7 +866,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/SUSCTF2022.html</loc>
+    <loc>http://ppppz.net/CTF/2022/SUSCTF2022.html</loc>
     
     <lastmod>2022-04-09</lastmod>
     
@@ -857,7 +884,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/DASCTF2022%20X%20SU.html</loc>
+    <loc>http://ppppz.net/CTF/2022/DASCTF2022%20X%20SU.html</loc>
     
     <lastmod>2022-04-09</lastmod>
     
@@ -866,7 +893,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/TQLCTF2022.html</loc>
+    <loc>http://ppppz.net/CTF/2022/TQLCTF2022.html</loc>
     
     <lastmod>2022-04-09</lastmod>
     
@@ -875,7 +902,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/VNCTF2022.html</loc>
+    <loc>http://ppppz.net/CTF/2022/VNCTF2022.html</loc>
     
     <lastmod>2022-04-09</lastmod>
     
@@ -884,7 +911,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/CTF/D^3CTF2022.html</loc>
+    <loc>http://ppppz.net/CTF/2022/D^3CTF2022.html</loc>
     
     <lastmod>2022-04-09</lastmod>
     
@@ -1462,7 +1489,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-08-28</lastmod>
+    <lastmod>2022-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
