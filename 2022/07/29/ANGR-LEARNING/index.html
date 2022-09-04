@@ -131,7 +131,60 @@
     <div class="divider"></div>
 
     <div class="content">
-        
+        <p>感谢该文出了ANGR的入门文章</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://bluesadi.github.io/0x401RevTrain-Tools/angr/00_%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86/">https://bluesadi.github.io/0x401RevTrain-Tools/angr/00_%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86/</a></p>
+</blockquote>
+<h1 id="符号执行原理"><a href="#符号执行原理" class="headerlink" title="符号执行原理"></a>符号执行原理</h1><p>通常状态来讲，当我们运行一个程序输入，程序所执行的路径是唯一的</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    x = input();</span><br><span class="line">    y = input();</span><br><span class="line">    z = <span class="number">2</span> * y;</span><br><span class="line">    <span class="keyword">if</span>(x == z)&#123;</span><br><span class="line">        <span class="keyword">if</span>(x &gt; y + <span class="number">10</span>)&#123;</span><br><span class="line">            print(<span class="string">&quot;Path-1&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            print(<span class="string">&quot;Path-2&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        print(<span class="string">&quot;Path-3&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="概念一-符号状态（Symbolic-State）"><a href="#概念一-符号状态（Symbolic-State）" class="headerlink" title="概念一 符号状态（Symbolic State）"></a><strong>概念一 符号状态（<em>Symbolic State</em>）</strong></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x = input();</span><br><span class="line">y = input();</span><br></pre></td></tr></table></figure>
+
+<p><img src="/ANGR-LEARNING/image-20220904113634409.png" alt="image-20220904113634409"></p>
+<h2 id="概念二-路径约束（Path-Constraint），简称PC"><a href="#概念二-路径约束（Path-Constraint），简称PC" class="headerlink" title="概念二 路径约束（Path Constraint），简称PC"></a><strong>概念二 路径约束<em>（Path Constraint）</em>，简称PC</strong></h2><p><img src="/ANGR-LEARNING/image-20220904114129957.png" alt="image-20220904114129957"></p>
+<p>符号执行需要为每一条路径维护一个符号状态σ和一个路径约束PC</p>
+<p><img src="/ANGR-LEARNING/image-20220904140333734.png" alt="image-20220904140333734"></p>
+<p><img src="/ANGR-LEARNING/image-20220904140343377.png" alt="image-20220904140343377"></p>
+<p><img src="/ANGR-LEARNING/image-20220904140650695.png" alt="image-20220904140650695"></p>
+<p>所以该程序执行到最后有3个状态，对应3条不同的路径</p>
+<p><img src="/ANGR-LEARNING/image-20220904141119209.png" alt="image-20220904141119209"></p>
+<h1 id="ANGR-入门"><a href="#ANGR-入门" class="headerlink" title="ANGR 入门"></a>ANGR 入门</h1><h2 id="加载二进制文件"><a href="#加载二进制文件" class="headerlink" title="加载二进制文件"></a>加载二进制文件</h2><p>加载一个二进制文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> angr</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>proj = angr.Project(<span class="string">&#x27;example-1&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>获取二进制文件的属性</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>proj.arch</span><br><span class="line">&lt;Arch AMD64 (LE)&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>proj.entry</span><br><span class="line"><span class="number">4198688</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>proj.filename</span><br><span class="line"><span class="string">&#x27;example-1&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="符号执行状态——SimStae"><a href="#符号执行状态——SimStae" class="headerlink" title="符号执行状态——SimStae"></a>符号执行状态——SimStae</h2><p>符号执行过程中要为每条路径维护一个符号状态σ和路径约束PC，对应angr中的SimState类</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>state = proj.factory.entry_state()</span><br><span class="line">&lt;SimState @ <span class="number">0x401120</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<p>angr中的许多类都需要factory获得，entry_state函数用来获取入口点的状态，也就是初始状态</p>
+<p>同样可以查看属性</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>state.regs.rip</span><br><span class="line">&lt;BV64 <span class="number">0x401120</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>state.regs.rax</span><br><span class="line">&lt;BV64 <span class="number">0x1c</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>state.mem[proj.entry].<span class="built_in">int</span>.resolved</span><br><span class="line">&lt;BV32 <span class="number">0xfa1e0ff3</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在angr中，不论是具体值还是符号量都有相同的类型–claripy.ast.bv.BV，也就是BitVector的意思，BV后面的数字代表比特向量的位数</p>
+<p>BV可以通过claripy这个模块创建：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>claripy.BVV(<span class="number">666</span>, <span class="number">32</span>)        <span class="comment"># 创建一个32位的有具体值的BV</span></span><br><span class="line">&lt;BV32 <span class="number">0x29a</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>claripy.BVS(<span class="string">&#x27;sym_var&#x27;</span>, <span class="number">32</span>)  <span class="comment"># 创建一个32位的符号值BV</span></span><br><span class="line">&lt;BV32 sym_var_97_32&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="符号执行引擎——Simulation-Managers"><a href="#符号执行引擎——Simulation-Managers" class="headerlink" title="符号执行引擎——Simulation Managers"></a>符号执行引擎——Simulation Managers</h2><p>有了初始状态就可以符号执行，要符号执行得先创建一个符号执行引擎</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>simgr = proj.factory.simulation_manager(state)</span><br><span class="line">&lt;SimulationManager <span class="keyword">with</span> <span class="number">1</span> active&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>注意自己编译的文件可能是ASLR的关系，设置地址不大行</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> claripy</span><br><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"></span><br><span class="line">proj = angr.Project(<span class="string">&#x27;example-1&#x27;</span>)                </span><br><span class="line">sym_flag = claripy.BVS(<span class="string">&#x27;flag&#x27;</span>, <span class="number">100</span> * <span class="number">8</span>)    </span><br><span class="line"></span><br><span class="line">state = proj.factory.entry_state(stdin=sym_flag)</span><br><span class="line">simgr = proj.factory.simgr(state)</span><br><span class="line"></span><br><span class="line">simgr.explore(find=<span class="keyword">lambda</span> s: <span class="string">b&quot;Right&quot;</span> <span class="keyword">in</span> s.posix.dumps(<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">s = simgr.found[<span class="number">0</span>]</span><br><span class="line"><span class="built_in">print</span>(s.posix.dumps(<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">flag = s.posix.dumps(<span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(flag)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>拿官网的编译好的题目即可设置地址也称</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> claripy</span><br><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"></span><br><span class="line">proj = angr.Project(<span class="string">&#x27;00_angr_find&#x27;</span>)                </span><br><span class="line"><span class="comment"># sym_flag = claripy.BVS(&#x27;flag&#x27;, 100 * 8)    </span></span><br><span class="line"></span><br><span class="line">state = proj.factory.entry_state()</span><br><span class="line">simgr = proj.factory.simgr(state)</span><br><span class="line"></span><br><span class="line"><span class="comment">#simgr.explore(find=lambda s: b&quot;Good Job&quot; in s.posix.dumps(1))</span></span><br><span class="line"><span class="comment"># 0x804868F</span></span><br><span class="line">simgr.explore(find=<span class="number">0x804868F</span>)</span><br><span class="line"><span class="built_in">print</span>(simgr.found[<span class="number">0</span>].posix.dumps(<span class="number">0</span>))</span><br></pre></td></tr></table></figure>
+
+
     </div>
 
     <p style= "text-align:center">

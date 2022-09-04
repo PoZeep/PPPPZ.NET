@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>流量分析 LEARNING - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>September</span>
+            
+            
+            
+            
+            <span>2,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">流量分析 LEARNING</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>从百草园到三味书屋，我从逆向到流量分析</p>
+<p>最近的逆向题天天整这个流量分析，之前学病毒分析的时候就想学了，今日qsdz师傅给我讲了个入门，大概是了解一点了，也可以准备从最近的题目学习一下该题目。–9.2</p>
+<h1 id="极客巅峰-easy-mb"><a href="#极客巅峰-easy-mb" class="headerlink" title="极客巅峰-easy_mb"></a>极客巅峰-easy_mb</h1><p>首先这是签到题的流量，不过和那题逆向是有关联的，像流浪包丢入都是追踪该流</p>
+<p><img src="/%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90-LEARNING/image-20220902170427962.png" alt="image-20220902170427962"></p>
+<p>那么根据TCP协议进行交换数据</p>
+<p><img src="/%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90-LEARNING/image-20220902170813741.png" alt="image-20220902170813741"></p>
+<p>一个query，请求，一个response，回复</p>
+<p>根据Src与Dst标识哪里发到哪里</p>
+<p>下面就是具体的相应体了</p>
+<p><img src="/%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90-LEARNING/image-20220902171035941.png" alt="image-20220902171035941"></p>
+<p>得去学的</p>
+<ul>
+<li><p>wireshark的各种操作</p>
+</li>
+<li><p>自己写个自定义协议</p>
+</li>
+<li><p>自己开的socket连上去抓包</p>
+</li>
+<li><p>流量包里有各种流量（流量有各种协议，如TCP、UDP…）</p>
+<ul>
+<li>TCP流量里又细分modbus流量…</li>
+</ul>
+</li>
+</ul>
+<p>靠做题慢慢积累了，那么这个流量主要是为了告诉你寄存器的小端序存储</p>
+<p>这题主要是就是这几个函数，解析的不完全，Encrypt应该就在client里的创建新对象所调用</p>
+<p><img src="/%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90-LEARNING/image-20220902171452627.png" alt="image-20220902171452627"></p>
+<p>而Encrypt就要一眼丁真RC5加密（才发现当初西电那题算有点魔改RC5了</p>
+<p>在client拿到key和密文即可</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdint.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ROTL32(x, c) (((x) <span class="meta-string">&lt;&lt; (c)) | ((x) &gt;</span>&gt; (32 - c)))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ROTR32(x, c) (((x) &gt;&gt; (c)) | ((x) &lt;&lt; (32 - c)))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ROTL(x, y) (((x) <span class="meta-string">&lt;&lt; (y &amp; (32 - 1))) | ((x) &gt;</span>&gt; (32 - (y &amp; (32 - 1)))))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ROTR(x, y) (((x) &gt;&gt; (y &amp; (32 - 1))) | ((x) &lt;&lt; (32 - (y &amp; (32 - 1)))))</span></span><br><span class="line"><span class="keyword">int</span> w = <span class="number">32</span>; <span class="comment">//字长 32bit 4字节</span></span><br><span class="line"><span class="keyword">int</span> r = <span class="number">12</span>; <span class="comment">// 12;//加密轮数12</span></span><br><span class="line"><span class="keyword">int</span> b = <span class="number">16</span>; <span class="comment">//主密钥(字节为单位8bit)个数  这里有16个</span></span><br><span class="line"><span class="keyword">int</span> t = <span class="number">26</span>; <span class="comment">// 2*r+2=12*2+2=26</span></span><br><span class="line"><span class="keyword">int</span> c = <span class="number">4</span>;  <span class="comment">//主密钥个数*8/w = 16*8/32</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">generateChildKey</span><span class="params">(<span class="keyword">uint8_t</span> *KeyK, <span class="keyword">uint32_t</span> *ChildKeyS)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">// const double e = 2.718281828459;</span></span><br><span class="line">  <span class="comment">// const double Phia = 1.618033988749;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> PW = <span class="number">0xB7E15163</span>; <span class="comment">// 0xb7e1;</span></span><br><span class="line">  <span class="keyword">int</span> QW = <span class="number">0x9E3779B9</span>; <span class="comment">// 0x9e37;//genggai</span></span><br><span class="line">  <span class="keyword">int</span> i;</span><br><span class="line">  <span class="keyword">int</span> u = w / <span class="number">8</span>; <span class="comment">// b/8;</span></span><br><span class="line">  <span class="keyword">uint32_t</span> A, B, X, Y;</span><br><span class="line">  <span class="keyword">uint32_t</span> L[<span class="number">4</span>]; <span class="comment">// c=16*8/32</span></span><br><span class="line">  A = B = X = Y = <span class="number">0</span>;</span><br><span class="line">  <span class="comment">//初始化数组S</span></span><br><span class="line">  ChildKeyS[<span class="number">0</span>] = PW;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;\n初始子密钥（没有主密钥的参与）：\n%.8X &quot;</span>, ChildKeyS[<span class="number">0</span>]);</span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt; t; i++) <span class="comment">// t=26</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (i % <span class="number">13</span> == <span class="number">0</span>)</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">    ChildKeyS[i] = (ChildKeyS[i - <span class="number">1</span>] + QW);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%.8X &quot;</span>, ChildKeyS[i]);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">//将K数组转换为L数组</span></span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; c; i++) <span class="comment">//初始化L数组c=8</span></span><br><span class="line">  &#123;</span><br><span class="line">    L[i] = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (i = b - <span class="number">1</span>; i != <span class="number">-1</span>; i--) <span class="comment">// b=16  转换主密钥数组（16个 单位为8bit）为L数组（8个单位为16bit），数组L每一元素长为16bit，数组K每一元素长为8bit</span></span><br><span class="line">  &#123;</span><br><span class="line">    L[i / u] = (L[i / u] &lt;&lt; <span class="number">8</span>) + KeyK[i];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;\n把主密钥变换为4字节单位：\n&quot;</span>);</span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; c; i++) <span class="comment">// 16进制输出gaidong</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%.8X &quot;</span>, L[i]);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;\n\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">//产生子密钥，存储在ChildKeyS中</span></span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">3</span> * t; i++)</span><br><span class="line">  &#123;</span><br><span class="line">    X = ChildKeyS[A] = <span class="built_in">ROTL</span>(ChildKeyS[A] + X + Y, <span class="number">3</span>);</span><br><span class="line">    A = (A + <span class="number">1</span>) % t;</span><br><span class="line">    Y = L[B] = <span class="built_in">ROTL</span>(L[B] + X + Y, (X + Y));</span><br><span class="line">    B = (B + <span class="number">1</span>) % c;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;生成的子密钥（初始主密钥参与和初始子密钥也参与）：&quot;</span>);</span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; t; i++) <span class="comment">// 16进制输出</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (i % <span class="number">13</span> == <span class="number">0</span>)</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;0X%.8X, &quot;</span>, ChildKeyS[i]);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;\n\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Encipher</span><span class="params">(<span class="keyword">uint32_t</span> *In, <span class="keyword">uint32_t</span> *Out, <span class="keyword">uint32_t</span> *S)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">uint32_t</span> X, Y; <span class="comment">//定义两个16位存储器</span></span><br><span class="line">  <span class="keyword">int</span> i, j;</span><br><span class="line">  <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; <span class="number">2</span>; j += <span class="number">2</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    X = In[j] + S[<span class="number">0</span>];     <span class="comment">// In[j]+S[0];</span></span><br><span class="line">    Y = In[j + <span class="number">1</span>] + S[<span class="number">1</span>]; <span class="comment">// In[j+1]+S[1];</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= <span class="number">12</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">      X = <span class="built_in">ROTL</span>((X ^ Y), Y) + S[<span class="number">2</span> * i];     <span class="comment">// X=ROTL((X^Y),Y) + S[2*i];   异或，循环移位，相加 //ROTL(x,y) (((x)&lt;&lt;(y&amp;(w-1))) | ((x)&gt;&gt;(w-(y&amp;(w-1)))))</span></span><br><span class="line">      Y = <span class="built_in">ROTL</span>((Y ^ X), X) + S[<span class="number">2</span> * i + <span class="number">1</span>]; <span class="comment">// Y=ROTL((Y^X),X) + S[2*i+1];</span></span><br><span class="line">    &#125;</span><br><span class="line">    Out[j] = X;</span><br><span class="line">    Out[j + <span class="number">1</span>] = Y; <span class="comment">//密文</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Decipher</span><span class="params">(<span class="keyword">uint32_t</span> *In, <span class="keyword">uint32_t</span> *Out, <span class="keyword">uint32_t</span> *S)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  	<span class="keyword">int</span> i = <span class="number">0</span>, j;</span><br><span class="line">  	<span class="keyword">uint32_t</span> X, Y;</span><br><span class="line">  	</span><br><span class="line">  	<span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; <span class="number">2</span>; j += <span class="number">2</span>)</span><br><span class="line">  	&#123;</span><br><span class="line">    	X = In[j];</span><br><span class="line">    	Y = In[j + <span class="number">1</span>];</span><br><span class="line">	    <span class="keyword">for</span> (i = <span class="number">12</span>; i &gt; <span class="number">0</span>; i--)</span><br><span class="line">	    &#123;</span><br><span class="line">	      	Y = <span class="built_in">ROTR</span>(Y - S[<span class="number">2</span> * i + <span class="number">1</span>], X) ^ X; <span class="comment">// Y = ROTR(Y-S[2*i+1],X)^X;相减，循环移位，异或  //ROTR(x,y) (((x)&gt;&gt;(y&amp;(w-1))) | ((x)&lt;&lt;(w-(y&amp;(w-1)))))</span></span><br><span class="line">	      	X = <span class="built_in">ROTR</span>(X - S[<span class="number">2</span> * i], Y) ^ Y;     <span class="comment">// X = ROTR(X-S[2*i],Y)^Y;</span></span><br><span class="line">	    &#125;</span><br><span class="line">    	Out[j] = X - S[<span class="number">0</span>];     <span class="comment">// Out[j]=X - S[0];</span></span><br><span class="line">    	Out[j + <span class="number">1</span>] = Y - S[<span class="number">1</span>]; <span class="comment">//明文 Out[j+1]=Y - S[1];</span></span><br><span class="line">  	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  	<span class="keyword">uint8_t</span> inkey[<span class="number">16</span>] = &#123; <span class="number">0x2D</span>, <span class="number">0xD6</span>, <span class="number">0x45</span>, <span class="number">0x9F</span>, <span class="number">0x82</span>, <span class="number">0xC5</span>, <span class="number">0xB3</span>, <span class="number">0x00</span>, <span class="number">0x95</span>, <span class="number">0x2C</span>, <span class="number">0x49</span>, <span class="number">0x1E</span>, <span class="number">0x48</span>, <span class="number">0x81</span>, <span class="number">0xFF</span>, <span class="number">0x48</span> &#125;;</span><br><span class="line">    <span class="keyword">uint32_t</span> key[<span class="number">26</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    </span><br><span class="line">  	<span class="built_in">generateChildKey</span>(inkey, key);</span><br><span class="line">  	<span class="keyword">uint32_t</span> v[<span class="number">2</span>] = &#123;<span class="number">0x73189ACE</span>, <span class="number">0x7C282BAA</span>&#125;;</span><br><span class="line">  	<span class="keyword">uint32_t</span> t[<span class="number">3</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">  	<span class="comment">// decode(v, key);</span></span><br><span class="line">  	<span class="built_in">Decipher</span>(v, t, key);</span><br><span class="line">  	<span class="built_in">puts</span>((<span class="keyword">char</span> *)t);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>打印出来的数据再小端序排序一下即可，因为流量包的缘故</p>
+<p><img src="/%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90-LEARNING/image-20220902171736785.png" alt="image-20220902171736785"></p>
+<p>参考ltlly师傅的文章</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/FW-ltlly/p/16623930.html">https://www.cnblogs.com/FW-ltlly/p/16623930.html</a></p>
+</blockquote>
+<h1 id="极客巅峰-liuliang"><a href="#极客巅峰-liuliang" class="headerlink" title="极客巅峰-liuliang"></a>极客巅峰-liuliang</h1><p>好吧我也不知道名字是什么，不过好像是签到题的后面一题，题目提示说是温度传感器有异常数据</p>
+<p>查看寄存器发现不同流量的寄存器值不一样，有些特别高，鉴定为异常流量</p>
+<p><img src="/%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90-LEARNING/image-20220904204844931.png" alt="image-20220904204844931"></p>
+<p>于是到出到json，搜索一下发现很多异常流量，有些是重复的，所以排除正常温度和重复异常温度</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;1.json&quot;</span>, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">  data = f.read().split(<span class="string">&quot;\n&quot;</span>)</span><br><span class="line"></span><br><span class="line">flag = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> data:</span><br><span class="line">  <span class="keyword">if</span> <span class="string">&quot;Register 0 (UINT16):&quot;</span> <span class="keyword">in</span> t <span class="keyword">and</span> <span class="string">&quot;Register 0 (UINT16): 27&quot;</span> <span class="keyword">not</span> <span class="keyword">in</span> t <span class="keyword">and</span> <span class="string">&quot;Register 0 (UINT16): 0&quot;</span> <span class="keyword">not</span> <span class="keyword">in</span> t <span class="keyword">and</span> <span class="built_in">int</span>(t[-<span class="number">9</span>:-<span class="number">4</span>], <span class="number">10</span>) <span class="keyword">not</span> <span class="keyword">in</span> flag:</span><br><span class="line">    flag.append(<span class="built_in">int</span>(t[-<span class="number">9</span>:-<span class="number">4</span>], <span class="number">10</span>))</span><br><span class="line"><span class="comment">#    print(int(t[-9:-4], 10), end=&quot;, &quot;)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> flag:</span><br><span class="line">  <span class="built_in">print</span>(<span class="built_in">hex</span>(t)[<span class="number">2</span>:].zfill(<span class="number">4</span>), end=<span class="string">&quot;&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>然后出货）</p>
+<p><img src="/%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90-LEARNING/image-20220904205118820.png" alt="image-20220904205118820"></p>
+
+    </div>
+
+    <p style= "text-align:center">
+        让我看看我被读了 
+    <b><span id="/2022/09/02/流量分析-LEARNING/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        支付宝
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        微信
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-5rvxh62nz-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '评论什么好呢',   //占位符
+    });
+  </script>
+</div>
+
+<!-- <span id="/2022/09/02/流量分析-LEARNING/" class="leancloud_visitors" data-flag-title="流量分析 LEARNING">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2022 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
