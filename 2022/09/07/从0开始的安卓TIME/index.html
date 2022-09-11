@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="color-scheme" content="light dark">
   
-  <title>PYD LEARNING - P.Z&#39;s Blog</title>
+  <title>从0开始的安卓TIME - P.Z&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/favicon.png">
   
@@ -114,35 +114,39 @@
             
             
             
-            <span>August</span>
+            
+            <span>September</span>
             
             
             
             
-            
-            <span>31,</span>
+            <span>7,</span>
             <span>2022</span>
         </div>
         
 
-        <h2 class="title">PYD LEARNING</h2>
+        <h2 class="title">从0开始的安卓TIME</h2>
     </div>
 
     <div class="divider"></div>
 
     <div class="content">
-        <h1 id="8-31"><a href="#8-31" class="headerlink" title="8.31"></a>8.31</h1><p>今日刚一个月的集训结束，数学英语都有所收获，不过逆向上没有什么时间学，好在考试不是很急，最近又对pyd逆向有些兴趣，配合上几道题目来学习一番（当然不能忘了数学英语的继续深入）</p>
-<p>准备逆向的题目！</p>
-<blockquote>
-<p>长城杯 babyre</p>
-<p>华东摆 cry </p>
-</blockquote>
-<h1 id="PYD-字符串"><a href="#PYD-字符串" class="headerlink" title="PYD-字符串"></a>PYD-字符串</h1>
+        <p>今天终于拿到了我的pixel，万物皆可公费，乐）毕业带不走就入手个Pixel4）</p>
+<p>自从给模拟器折磨后我就很久没碰安卓题，碰到即逃避，然而大赛的趋向都是安卓题，从0开始的安卓TIME</p>
+<p>感觉换了个新手机一样，呜呼，我的三星与大白兔面基那天不小心摔到，然后无线模块全部坏了，不扯废话了，开始记录！–2022.9.7</p>
+<h1 id="0x00-基础连接"><a href="#0x00-基础连接" class="headerlink" title="0x00 基础连接"></a>0x00 基础连接</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">adb shell # 连接shell</span><br><span class="line">su # 变井号提权</span><br><span class="line">./data/local/tmp/android_server # 开启IDA远程调试文件</span><br><span class="line"></span><br><span class="line">adb push android_server /data/local/tmp/  # 丢入文件</span><br><span class="line">adb shell chmod 755 /data/local/tmp/android_server # 设置权限</span><br><span class="line">adb forward tcp:23946 tcp:23946 # 转发端口，日后最后换个端口有些反调试会检测</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="基本原生程序调试-法-1"><a href="#基本原生程序调试-法-1" class="headerlink" title="基本原生程序调试 - 法 1"></a>基本原生程序调试 - 法 1</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">adb install easy.apk # 先安装该应用</span><br><span class="line">adb install -t *.apk # 有时候需要强制安装</span><br><span class="line"></span><br><span class="line">adb shell am start -D -n com.a.easyapk/com.a.easyapk.MainActivity # 利用apktools以调试启动该文件</span><br></pre></td></tr></table></figure>
+
+<p>在so里下断直接attach上即可</p>
+
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 
-    <b><span id="/2022/08/31/PYD-LEARNING/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    <b><span id="/2022/09/07/从0开始的安卓TIME/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
     <div id = "frozen-btn" class = "center">
     <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
@@ -211,7 +215,7 @@
   </script>
 </div>
 
-<!-- <span id="/2022/08/31/PYD-LEARNING/" class="leancloud_visitors" data-flag-title="PYD LEARNING">
+<!-- <span id="/2022/09/07/从0开始的安卓TIME/" class="leancloud_visitors" data-flag-title="从0开始的安卓TIME">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->

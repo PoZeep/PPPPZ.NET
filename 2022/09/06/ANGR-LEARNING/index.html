@@ -113,14 +113,14 @@
             
             
             
-            <span>July</span>
+            
+            
+            <span>September</span>
             
             
             
             
-            
-            
-            <span>29,</span>
+            <span>6,</span>
             <span>2022</span>
         </div>
         
@@ -140,7 +140,7 @@
 
 
 
-<h2 id="概念一-符号状态（Symbolic-State）"><a href="#概念一-符号状态（Symbolic-State）" class="headerlink" title="概念一 符号状态（Symbolic State）"></a><strong>概念一 符号状态（<em>Symbolic State</em>）</strong></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x = input();</span><br><span class="line">y = input();</span><br></pre></td></tr></table></figure>
+<h2 id="概念一-符号状态σ（Symbolic-State）"><a href="#概念一-符号状态σ（Symbolic-State）" class="headerlink" title="概念一 符号状态σ（Symbolic State）"></a><strong>概念一 符号状态σ（<em>Symbolic State</em>）</strong></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x = input();</span><br><span class="line">y = input();</span><br></pre></td></tr></table></figure>
 
 <p><img src="/ANGR-LEARNING/image-20220904113634409.png" alt="image-20220904113634409"></p>
 <h2 id="概念二-路径约束（Path-Constraint），简称PC"><a href="#概念二-路径约束（Path-Constraint），简称PC" class="headerlink" title="概念二 路径约束（Path Constraint），简称PC"></a><strong>概念二 路径约束<em>（Path Constraint）</em>，简称PC</strong></h2><p><img src="/ANGR-LEARNING/image-20220904114129957.png" alt="image-20220904114129957"></p>
@@ -161,11 +161,11 @@
 <h2 id="符号执行状态——SimStae"><a href="#符号执行状态——SimStae" class="headerlink" title="符号执行状态——SimStae"></a>符号执行状态——SimStae</h2><p>符号执行过程中要为每条路径维护一个符号状态σ和路径约束PC，对应angr中的SimState类</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>state = proj.factory.entry_state()</span><br><span class="line">&lt;SimState @ <span class="number">0x401120</span>&gt;</span><br></pre></td></tr></table></figure>
 
-<p>angr中的许多类都需要factory获得，entry_state函数用来获取入口点的状态，也就是初始状态</p>
+<p><strong>angr中的许多类都需要factory获得</strong>，entry_state函数用来获取入口点的状态，也就是初始状态</p>
 <p>同样可以查看属性</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>state.regs.rip</span><br><span class="line">&lt;BV64 <span class="number">0x401120</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>state.regs.rax</span><br><span class="line">&lt;BV64 <span class="number">0x1c</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>state.mem[proj.entry].<span class="built_in">int</span>.resolved</span><br><span class="line">&lt;BV32 <span class="number">0xfa1e0ff3</span>&gt;</span><br></pre></td></tr></table></figure>
 
-<p>在angr中，不论是具体值还是符号量都有相同的类型–claripy.ast.bv.BV，也就是BitVector的意思，BV后面的数字代表比特向量的位数</p>
+<p><strong>在angr中，不论是具体值还是符号量都有相同的类型–claripy.ast.bv.BV，也就是BitVector的意思，BV后面的数字代表比特向量的位数</strong>（符号化自己想要的值就是用这个！！）</p>
 <p>BV可以通过claripy这个模块创建：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>claripy.BVV(<span class="number">666</span>, <span class="number">32</span>)        <span class="comment"># 创建一个32位的有具体值的BV</span></span><br><span class="line">&lt;BV32 <span class="number">0x29a</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>claripy.BVS(<span class="string">&#x27;sym_var&#x27;</span>, <span class="number">32</span>)  <span class="comment"># 创建一个32位的符号值BV</span></span><br><span class="line">&lt;BV32 sym_var_97_32&gt;</span><br></pre></td></tr></table></figure>
 
@@ -174,22 +174,70 @@
 
 
 
-<p>注意自己编译的文件可能是ASLR的关系，设置地址不大行</p>
+<p>注意自己编译的文件可能是ASLR的关系，设置地址不大行（现在刚学不知道如何写</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> claripy</span><br><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"></span><br><span class="line">proj = angr.Project(<span class="string">&#x27;example-1&#x27;</span>)                </span><br><span class="line">sym_flag = claripy.BVS(<span class="string">&#x27;flag&#x27;</span>, <span class="number">100</span> * <span class="number">8</span>)    </span><br><span class="line"></span><br><span class="line">state = proj.factory.entry_state(stdin=sym_flag)</span><br><span class="line">simgr = proj.factory.simgr(state)</span><br><span class="line"></span><br><span class="line">simgr.explore(find=<span class="keyword">lambda</span> s: <span class="string">b&quot;Right&quot;</span> <span class="keyword">in</span> s.posix.dumps(<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">s = simgr.found[<span class="number">0</span>]</span><br><span class="line"><span class="built_in">print</span>(s.posix.dumps(<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">flag = s.posix.dumps(<span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(flag)</span><br></pre></td></tr></table></figure>
 
 
 
+<h1 id="ANGR-explore"><a href="#ANGR-explore" class="headerlink" title="ANGR_explore"></a>ANGR_explore</h1><h2 id="00-angr-find"><a href="#00-angr-find" class="headerlink" title="00_angr_find"></a>00_angr_find</h2><p>拿官网的编译好的题目即可设置地址也行，地址就设置打印要打印right的其中一条汇编地址即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"></span><br><span class="line">proj = angr.Project(<span class="string">&#x27;00_angr_find&#x27;</span>)                  </span><br><span class="line"></span><br><span class="line">state = proj.factory.entry_state()</span><br><span class="line">simgr = proj.factory.simgr(state)</span><br><span class="line"></span><br><span class="line">simgr.explore(find=<span class="number">0x804868F</span>)</span><br><span class="line"><span class="built_in">print</span>(simgr.found[<span class="number">0</span>].posix.dumps(<span class="number">0</span>))</span><br></pre></td></tr></table></figure>
 
 
-<p>拿官网的编译好的题目即可设置地址也称</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> claripy</span><br><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"></span><br><span class="line">proj = angr.Project(<span class="string">&#x27;00_angr_find&#x27;</span>)                </span><br><span class="line"><span class="comment"># sym_flag = claripy.BVS(&#x27;flag&#x27;, 100 * 8)    </span></span><br><span class="line"></span><br><span class="line">state = proj.factory.entry_state()</span><br><span class="line">simgr = proj.factory.simgr(state)</span><br><span class="line"></span><br><span class="line"><span class="comment">#simgr.explore(find=lambda s: b&quot;Good Job&quot; in s.posix.dumps(1))</span></span><br><span class="line"><span class="comment"># 0x804868F</span></span><br><span class="line">simgr.explore(find=<span class="number">0x804868F</span>)</span><br><span class="line"><span class="built_in">print</span>(simgr.found[<span class="number">0</span>].posix.dumps(<span class="number">0</span>))</span><br></pre></td></tr></table></figure>
+
+<h2 id="01-angr-avoid"><a href="#01-angr-avoid" class="headerlink" title="01_angr_avoid"></a>01_angr_avoid</h2><p>该文件有非常多的分支，查看关键代码，其实should_succed不能被设置为0</p>
+<p><img src="/ANGR-LEARNING/image-20220906154629082.png" alt="image-20220906154629082"></p>
+<p>从引用中可以看到，该函数要把should_succeed设置为0，所以explore有个参数是avoid，设置该地址即可</p>
+<p><img src="/ANGR-LEARNING/image-20220906154724946.png" alt="image-20220906154724946"></p>
+<p>（不设置也没事，就是慢了点）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"></span><br><span class="line">proj = angr.Project(<span class="string">&#x27;01_angr_avoid&#x27;</span>)                </span><br><span class="line"></span><br><span class="line">state = proj.factory.entry_state()</span><br><span class="line">simgr = proj.factory.simgr(state)</span><br><span class="line"></span><br><span class="line">simgr.explore(find=<span class="number">0x80485F7</span>, avoid=<span class="number">0x80485C2</span>)</span><br><span class="line"><span class="built_in">print</span>(simgr.found[<span class="number">0</span>].posix.dumps(<span class="number">0</span>))</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="02-angr-find-condition"><a href="#02-angr-find-condition" class="headerlink" title="02_angr_find_condition"></a>02_angr_find_condition</h2><p>该题有大量混淆，不能确定哪个是真的right（其实F5后再TAB关键代表就可）如果找不到正确的地址angr就G了，所以除了find地址还有种办法</p>
+<p><img src="/ANGR-LEARNING/image-20220906155300197.png" alt="image-20220906155300197"></p>
+<p>于是一种方法就是看字符串</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"></span><br><span class="line">proj = angr.Project(<span class="string">&#x27;02_angr_find_condition&#x27;</span>)                </span><br><span class="line"></span><br><span class="line">state = proj.factory.entry_state()</span><br><span class="line">simgr = proj.factory.simgr(state)</span><br><span class="line"></span><br><span class="line">simgr.explore(</span><br><span class="line">    find=<span class="keyword">lambda</span> state: <span class="string">b&#x27;Good Job.&#x27;</span> <span class="keyword">in</span> state.posix.dumps(<span class="number">1</span>),</span><br><span class="line">    avoid=<span class="keyword">lambda</span> state: <span class="string">b&#x27;Try again.&#x27;</span> <span class="keyword">in</span> state.posix.dumps(<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(simgr.found[<span class="number">0</span>].posix.dumps(<span class="number">0</span>))</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="ANGR-symbolic"><a href="#ANGR-symbolic" class="headerlink" title="ANGR_symbolic"></a>ANGR_symbolic</h1><p>angr在默认状态下只会符号化从 <strong>标准输入流</strong> 中读取的数据，而实际情况下需要我们符号化其他数据，寄存器、某块内存，甚至还可以文件。</p>
+<h2 id="03-angr-symbolic-registers"><a href="#03-angr-symbolic-registers" class="headerlink" title="03_angr_symbolic_registers"></a>03_angr_symbolic_registers</h2><p>那么该题要构造我们的输入，我们的输入为三次，进入不同的加密</p>
+<p>分别存放到了eax ebx 与 edx，所以符号化这三个寄存器</p>
+<p><img src="/ANGR-LEARNING/image-20220906160325398.png" alt="image-20220906160325398"></p>
+<p>在angr入门记录过的 claripy.BVS，用来符号化我们想要的值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">password0 = claripy.BVS(<span class="string">&#x27;password0&#x27;</span>, <span class="number">32</span>)</span><br><span class="line">password1 = claripy.BVS(<span class="string">&#x27;password1&#x27;</span>, <span class="number">32</span>)</span><br><span class="line">password2 = claripy.BVS(<span class="string">&#x27;password2&#x27;</span>, <span class="number">32</span>)</span><br><span class="line"></span><br><span class="line">state.regs.eax = password0</span><br><span class="line">state.regs.ebx = password1</span><br><span class="line">state.regs.edx = password2</span><br></pre></td></tr></table></figure>
+
+<p>接着让angr跑到爆right的地方</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">simgr = proj.factory.simgr(state)</span><br><span class="line">simgr.explore(find = <span class="number">0x804892A</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>符号执行的过程中每个状态都会内置一个约束求解器solver，求解器中保存了当前路径PC，所以    我们可以在当前状态手动添加新的约束，但既然已经跑到right，所以不需要加约束了，直接打印即可</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">solver = simgr.found[<span class="number">0</span>].solver</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;password0: <span class="subst">&#123;<span class="built_in">hex</span>(solver.<span class="built_in">eval</span>(password0))&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;password1: <span class="subst">&#123;<span class="built_in">hex</span>(solver.<span class="built_in">eval</span>(password1))&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;password2: <span class="subst">&#123;<span class="built_in">hex</span>(solver.<span class="built_in">eval</span>(password2))&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>完整脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"><span class="keyword">import</span> claripy</span><br><span class="line"></span><br><span class="line">proj = angr.Project(<span class="string">&#x27;03_angr_symbolic_registers&#x27;</span>)</span><br><span class="line">state = proj.factory.blank_state(addr = <span class="number">0x80488C7</span>)</span><br><span class="line"></span><br><span class="line">password0 = claripy.BVS(<span class="string">&#x27;password0&#x27;</span>, <span class="number">32</span>)</span><br><span class="line">password1 = claripy.BVS(<span class="string">&#x27;password1&#x27;</span>, <span class="number">32</span>)</span><br><span class="line">password2 = claripy.BVS(<span class="string">&#x27;password2&#x27;</span>, <span class="number">32</span>)</span><br><span class="line"></span><br><span class="line">state.regs.eax = password0</span><br><span class="line">state.regs.ebx = password1</span><br><span class="line">state.regs.edx = password2</span><br><span class="line"></span><br><span class="line">simgr = proj.factory.simgr(state)</span><br><span class="line">simgr.explore(find = <span class="number">0x804892A</span>)</span><br><span class="line"></span><br><span class="line">solver = simgr.found[<span class="number">0</span>].solver</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;password0: <span class="subst">&#123;<span class="built_in">hex</span>(solver.<span class="built_in">eval</span>(password0))&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;password1: <span class="subst">&#123;<span class="built_in">hex</span>(solver.<span class="built_in">eval</span>(password1))&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;password2: <span class="subst">&#123;<span class="built_in">hex</span>(solver.<span class="built_in">eval</span>(password2))&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">state = proj.factory.blank_state(addr = <span class="number">0x80488C7</span>)</span><br></pre></td></tr></table></figure>
+
+<p>因为在0x80488C7之前的指令对我们的求解其实是没有任何作用的，包括get_user_input函数，因为接下来我们就要将get_user_input函数的结果符号化了，而不是让angr自动帮我们符号化通过scanf读取的数据</p>
+<p><img src="/ANGR-LEARNING/image-20220906163237951.png" alt="image-20220906163237951"></p>
+<p>tips:</p>
+<p>Q：直接在这里开始符号执行，那么初始状态是怎么样的？</p>
+<p>A：像eax ecx edx与上下文无关，也不会造成栈爆炸之类，且用blank_state获取的状态处于未初始化也没关系，因为马上要被符号化</p>
+<p>Q：那么ESP、EBP呢</p>
+<p>A：用blank_state获取的状态，angr会给esp一个默认的值，这样不会让接下来的函数爆炸，而ebp没有赋予一个值不过没关系</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; state.regs.esp</span><br><span class="line">&lt;BV32 0x7fff0000&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="04-angr-symbolic-stack"><a href="#04-angr-symbolic-stack" class="headerlink" title="04_angr_symbolic_stack"></a>04_angr_symbolic_stack</h2><h2 id="06-angr-symbolic-dynamic-memory"><a href="#06-angr-symbolic-dynamic-memory" class="headerlink" title="06_angr_symbolic_dynamic_memory"></a>06_angr_symbolic_dynamic_memory</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import angr</span><br><span class="line">import claripy</span><br><span class="line"></span><br><span class="line">proj = angr.Project(&#x27;06_angr_symbolic_dynamic_memory&#x27;)</span><br><span class="line">state = proj.factory.blank_state(addr = 0x80486AF)</span><br><span class="line"></span><br><span class="line">password0 = claripy.BVS(&#x27;password0&#x27;, 64)</span><br><span class="line">password1 = claripy.BVS(&#x27;password1&#x27;, 64)</span><br><span class="line"></span><br><span class="line">state.mem[0x804A6C0].uint64_t = password0</span><br><span class="line">state.mem[0x804A6C0 + 8].uint64_t = password1</span><br><span class="line">state.mem[0xA2DEF74].uint32_t = 0x804A6C0</span><br><span class="line">state.mem[0xA2DEF7C].uint32_t = 0x804A6C0 + 8</span><br><span class="line"></span><br><span class="line">simgr = proj.factory.simgr(state)</span><br><span class="line">simgr.explore(find = 0x8048775)</span><br><span class="line">sol = simgr.found[0].solver</span><br><span class="line">print(sol.eval(password0, cast_to=bytes))</span><br><span class="line">print(sol.eval(password1, cast_to=bytes))</span><br></pre></td></tr></table></figure>
 
 
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 
-    <b><span id="/2022/07/29/ANGR-LEARNING/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    <b><span id="/2022/09/06/ANGR-LEARNING/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
     <div id = "frozen-btn" class = "center">
     <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
@@ -258,7 +306,7 @@
   </script>
 </div>
 
-<!-- <span id="/2022/07/29/ANGR-LEARNING/" class="leancloud_visitors" data-flag-title="ANGR-LEARNING">
+<!-- <span id="/2022/09/06/ANGR-LEARNING/" class="leancloud_visitors" data-flag-title="ANGR-LEARNING">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->
