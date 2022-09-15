@@ -120,7 +120,7 @@
             
             
             
-            <span>6,</span>
+            <span>13,</span>
             <span>2022</span>
         </div>
         
@@ -230,14 +230,33 @@
 
 
 
-<h2 id="04-angr-symbolic-stack"><a href="#04-angr-symbolic-stack" class="headerlink" title="04_angr_symbolic_stack"></a>04_angr_symbolic_stack</h2><h2 id="06-angr-symbolic-dynamic-memory"><a href="#06-angr-symbolic-dynamic-memory" class="headerlink" title="06_angr_symbolic_dynamic_memory"></a>06_angr_symbolic_dynamic_memory</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import angr</span><br><span class="line">import claripy</span><br><span class="line"></span><br><span class="line">proj = angr.Project(&#x27;06_angr_symbolic_dynamic_memory&#x27;)</span><br><span class="line">state = proj.factory.blank_state(addr = 0x80486AF)</span><br><span class="line"></span><br><span class="line">password0 = claripy.BVS(&#x27;password0&#x27;, 64)</span><br><span class="line">password1 = claripy.BVS(&#x27;password1&#x27;, 64)</span><br><span class="line"></span><br><span class="line">state.mem[0x804A6C0].uint64_t = password0</span><br><span class="line">state.mem[0x804A6C0 + 8].uint64_t = password1</span><br><span class="line">state.mem[0xA2DEF74].uint32_t = 0x804A6C0</span><br><span class="line">state.mem[0xA2DEF7C].uint32_t = 0x804A6C0 + 8</span><br><span class="line"></span><br><span class="line">simgr = proj.factory.simgr(state)</span><br><span class="line">simgr.explore(find = 0x8048775)</span><br><span class="line">sol = simgr.found[0].solver</span><br><span class="line">print(sol.eval(password0, cast_to=bytes))</span><br><span class="line">print(sol.eval(password1, cast_to=bytes))</span><br></pre></td></tr></table></figure>
+<h2 id="04-angr-symbolic-stack"><a href="#04-angr-symbolic-stack" class="headerlink" title="04_angr_symbolic_stack"></a>04_angr_symbolic_stack</h2><p>铁咩，自己算半天算不明白，原来是认知错误，pwn👴一来就看出端倪，弄懂了算偏移发现文件有问题，我说怎么IDA里的地址都和别人的不一样，之前还好，现在是答案都跑不出来了，结果LN的附件一下就行，铁咩</p>
+<p>这题要符号化堆栈，依然不需要scanf不过需要正确的ebp值，而具体ebp什么不重要（因为要取ebp + varC之类的值），重要的是与esp的偏移地址</p>
+<p>那么首先算可得</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">state.regs.ebp = state.regs.esp + <span class="number">40</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/ANGR-LEARNING/image-20220913160221725.png" alt="image-20220913160221725"></p>
+<p>随后我们要让符号化的值push到ebp + var_C相应的位置</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">state.regs.esp = state.regs.ebp - <span class="number">0xC</span> + <span class="number">4</span></span><br><span class="line">password0 = claripy.BVS(<span class="string">&#x27;password0&#x27;</span>, <span class="number">32</span>)</span><br><span class="line">password1 = claripy.BVS(<span class="string">&#x27;password1&#x27;</span>, <span class="number">32</span>)</span><br><span class="line">state.stack_push(password0)</span><br><span class="line">state.stack_push(password1)</span><br><span class="line">state.regs.esp = state.regs.ebp - <span class="number">40</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/ANGR-LEARNING/image-20220913160612156.png" alt="image-20220913160612156"></p>
+<p>所以为什么是 -C + 4？？我就是卡在这了</p>
+<p>双击点入相应变量，这里的 + 的是负数，实际是 ebp - C 才是正确的偏移</p>
+<p>而 + 4 是因为第一个变量存放的是 8 - 12 这四个字节的内存，然后再push两个符号化的值就正好符号我们内存放input的变量</p>
+<p><img src="/ANGR-LEARNING/image-20220913160720422.png" alt="image-20220913160720422"></p>
+<p>解毕</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"><span class="keyword">import</span> claripy</span><br><span class="line"></span><br><span class="line">proj = angr.Project(<span class="string">&#x27;../dist/04_angr_symbolic_stack&#x27;</span>)</span><br><span class="line">state = proj.factory.blank_state(addr=<span class="number">0x8048694</span>)</span><br><span class="line"></span><br><span class="line">state.regs.ebp = state.regs.esp + <span class="number">40</span></span><br><span class="line">state.regs.esp = state.regs.ebp - <span class="number">0xC</span> + <span class="number">4</span></span><br><span class="line">password0 = claripy.BVS(<span class="string">&#x27;password0&#x27;</span>, <span class="number">32</span>)</span><br><span class="line">password1 = claripy.BVS(<span class="string">&#x27;password1&#x27;</span>, <span class="number">32</span>)</span><br><span class="line">state.stack_push(password0)</span><br><span class="line">state.stack_push(password1)</span><br><span class="line">state.regs.esp = state.regs.ebp - <span class="number">40</span></span><br><span class="line"></span><br><span class="line">simgr = proj.factory.simgr(state)</span><br><span class="line">simgr.explore(find=<span class="number">0x80486E1</span>)</span><br><span class="line">solver = simgr.found[<span class="number">0</span>].solver</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;password0: <span class="subst">&#123;<span class="built_in">hex</span>(solver.<span class="built_in">eval</span>(password0))&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;password1: <span class="subst">&#123;<span class="built_in">hex</span>(solver.<span class="built_in">eval</span>(password1))&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="06-angr-symbolic-dynamic-memory"><a href="#06-angr-symbolic-dynamic-memory" class="headerlink" title="06_angr_symbolic_dynamic_memory"></a>06_angr_symbolic_dynamic_memory</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import angr</span><br><span class="line">import claripy</span><br><span class="line"></span><br><span class="line">proj = angr.Project(&#x27;06_angr_symbolic_dynamic_memory&#x27;)</span><br><span class="line">state = proj.factory.blank_state(addr = 0x80486AF)</span><br><span class="line"></span><br><span class="line">password0 = claripy.BVS(&#x27;password0&#x27;, 64)</span><br><span class="line">password1 = claripy.BVS(&#x27;password1&#x27;, 64)</span><br><span class="line"></span><br><span class="line">state.mem[0x804A6C0].uint64_t = password0</span><br><span class="line">state.mem[0x804A6C0 + 8].uint64_t = password1</span><br><span class="line">state.mem[0xA2DEF74].uint32_t = 0x804A6C0</span><br><span class="line">state.mem[0xA2DEF7C].uint32_t = 0x804A6C0 + 8</span><br><span class="line"></span><br><span class="line">simgr = proj.factory.simgr(state)</span><br><span class="line">simgr.explore(find = 0x8048775)</span><br><span class="line">sol = simgr.found[0].solver</span><br><span class="line">print(sol.eval(password0, cast_to=bytes))</span><br><span class="line">print(sol.eval(password1, cast_to=bytes))</span><br></pre></td></tr></table></figure>
 
 
     </div>
 
     <p style= "text-align:center">
         让我看看我被读了 
-    <b><span id="/2022/09/06/ANGR-LEARNING/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    <b><span id="/2022/09/13/ANGR-LEARNING/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
     
     <div id = "frozen-btn" class = "center">
     <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
@@ -306,7 +325,7 @@
   </script>
 </div>
 
-<!-- <span id="/2022/09/06/ANGR-LEARNING/" class="leancloud_visitors" data-flag-title="ANGR-LEARNING">
+<!-- <span id="/2022/09/13/ANGR-LEARNING/" class="leancloud_visitors" data-flag-title="ANGR-LEARNING">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="waline-visitor-count"></i>
 </span> -->
