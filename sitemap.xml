@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2022/09/18/About-9-18-This-Week/</loc>
+    
+    <lastmod>2022-09-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/09/13/ANGR-LEARNING/</loc>
+    
+    <lastmod>2022-09-15</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2022/09/15/FlareOn4-greek-to-me/</loc>
     
     <lastmod>2022-09-15</lastmod>
@@ -14,15 +32,6 @@
     <loc>http://ppppz.net/2022/09/14/IDApython-LEARNING/</loc>
     
     <lastmod>2022-09-14</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/2022/09/13/ANGR-LEARNING/</loc>
-    
-    <lastmod>2022-09-13</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1561,7 +1570,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-09-15</lastmod>
+    <lastmod>2022-09-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
