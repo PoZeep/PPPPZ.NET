@@ -2,9 +2,36 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://ppppz.net/2022/09/18/About-9-18-This-Week/</loc>
+    <loc>http://ppppz.net/2022/09/25/About-9-25-This-Week/</loc>
     
-    <lastmod>2022-09-18</lastmod>
+    <lastmod>2022-09-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/09/22/DASCTF-X-CB-Landing-cbNET/</loc>
+    
+    <lastmod>2022-09-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/CTF/2022/DASCTF%20X%20CB.html</loc>
+    
+    <lastmod>2022-09-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/CTF/CTF.html</loc>
+    
+    <lastmod>2022-09-22</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -13,7 +40,16 @@
   <url>
     <loc>http://ppppz.net/2022/09/13/ANGR-LEARNING/</loc>
     
-    <lastmod>2022-09-15</lastmod>
+    <lastmod>2022-09-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/09/18/About-9-18-This-Week/</loc>
+    
+    <lastmod>2022-09-18</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -95,15 +131,6 @@
     <loc>http://ppppz.net/2022/09/02/%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90-LEARNING/</loc>
     
     <lastmod>2022-09-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/CTF/CTF.html</loc>
-    
-    <lastmod>2022-09-01</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1570,7 +1597,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-09-18</lastmod>
+    <lastmod>2022-09-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
