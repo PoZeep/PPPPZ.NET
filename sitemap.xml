@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2022/10/16/About-10-16-This-Week/</loc>
+    
+    <lastmod>2022-10-16</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/10/01/%E3%80%90NewStarCTF%E3%80%91WEEK2-REVERSE/</loc>
+    
+    <lastmod>2022-10-13</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2022/10/09/About-10-9-This-Week/</loc>
     
     <lastmod>2022-10-09</lastmod>
@@ -23,15 +41,6 @@
     <loc>http://ppppz.net/2022/10/02/About-10-2-This-Week/</loc>
     
     <lastmod>2022-10-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/2022/10/01/%E3%80%90NewStarCTF%E3%80%91WEEK2-REVERSE/</loc>
-    
-    <lastmod>2022-10-01</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1525,7 +1534,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-10-09</lastmod>
+    <lastmod>2022-10-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
