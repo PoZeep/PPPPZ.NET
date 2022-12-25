@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2022/12/25/About-12-25-This-Week/</loc>
+    
+    <lastmod>2022-12-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/Friends/Friends.html</loc>
+    
+    <lastmod>2022-12-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2022/12/18/About-12-18-This-Week/</loc>
     
     <lastmod>2022-12-18</lastmod>
@@ -212,15 +230,6 @@
     <loc>http://ppppz.net/2022/09/04/About-9-4-This-Week/</loc>
     
     <lastmod>2022-09-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/Friends/Friends.html</loc>
-    
-    <lastmod>2022-09-01</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1624,7 +1633,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2022-12-18</lastmod>
+    <lastmod>2022-12-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
