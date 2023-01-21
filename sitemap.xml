@@ -2,18 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://ppppz.net/SekiGalaxy/index.html</loc>
+    <loc>http://ppppz.net/2023/01/31/2023-January/</loc>
     
-    <lastmod>2023-01-17</lastmod>
+    <lastmod>2023-01-21</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://ppppz.net/2023/01/31/2023-January/</loc>
+    <loc>http://ppppz.net/SekiGalaxy/index.html</loc>
     
-    <lastmod>2023-01-15</lastmod>
+    <lastmod>2023-01-17</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1660,7 +1660,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2023-01-17</lastmod>
+    <lastmod>2023-01-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
