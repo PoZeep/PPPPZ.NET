@@ -2,7 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://ppppz.net/Friends/Friends.html</loc>
+    <loc>http://ppppz.net/2023/02/27/2023-March/</loc>
+    
+    <lastmod>2023-03-05</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2023/02/28/2023-February/</loc>
     
     <lastmod>2023-02-27</lastmod>
     
@@ -11,7 +20,7 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/2023/02/28/2023-February/</loc>
+    <loc>http://ppppz.net/Friends/Friends.html</loc>
     
     <lastmod>2023-02-27</lastmod>
     
@@ -1669,7 +1678,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2023-02-27</lastmod>
+    <lastmod>2023-03-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
