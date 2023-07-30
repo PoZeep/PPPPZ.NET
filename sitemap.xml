@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2023/07/25/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A22023-REVERSE/</loc>
+    
+    <lastmod>2023-07-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2023/07/24/DASCTF2023-X-0X401-REVERSE/</loc>
+    
+    <lastmod>2023-07-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2023/07/20/IL2CPP/</loc>
     
     <lastmod>2023-07-21</lastmod>
@@ -1768,7 +1786,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2023-07-21</lastmod>
+    <lastmod>2023-07-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>巅峰极客2023 REVERSE - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            
+            <span>July</span>
+            
+            
+            
+            
+            
+            
+            <span>25,</span>
+            <span>2023</span>
+        </div>
+        
+
+        <h2 class="title">巅峰极客2023 REVERSE</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <h1 id="M1-Read"><a href="#M1-Read" class="headerlink" title="M1_Read"></a>M1_Read</h1><h2 id="0x00-Daily-Shell-Check"><a href="#0x00-Daily-Shell-Check" class="headerlink" title="0x00 Daily Shell Check"></a>0x00 Daily Shell Check</h2><p>无壳64位</p>
+<p><img src="/2023/07/25/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A22023-REVERSE/image-20230725142553984.png" alt="image-20230725142553984"></p>
+<h2 id="0x01-DFA"><a href="#0x01-DFA" class="headerlink" title="0x01 DFA"></a>0x01 DFA</h2><blockquote>
+<p>Refer: <a target="_blank" rel="noopener" href="https://blog.csdn.net/fenfei331/article/details/126385120">https://blog.csdn.net/fenfei331/article/details/126385120</a></p>
+</blockquote>
+<p>属于是知识盲区，不过去年好像听谁提过一句 DFA 攻击，在 AES-128 中其实就是在第九轮的列混合之前的时候<strong>修改一个字节</strong>，而第九轮就是最后一次列混合了，第十轮是没有列混合的。</p>
+<p><img src="/2023/07/25/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A22023-REVERSE/%60MC$RB1%60C1H7ZPJG08BRF%5BQ.png" alt="img"></p>
+<p>于是会导致这样出来的密文与原密文有四个字节不一样，经过多次修改就会有多组错误密文，然后通过正确密文和错误密文就可以推算出第10轮的密钥，继而推出原始密钥。</p>
+<p>所以在实际应用中，就需要找准列混合的函数位置，在他之前修改数据。</p>
+<p>而在实际样本分析中，如果 <strong>结果全部不同</strong> 说明时机太早了，<strong>只有一个不同</strong> 说明时机太晚了。</p>
+<h3 id="Frida-Hook"><a href="#Frida-Hook" class="headerlink" title="Frida Hook"></a>Frida Hook</h3><p>那么现在就是去 hook 程序中的轮密钥加的位置了，在一堆函数中翻翻翻配合 fincrypt 可以猜测 sub_140004BF0 是 AES 加密</p>
+<p><img src="/2023/07/25/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A22023-REVERSE/image-20230727164637240.png" alt="image-20230727164637240"></p>
+<p>于是 hook 的思路</p>
+<ul>
+<li>hook 进入加密 do while 循环前的一个地址计数，第九轮的时候修改值</li>
+<li>主动调用该函数，多次获取密文，即可拿到错误数据</li>
+</ul>
+<p>写出脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> frida</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">session = frida.attach(<span class="string">&quot;m1_read.exe&quot;</span>)</span><br><span class="line"></span><br><span class="line">script = session.create_script(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">  var baseAddr = Module.findBaseAddress(&quot;m1_read.exe&quot;);</span></span><br><span class="line"><span class="string">  var whiteAES = new NativeFunction(baseAddr.add(0x4BF0), &#x27;pointer&#x27;, [&#x27;pointer&#x27;, &#x27;pointer&#x27;])</span></span><br><span class="line"><span class="string">  var count = 9;</span></span><br><span class="line"><span class="string">  Interceptor.attach(baseAddr.add(0x4C2C), &#123;</span></span><br><span class="line"><span class="string">      onEnter: function(args) &#123;</span></span><br><span class="line"><span class="string">          count++;</span></span><br><span class="line"><span class="string">          if(count == 9) &#123;</span></span><br><span class="line"><span class="string">//              console.log(Math.floor(Math.random() * 16)).writeU8(Math.floor(Math.random() * 256));</span></span><br><span class="line"><span class="string">              this.context.rdi.add(Math.floor(Math.random() * 16)).writeU8(Math.floor(Math.random() * 256));</span></span><br><span class="line"><span class="string">          &#125; </span></span><br><span class="line"><span class="string">      &#125;,</span></span><br><span class="line"><span class="string">      onLeave: (retval) =&gt; &#123;</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">  &#125;)</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">  for (let index = 0; index &lt; 32; index++) &#123;</span></span><br><span class="line"><span class="string">      var l = Memory.allocAnsiString(&quot;1234567890abcdef&quot;);</span></span><br><span class="line"><span class="string">      var b = Memory.alloc(16);</span></span><br><span class="line"><span class="string">      whiteAES(l, b);</span></span><br><span class="line"><span class="string">      console.log(b.readByteArray(16));</span></span><br><span class="line"><span class="string">      count = 0;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">                               &quot;&quot;&quot;</span>)</span><br><span class="line">script.load()</span><br></pre></td></tr></table></figure>
+
+<p>（学习了 sink 师傅的 frida 脚本）</p>
+<p>这样子就可以拿到多组的结果了，随后利用该工具来获取最后一轮的 key</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/SideChannelMarvels/JeanGrey">https://github.com/SideChannelMarvels/JeanGrey</a></p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line">data = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">ca 42 9f dc 6b fa 9b 5e 54 0c 8f 14 b0 3b ae 88  .B..k..^T....;..</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca 3a 9f dc 1d fa 9b 5e 54 0c 8f 87 b0 3b 6e 88  .:.....^T....;n.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca 69 9f dc 9f fa 9b 5e 54 0c 8f 11 b0 3b f5 88  .i.....^T....;..</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca d4 9f dc bd fa 9b 5e 54 0c 8f a5 b0 3b 3f 88  .......^T....;?.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca 42 44 dc 6b 17 9b 5e f3 0c 8f 14 b0 3b ae e0  .BD.k..^.....;..</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca c3 9f dc a3 fa 9b 5e 54 0c 8f 6f b0 3b d6 88  .......^T..o.;..</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca 42 9f 9b 6b fa 3d 5e 54 44 8f 14 6f 3b ae 88  .B..k.=^TD..o;..</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca 42 6b dc 6b ba 9b 5e 56 0c 8f 14 b0 3b ae e8  .Bk.k..^V....;..</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca 42 6c dc 6b 55 9b 5e e3 0c 8f 14 b0 3b ae 6e  .Bl.kU.^.....;.n</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca 42 9f ea 6b fa 45 5e 54 d4 8f 14 61 3b ae 88  .B..k.E^T...a;..</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca 42 f3 dc 6b 09 9b 5e bf 0c 8f 14 b0 3b ae 69  .B..k..^.....;.i</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca 42 9f 93 6b fa 61 5e 54 c3 8f 14 fe 3b ae 88  .B..k.a^T....;..</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca f3 9f dc 8d fa 9b 5e 54 0c 8f 84 b0 3b 21 88  .......^T....;!.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca d6 9f dc b2 fa 9b 5e 54 0c 8f f9 b0 3b e2 88  .......^T....;..</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca 42 9f fd 6b fa b9 5e 54 f7 8f 14 a6 3b ae 88  .B..k..^T....;..</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ca 40 9f dc cf fa 9b 5e 54 0c 8f e4 b0 3b 96 88  .@.....^T....;..</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">arr_data = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> data.split(<span class="string">&#x27;\n&#x27;</span>):</span><br><span class="line">    tmp = <span class="built_in">bytearray</span>.fromhex(t[:<span class="number">47</span>])</span><br><span class="line">    <span class="keyword">if</span> tmp != <span class="string">b&#x27;&#x27;</span>:</span><br><span class="line">        arr_data += tmp.<span class="built_in">hex</span>() + <span class="string">&#x27;\n&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(arr_data)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> phoenixAES</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;tracefile&quot;</span>, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> t:</span><br><span class="line">    t.write(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">ca429fdc6bfa9b5e540c8f14b03bae88</span></span><br><span class="line"><span class="string">ca3a9fdc1dfa9b5e540c8f87b03b6e88</span></span><br><span class="line"><span class="string">ca699fdc9ffa9b5e540c8f11b03bf588</span></span><br><span class="line"><span class="string">cad49fdcbdfa9b5e540c8fa5b03b3f88</span></span><br><span class="line"><span class="string">ca4244dc6b179b5ef30c8f14b03baee0</span></span><br><span class="line"><span class="string">cac39fdca3fa9b5e540c8f6fb03bd688</span></span><br><span class="line"><span class="string">ca429f9b6bfa3d5e54448f146f3bae88</span></span><br><span class="line"><span class="string">ca426bdc6bba9b5e560c8f14b03baee8</span></span><br><span class="line"><span class="string">ca426cdc6b559b5ee30c8f14b03bae6e</span></span><br><span class="line"><span class="string">ca429fea6bfa455e54d48f14613bae88</span></span><br><span class="line"><span class="string">ca42f3dc6b099b5ebf0c8f14b03bae69</span></span><br><span class="line"><span class="string">ca429f936bfa615e54c38f14fe3bae88</span></span><br><span class="line"><span class="string">caf39fdc8dfa9b5e540c8f84b03b2188</span></span><br><span class="line"><span class="string">cad69fdcb2fa9b5e540c8ff9b03be288</span></span><br><span class="line"><span class="string">ca429ffd6bfab95e54f78f14a63bae88</span></span><br><span class="line"><span class="string">ca409fdccffa9b5e540c8fe4b03b9688</span></span><br><span class="line"><span class="string">ca42a0dc6bf59b5e450c8f14b03baefe</span></span><br><span class="line"><span class="string">ca42dedc6b039b5e2b0c8f14b03baeed</span></span><br><span class="line"><span class="string">91429fdc6bfa9bb9540c3514b0fcae88</span></span><br><span class="line"><span class="string">ca2a9fdc77fa9b5e540c8ff7b03bd388</span></span><br><span class="line"><span class="string">ca429fbf6bfa7c5e547c8f14823bae88</span></span><br><span class="line"><span class="string">ca429f086bfafc5e54a08f14143bae88</span></span><br><span class="line"><span class="string">caf89fdc25fa9b5e540c8f65b03b6888</span></span><br><span class="line"><span class="string">a0429fdc6bfa9bda540c5e14b015ae88</span></span><br><span class="line"><span class="string">ca42c6dc6bf59b5e620c8f14b03bae72</span></span><br><span class="line"><span class="string">ca009fdc01fa9b5e540c8ff0b03b1288</span></span><br><span class="line"><span class="string">ca429f306bfa345e54b78f14dc3bae88</span></span><br><span class="line"><span class="string">ca429f2b6bfa665e547b8f14793bae88</span></span><br><span class="line"><span class="string">ca42f8dc6ba19b5e590c8f14b03baeb5</span></span><br><span class="line"><span class="string">cac89fdcfafa9b5e540c8f63b03b0488</span></span><br><span class="line"><span class="string">ca429fe76bfa755e54b18f146b3bae88</span></span><br><span class="line"><span class="string">ca429fd66bfa485e541a8f14a43bae88</span></span><br><span class="line"><span class="string">ca4270dc6b369b5ee10c8f14b03bae6a</span></span><br><span class="line"><span class="string">caf39fdc8dfa9b5e540c8f84b03b2188</span></span><br><span class="line"><span class="string">ca429f9e6bfa885e548c8f14623bae88</span></span><br><span class="line"><span class="string">ca429f9f6bfa635e540f8f14d13bae88</span></span><br><span class="line"><span class="string">ca429f666bfa795e54928f14ed3bae88</span></span><br><span class="line"><span class="string">ca1e9fdce1fa9b5e540c8ff8b03b0288</span></span><br><span class="line"><span class="string">ca42e4dc6be79b5e0b0c8f14b03bae68</span></span><br><span class="line"><span class="string">ca423bdc6bb19b5e010c8f14b03bae3e</span></span><br><span class="line"><span class="string">ca429f146bfa365e54958f14783bae88</span></span><br><span class="line"><span class="string">2d429fdc6bfa9b6a540cb414b0ecae88</span></span><br><span class="line"><span class="string">95429fdc6bfa9be8540c2a14b03dae88</span></span><br><span class="line"><span class="string">ca42b5dc6b659b5e030c8f14b03baedb</span></span><br><span class="line"><span class="string">ca429f0f6bfad85e54208f145c3bae88</span></span><br><span class="line"><span class="string">ca4268dc6b439b5e020c8f14b03baea7</span></span><br><span class="line"><span class="string">ca569fdc65fa9b5e540c8f39b03b9c88</span></span><br><span class="line"><span class="string">ca4d9fdc58fa9b5e540c8f9db03be988</span></span><br><span class="line"><span class="string">caff9fdc2cfa9b5e540c8f33b03b7b88</span></span><br><span class="line"><span class="string">ca429f5f6bfa905e549d8f14043bae88</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span>.encode(<span class="string">&#x27;utf8&#x27;</span>))</span><br><span class="line">phoenixAES.crack_file(<span class="string">&#x27;tracefile&#x27;</span>, verbose=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<p>（注意尾巴还有一个异或0x66，最后一轮Key获得之后要异或该值，或将多组密文都异或0x66也可获取）</p>
+<p>有了最后一轮 key 就可以还原出最原先的 key</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/SideChannelMarvels/Stark">https://github.com/SideChannelMarvels/Stark</a></p>
+</blockquote>
+<p><img src="/2023/07/25/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A22023-REVERSE/image-20230727165357326.png" alt="image-20230727165357326"></p>
+<h2 id="0x02-Get-Flag"><a href="#0x02-Get-Flag" class="headerlink" title="0x02 Get Flag"></a>0x02 Get Flag</h2><p>那么有了 key，直接解密 out.bin 里的数据即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"></span><br><span class="line">key = <span class="built_in">bytes</span>.fromhex(<span class="string">&quot;00000000000000000000000000000000&quot;</span>)</span><br><span class="line">cipher = AES.new(key, AES.MODE_ECB)</span><br><span class="line">enc = <span class="built_in">bytearray</span>.fromhex(<span class="string">&quot;0B987EF5D94DD679592C4D2FADD4EB89&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">16</span>):</span><br><span class="line">    enc[i] ^= <span class="number">0x66</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(cipher.decrypt(enc))</span><br></pre></td></tr></table></figure>
+
+<p>Get Flag!</p>
+<p><img src="/2023/07/25/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A22023-REVERSE/image-20230727165623391.png" alt="image-20230727165623391"></p>
+
+    </div>
+
+    <p style= "text-align:center">
+        让我看看我被读了 
+    <b><span id="/2023/07/25/巅峰极客2023-REVERSE/" class="waline-visitor-count"/>...</b> 次呢🎉</p>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2023/07/25/巅峰极客2023-REVERSE/" class="leancloud_visitors" data-flag-title="巅峰极客2023 REVERSE">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2023 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
