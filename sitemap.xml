@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2023/10/30/2023-October/</loc>
+    
+    <lastmod>2023-10-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2023/10/24/%E4%BB%80%E4%B9%88%E5%8F%ABUPX%EF%BC%81/</loc>
+    
+    <lastmod>2023-10-27</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2023/10/24/DASCTF2023-X-CBCTF/</loc>
+    
+    <lastmod>2023-10-27</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2023/09/28/2023-September/</loc>
     
     <lastmod>2023-09-28</lastmod>
@@ -1489,7 +1516,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2023-09-28</lastmod>
+    <lastmod>2023-10-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
