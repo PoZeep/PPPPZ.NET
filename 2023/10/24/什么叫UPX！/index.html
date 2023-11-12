@@ -133,10 +133,10 @@
     <div class="content">
         <p>今日连着遇到 UPX 魔改题，受不了了，于是把一个历史遗留问题解决了</p>
 <h1 id="UPX"><a href="#UPX" class="headerlink" title="UPX"></a>UPX</h1><h2 id="Win下魔改"><a href="#Win下魔改" class="headerlink" title="Win下魔改"></a>Win下魔改</h2><p>一般的压缩壳已经满足不了出题人了，于是出题人改了UPX段名，就比如说这样，这个.rsrc原来是个upx2</p>
-<p><img src="/%E4%BB%80%E4%B9%88%E5%8F%ABUPX%EF%BC%81/image-20231024231633168.png" alt="image-20231024231633168"></p>
+<p><img src="/2023/10/24/%E4%BB%80%E4%B9%88%E5%8F%ABUPX%EF%BC%81/image-20231024231633168.png" alt="image-20231024231633168"></p>
 <p>而改回去也要注意，就像这里是要把5个字节改成4个字节，最后一个字节标00，然后就可以正常脱壳，至于要改成什么样，可以随便拉一个exe加上upx壳对比一下即可，再者windows下的其实调试器很全，也很好动调脱下来</p>
 <p>这题改成这样即可</p>
-<p><img src="/%E4%BB%80%E4%B9%88%E5%8F%ABUPX%EF%BC%81/image-20231024231820174.png" alt="image-20231024231820174"></p>
+<p><img src="/2023/10/24/%E4%BB%80%E4%B9%88%E5%8F%ABUPX%EF%BC%81/image-20231024231820174.png" alt="image-20231024231820174"></p>
 <h2 id="Linux下魔改"><a href="#Linux下魔改" class="headerlink" title="Linux下魔改"></a>Linux下魔改</h2><p>首先精读文章</p>
 <blockquote>
 <p><a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-275753.htm#msg_header_h1_0">https://bbs.kanxue.com/thread-275753.htm#msg_header_h1_0</a></p>
@@ -170,10 +170,10 @@
 
 <p>那么linux下的，gdb就算脱下来，符号什么的也没恢复，程序运行不了，这题又是rust写的，不调试太难逆了</p>
 <p>这题也同样改了名字</p>
-<p><img src="/%E4%BB%80%E4%B9%88%E5%8F%ABUPX%EF%BC%81/image-20231024232149328.png" alt="image-20231024232149328"></p>
+<p><img src="/2023/10/24/%E4%BB%80%E4%B9%88%E5%8F%ABUPX%EF%BC%81/image-20231024232149328.png" alt="image-20231024232149328"></p>
 <p>然而改回来也不行，还改了一个地方，就是最后四个字节，看结构体可知最后四个字节是 p_info 的文件偏移</p>
 <p>然而这边直接爆 0，工具脱不了是原因也就是这</p>
-<p><img src="/%E4%BB%80%E4%B9%88%E5%8F%ABUPX%EF%BC%81/image-20231024232256579.png" alt="image-20231024232256579"></p>
+<p><img src="/2023/10/24/%E4%BB%80%E4%B9%88%E5%8F%ABUPX%EF%BC%81/image-20231024232256579.png" alt="image-20231024232256579"></p>
 <p>那我们手动恢复一下即可，程序表头结束后+12的地方就是 p_info 的偏移地址</p>
 <ul>
 <li>new pheader(56 bytes) * 3 (程序头表)</li>
@@ -181,7 +181,7 @@
 <li>p_info(12 bytes)</li>
 </ul>
 <p>于是找到是 F4，注意小端序填到第一个字节即可</p>
-<p><img src="/%E4%BB%80%E4%B9%88%E5%8F%ABUPX%EF%BC%81/image-20231024232450109.png" alt="image-20231024232450109"></p>
+<p><img src="/2023/10/24/%E4%BB%80%E4%B9%88%E5%8F%ABUPX%EF%BC%81/image-20231024232450109.png" alt="image-20231024232450109"></p>
 
     </div>
 
