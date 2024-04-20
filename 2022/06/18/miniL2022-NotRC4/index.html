@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>miniL2022-NotRC4 - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            <span>June</span>
+            
+            
+            
+            
+            
+            
+            
+            <span>18,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">miniL2022-NotRC4</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>我是懒狗，懒狗是我，拖到今天。–6.18</p>
+<h1 id="0x00-日常查壳"><a href="#0x00-日常查壳" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h1><p>拖进IDA直接闪退，好！</p>
+<p><img src="/2022/06/18/miniL2022-NotRC4/image-20220618193604956.png" alt="image-20220618193604956"></p>
+<p>linux下file查一下，可以发知道是RISC-V架构</p>
+<p><img src="/2022/06/18/miniL2022-NotRC4/image-20220618193637229.png" alt="image-20220618193637229"></p>
+<h1 id="0x01-Ghidra-Time"><a href="#0x01-Ghidra-Time" class="headerlink" title="0x01 Ghidra Time"></a>0x01 Ghidra Time</h1><p>详见</p>
+<blockquote>
+<p><a href="https://ppppz.net/2022/06/15/Ghidra-learning/">https://ppppz.net/2022/06/15/Ghidra-learning/</a></p>
+</blockquote>
+<p>稍加分析可知，符号执行题，那么一个个分析即可</p>
+<p><img src="/2022/06/18/miniL2022-NotRC4/image-20220618194159597.png" alt="image-20220618194159597"></p>
+<h1 id="0x02-Opcode"><a href="#0x02-Opcode" class="headerlink" title="0x02 Opcode"></a>0x02 Opcode</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">F3,00,  F4,E1,  F4,E2,  F2,04,0B,  F5,</span><br><span class="line">F3,00,  F4,E1,  F4,E2,  F2,04,0B,  F5,	F1,FF</span><br></pre></td></tr></table></figure>
+
+<p>分析可知，这里就是每个FX对应一个操作，这些FX的后面就是所需的参数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init_opcode</span><span class="params">(undefined4 *param_1)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  *param_1 = <span class="number">0</span>;</span><br><span class="line">  *(undefined *)(param_1 + <span class="number">6</span>) = <span class="number">0xf1</span>;</span><br><span class="line">  *(undefined **)(param_1 + <span class="number">8</span>) = &amp;Check;</span><br><span class="line">  *(undefined *)(param_1 + <span class="number">10</span>) = <span class="number">0xf2</span>;</span><br><span class="line">  *(undefined **)(param_1 + <span class="number">0xc</span>) = &amp;for_count;</span><br><span class="line">  *(undefined *)(param_1 + <span class="number">0xe</span>) = <span class="number">0xf3</span>;</span><br><span class="line">  *(undefined **)(param_1 + <span class="number">0x10</span>) = &amp;Add_Key;</span><br><span class="line">  *(undefined *)(param_1 + <span class="number">0x12</span>) = <span class="number">0xf4</span>;</span><br><span class="line">  *(undefined **)(param_1 + <span class="number">0x14</span>) = &amp;ShiftXor;</span><br><span class="line">  *(undefined *)(param_1 + <span class="number">0x16</span>) = <span class="number">0xf5</span>;</span><br><span class="line">  *(undefined **)(param_1 + <span class="number">0x18</span>) = &amp;NextRound;</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>逐个分析，分析之前要清楚！</p>
+<p>param_1是一个结构体（然而还没找到Ghidra处理结构体比较好的办法）</p>
+<h2 id="F1-Check"><a href="#F1-Check" class="headerlink" title="F1 | Check"></a>F1 | Check</h2><p>这里爆个wrong基本可以猜测另一个奇怪数据是加密后的flag</p>
+<p>之后F5函数可以确定DAT_001020c8就是加密后的input</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UndefinedFunction_00100b7e</span><span class="params">(<span class="keyword">int</span> *param_1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> iStack20;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">for</span> (iStack20 = <span class="number">0</span>; iStack20 &lt; <span class="number">4</span>; iStack20 = iStack20 + <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (*(qword *)(&amp;DAT_001020c8 + (longlong)iStack20 * <span class="number">8</span>) != (&amp;encFlag)[iStack20]) &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;Wrong!&quot;</span>);</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  *param_1 = *param_1 + <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="F2-for-count"><a href="#F2-for-count" class="headerlink" title="F2 | for_count"></a>F2 | for_count</h2><ul>
+<li>(int)(uint)(byte)(&amp;opcode)[*param_1 + 2] 这里是取了opcode后两个字符</li>
+<li>(int)(uint)(byte)(&amp;opcode)[*param_1 + 1] 同理取后一个</li>
+<li>*param_1 指的是当前opcode</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UndefinedFunction_00100bfe</span><span class="params">(<span class="keyword">int</span> *param_1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (count &lt; (<span class="keyword">int</span>)(uint)(byte)(&amp;opcode)[*param_1 + <span class="number">2</span>]) &#123;</span><br><span class="line">    *param_1 = *param_1 - (uint)(byte)(&amp;opcode)[*param_1 + <span class="number">1</span>];</span><br><span class="line">    count = count + <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    count = <span class="number">0</span>;</span><br><span class="line">    *param_1 = *param_1 + <span class="number">3</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么其实是什么意思呢，整理可知</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ( count = <span class="number">0</span>; count &lt; <span class="number">0xB</span>; count++ )</span><br><span class="line">&#123;</span><br><span class="line">	f4,e1,  f4,e2  函数操作</span><br><span class="line">&#125;</span><br><span class="line">count = <span class="number">0</span> </span><br><span class="line">opcode += <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>count小于的是当前F2 opcode后两位也就是0xB</p>
+<p>而为了实现循环操作，用了当前opcode - 4的操作，也就是减去的F2 opcode后的第一位0x4</p>
+<h2 id="F3-Add-Key"><a href="#F3-Add-Key" class="headerlink" title="F3 | Add_Key"></a>F3 | Add_Key</h2><p>注意开始我说过要把param_1当成结构体</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UndefinedFunction_00100974</span><span class="params">(<span class="keyword">int</span> *param_1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  *(longlong *)(param_1 + <span class="number">2</span>) =</span><br><span class="line">       *(longlong *)(&amp;input + (longlong)(<span class="keyword">int</span>)(uint)(byte)(&amp;opcode)[*param_1 + <span class="number">1</span>] * <span class="number">8</span>) +</span><br><span class="line">       _DWORD_00102008;</span><br><span class="line">  *(longlong *)(param_1 + <span class="number">4</span>) =</span><br><span class="line">       *(longlong *)(&amp;input + (longlong)(<span class="keyword">int</span>)((byte)(&amp;opcode)[*param_1 + <span class="number">1</span>] + <span class="number">1</span>) * <span class="number">8</span>) +</span><br><span class="line">       _DWORD_00102010;</span><br><span class="line">  *param_1 = *param_1 + <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>(param_1 + 2) 和 (param_1 + 4)可以当成所使用的临时数 X 和 Y</p>
+<p>(&amp;input + (longlong)(int)((byte)(&amp;opcode)[*param_1 + 1] + 1) * 8) 分别根据F3后的第一个操作数，把我们的32位输入划分为64位</p>
+<p>（可以想象成我们的32个字节输入是个 64位无符号整形的数组 长度为4）</p>
+<p>整理可知</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">X = input[opcode] + key1</span><br><span class="line">Y = input[opcode + <span class="number">1</span>] + key2</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="F4-ShfitXor"><a href="#F4-ShfitXor" class="headerlink" title="F4 | ShfitXor"></a>F4 | ShfitXor</h2><p>Ghidra的代码亿点点怪</p>
+<ul>
+<li>严格区别 [*param_1 + 1] 和 (param_1 + 2)</li>
+<li>-0x1F就是0xE1 符号数区别</li>
+<li>(longlong) <strong>-</strong> (int)*(undefined8 *)(param_1 + 4) 是 64 - Y（你说怪不怪</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UndefinedFunction_00100a10</span><span class="params">(<span class="keyword">int</span> *param_1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> ((&amp;opcode)[*param_1 + <span class="number">1</span>] == <span class="number">-0x1f</span>) &#123;</span><br><span class="line">    *(ulonglong *)(param_1 + <span class="number">2</span>) =</span><br><span class="line">         _DWORD_00102008 +</span><br><span class="line">         ((*(ulonglong *)(param_1 + <span class="number">4</span>) ^ *(ulonglong *)(param_1 + <span class="number">2</span>)) &gt;&gt;</span><br><span class="line">          ((longlong)-(<span class="keyword">int</span>)*(undefined8 *)(param_1 + <span class="number">4</span>) &amp; <span class="number">0x3f</span>U) |</span><br><span class="line">         (*(ulonglong *)(param_1 + <span class="number">4</span>) ^ *(ulonglong *)(param_1 + <span class="number">2</span>)) &lt;&lt;</span><br><span class="line">         ((longlong)(<span class="keyword">int</span>)*(undefined8 *)(param_1 + <span class="number">4</span>) &amp; <span class="number">0x3f</span>U));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> ((&amp;opcode)[*param_1 + <span class="number">1</span>] == <span class="number">-0x1e</span>) &#123;</span><br><span class="line">    *(ulonglong *)(param_1 + <span class="number">4</span>) =</span><br><span class="line">         _DWORD_00102010 +</span><br><span class="line">         ((*(ulonglong *)(param_1 + <span class="number">4</span>) ^ *(ulonglong *)(param_1 + <span class="number">2</span>)) &gt;&gt;</span><br><span class="line">          ((longlong)-(<span class="keyword">int</span>)*(undefined8 *)(param_1 + <span class="number">2</span>) &amp; <span class="number">0x3f</span>U) |</span><br><span class="line">         (*(ulonglong *)(param_1 + <span class="number">4</span>) ^ *(ulonglong *)(param_1 + <span class="number">2</span>)) &lt;&lt;</span><br><span class="line">         ((longlong)(<span class="keyword">int</span>)*(undefined8 *)(param_1 + <span class="number">2</span>) &amp; <span class="number">0x3f</span>U));</span><br><span class="line">  &#125;</span><br><span class="line">  *param_1 = *param_1 + <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>整理可得</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-0x1F: X = ((X ^ Y) &gt;&gt; (64 - Y &amp; 0x3F) | (X ^ Y) &lt;&lt; (Y &amp; 0x3F)) + Key1</span><br><span class="line">-0x1E: Y = ((X ^ Y) &gt;&gt; (64 - X &amp; 0x3F) | (X ^ Y) &lt;&lt; (X &amp; 0x3F)) + Key2</span><br></pre></td></tr></table></figure>
+
+<p>一句话，逻辑左移加key</p>
+<p>美其名曰，RC5</p>
+<h2 id="F5-NextRound"><a href="#F5-NextRound" class="headerlink" title="F5 | NextRound"></a>F5 | NextRound</h2><p>世界线收束，注意DAT_001020c8，可以回去看了F1，可以发现这是同一个</p>
+<p>我们X和Y赋值了进去，再清除，进行下轮input加密</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UndefinedFunction_00100af0</span><span class="params">(<span class="keyword">int</span> *param_1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  *(undefined8 *)(&amp;DAT_001020c8 + (longlong)DAT_0010210c * <span class="number">8</span>) = *(undefined8 *)(param_1 + <span class="number">2</span>);</span><br><span class="line">  *(undefined8 *)(&amp;DAT_001020c8 + (longlong)(DAT_0010210c + <span class="number">1</span>) * <span class="number">8</span>) = *(undefined8 *)(param_1 + <span class="number">4</span>) ;</span><br><span class="line">  *(undefined8 *)(param_1 + <span class="number">2</span>) = <span class="number">0</span>;</span><br><span class="line">  *(undefined8 *)(param_1 + <span class="number">4</span>) = <span class="number">0</span>;</span><br><span class="line">  DAT_0010210c = DAT_0010210c + <span class="number">2</span>;</span><br><span class="line">  *param_1 = *param_1 + <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="0x03-GetFlag"><a href="#0x03-GetFlag" class="headerlink" title="0x03 GetFlag"></a>0x03 GetFlag</h1><p>那么整理下流量</p>
+<ol>
+<li> F3,00 （将input变成 X 和 Y，再加上key）</li>
+<li> F4,E1,  F4,E2,  F2,04,0B  （循环操作，RC5加密不过是省去了初始化密钥流的操作）</li>
+<li> F5 （赋值入加密后的input数据区）</li>
+<li> F1 （与加密后的input数据区与encFlag进行比较）</li>
+</ol>
+<p>关于RC5详解</p>
+<blockquote>
+<p>好康的维基百科：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/RC5">https://en.wikipedia.org/wiki/RC5</a></p>
+</blockquote>
+<p>EXP</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdint.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ROTR(x, y) ((x &gt;&gt; (y &amp; 0x3F)) | (x &lt;&lt; (64 - y &amp; 0x3F)))</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">uint64_t</span> encFlag[] = &#123; <span class="number">0x4BC21DBB95EF82CA</span>, <span class="number">0xF57BECAE71B547BE</span>, <span class="number">0x80A1BDAB15E7F6CD</span>, <span class="number">0xA3C793D7E1776385</span> &#125;;</span><br><span class="line">	<span class="keyword">uint64_t</span> key[] = &#123; <span class="number">0x64627421</span>, <span class="number">0x79796473</span> &#125;;</span><br><span class="line">	<span class="keyword">int</span> i, j, z;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i += <span class="number">2</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span> ( j = <span class="number">0</span>; j &lt; <span class="number">12</span>; j++ )</span><br><span class="line">		&#123;</span><br><span class="line">			encFlag[i + <span class="number">1</span>] = ROTR(encFlag[i + <span class="number">1</span>] - key[<span class="number">1</span>], encFlag[i]) ^ encFlag[i];</span><br><span class="line">			encFlag[i] = ROTR(encFlag[i] - key[<span class="number">0</span>], encFlag[i + <span class="number">1</span>]) ^ encFlag[i + <span class="number">1</span>];	</span><br><span class="line">		&#125; </span><br><span class="line">		encFlag[i] -= key[<span class="number">0</span>];</span><br><span class="line">		encFlag[i + <span class="number">1</span>] -= key[<span class="number">1</span>]; </span><br><span class="line"><span class="comment">//		printf(&quot;%p, %p, &quot;, encFlag[i], encFlag[i + 1]);</span></span><br><span class="line">		<span class="keyword">for</span> ( z = <span class="number">0</span>; z &lt; <span class="number">8</span>; z++ )</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, encFlag[i] &amp; <span class="number">0xFF</span>);</span><br><span class="line">			encFlag[i] &gt;&gt;= <span class="number">8</span>;	</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> ( z = <span class="number">0</span>; z &lt; <span class="number">8</span>; z++ )</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;%c&quot;</span>, encFlag[i + <span class="number">1</span>] &amp; <span class="number">0xFF</span>);</span><br><span class="line">			encFlag[i + <span class="number">1</span>] &gt;&gt;= <span class="number">8</span>;	</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;	</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>GetFlag!</p>
+<p><img src="/2022/06/18/miniL2022-NotRC4/image-20220618204557983.png" alt="image-20220618204557983"></p>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2022/06/18/miniL2022-NotRC4/" class="leancloud_visitors" data-flag-title="miniL2022-NotRC4">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2024 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>

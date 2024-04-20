@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>ACTF2022-dropper - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            <span>June</span>
+            
+            
+            
+            
+            
+            
+            
+            <span>29,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">ACTF2022-dropper</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <h1 id="0x00-日常查壳"><a href="#0x00-日常查壳" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h1><p>64位upx壳</p>
+<p><img src="/2022/06/29/ACTF2022-dropper/image-20220630123736695.png" alt="image-20220630123736695"></p>
+<h1 id="0x01-脱壳？"><a href="#0x01-脱壳？" class="headerlink" title="0x01 脱壳？"></a>0x01 脱壳？</h1><p>虽然工具可以直接脱，但是哒咩，脱了就不能运行了，直接载入x64debug</p>
+<p>upx长度不大直接单步跟即可，当我碰到熟悉的jmp到OEP前的循环就知道这是出口了</p>
+<p><img src="/2022/06/29/ACTF2022-dropper/image-20220630124402517.png" alt="image-20220630124402517"></p>
+<p>但是！直接dump出来依然和脱出来的没什么变化，所以我继续跟入找</p>
+<h1 id="0x02-RealProcess"><a href="#0x02-RealProcess" class="headerlink" title="0x02 RealProcess"></a>0x02 RealProcess</h1><p>发现每次到这的时候就会停住，然后要输入，输入完直接跑飞，所以搜索一下这个<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject">API</a></p>
+<p><img src="/2022/06/29/ACTF2022-dropper/image-20220630124703051.png" alt="image-20220630124703051"></p>
+<p>可以知道这是在等待其他线程执行，那么也就是说真正的验证函数在另一个线程，于是反复调试可以发现</p>
+<p>每次经过这个函数就会多一个线程，可以在任务管理器或者Procexp查看（能查看到不应该叫进程吗，雾，有师傅知道或许可以让我解惑一下</p>
+<p><img src="/2022/06/29/ACTF2022-dropper/image-20220630125109827.png" alt="image-20220630125109827"></p>
+<p>那么我们看这个函数的参数，可以看到R8寄存器指向着MZ开头的东西，直接内存窗口查看dump出来！（要删点多余的数据）</p>
+<h1 id="0x03-逆向分析！"><a href="#0x03-逆向分析！" class="headerlink" title="0x03 逆向分析！"></a>0x03 逆向分析！</h1><p>dump出来的文件可以正常执行！没错了就是这个</p>
+<p>于是在start函数一路寻找找到主函数（下次一定好好命名</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 <span class="title">sub_7FF6BD84D080</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> *v0; <span class="comment">// rdi</span></span><br><span class="line">  __int64 i; <span class="comment">// rcx</span></span><br><span class="line">  __int64 copy_input; <span class="comment">// rax</span></span><br><span class="line">  __int64 base_input; <span class="comment">// rax</span></span><br><span class="line">  __int64 bignum; <span class="comment">// rax</span></span><br><span class="line">  _DWORD *Wbignum; <span class="comment">// rax</span></span><br><span class="line">  __int64 v6; <span class="comment">// rax</span></span><br><span class="line">  __int64 v7; <span class="comment">// rax</span></span><br><span class="line">  <span class="keyword">char</span> v9; <span class="comment">// [rsp+20h] [rbp+0h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> input[<span class="number">72</span>]; <span class="comment">// [rsp+28h] [rbp+8h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> Winput[<span class="number">2040</span>]; <span class="comment">// [rsp+70h] [rbp+50h] BYREF</span></span><br><span class="line">  <span class="built_in"><span class="keyword">void</span></span> (__fastcall ***vbtable1)(_QWORD, __int64); <span class="comment">// [rsp+868h] [rbp+848h]</span></span><br><span class="line">  __int64 v13; <span class="comment">// [rsp+888h] [rbp+868h]</span></span><br><span class="line">  <span class="keyword">char</span> v14[<span class="number">3576</span>]; <span class="comment">// [rsp+8B0h] [rbp+890h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v15[<span class="number">64</span>]; <span class="comment">// [rsp+16A8h] [rbp+1688h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v16[<span class="number">64</span>]; <span class="comment">// [rsp+16E8h] [rbp+16C8h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> *v17; <span class="comment">// [rsp+1728h] [rbp+1708h]</span></span><br><span class="line">  _QWORD *v18; <span class="comment">// [rsp+1748h] [rbp+1728h]</span></span><br><span class="line">  <span class="keyword">void</span> *v19; <span class="comment">// [rsp+1768h] [rbp+1748h]</span></span><br><span class="line">  <span class="keyword">char</span> v20; <span class="comment">// [rsp+1788h] [rbp+1768h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> *v21; <span class="comment">// [rsp+1F78h] [rbp+1F58h]</span></span><br><span class="line">  <span class="keyword">char</span> v22[<span class="number">64</span>]; <span class="comment">// [rsp+1F98h] [rbp+1F78h] BYREF</span></span><br><span class="line">  __int64 v23; <span class="comment">// [rsp+1FD8h] [rbp+1FB8h]</span></span><br><span class="line">  <span class="keyword">void</span> *v24; <span class="comment">// [rsp+1FF8h] [rbp+1FD8h]</span></span><br><span class="line">  <span class="keyword">char</span> v25[<span class="number">64</span>]; <span class="comment">// [rsp+2018h] [rbp+1FF8h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v26[<span class="number">64</span>]; <span class="comment">// [rsp+2058h] [rbp+2038h] BYREF</span></span><br><span class="line">  <span class="built_in"><span class="keyword">void</span></span> (__fastcall ***v27)(_QWORD, _QWORD); <span class="comment">// [rsp+2098h] [rbp+2078h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v28; <span class="comment">// [rsp+20B4h] [rbp+2094h]</span></span><br><span class="line">  <span class="keyword">int</span> v29; <span class="comment">// [rsp+20D4h] [rbp+20B4h]</span></span><br><span class="line">  __int64 t; <span class="comment">// [rsp+20E8h] [rbp+20C8h]</span></span><br><span class="line">  __int64 v31; <span class="comment">// [rsp+20F0h] [rbp+20D0h]</span></span><br><span class="line">  _QWORD *v32; <span class="comment">// [rsp+20F8h] [rbp+20D8h]</span></span><br><span class="line"></span><br><span class="line">  v0 = &amp;v9;</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">1726</span>i64; i; --i )</span><br><span class="line">  &#123;</span><br><span class="line">    *v0 = <span class="number">-858993460</span>;</span><br><span class="line">    v0 += <span class="number">4</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  v29 = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">what</span>(dword_7FF6BD8660F2);</span><br><span class="line">  t = <span class="built_in">Reverse</span>(v15, &amp;flag, <span class="number">5</span>i64);</span><br><span class="line">  v31 = t;</span><br><span class="line">  <span class="built_in">printf</span>(std::cout, t);</span><br><span class="line">  <span class="built_in">clear</span>(v15);</span><br><span class="line">  <span class="built_in">sub_7FF6BD8417DF</span>(input);</span><br><span class="line">  <span class="built_in">get</span>(std::cin, input);</span><br><span class="line">  t = <span class="built_in">strlen_0</span>(input);</span><br><span class="line">  copy_input = <span class="built_in">strcopy</span>(input);</span><br><span class="line">  base_input = <span class="built_in">Base64</span>(copy_input, t);</span><br><span class="line">  <span class="built_in">P1</span>(input, base_input);</span><br><span class="line">  v17 = v16;</span><br><span class="line">  t = <span class="built_in">P2</span>(v16, input);</span><br><span class="line">  <span class="built_in">ToW</span>(Winput, t);</span><br><span class="line">  v19 = <span class="built_in">malloc_0</span>(<span class="number">0x7E0</span>ui64);</span><br><span class="line">  <span class="keyword">if</span> ( v19 )</span><br><span class="line">  &#123;</span><br><span class="line">    v21 = &amp;v20;</span><br><span class="line">    t = <span class="built_in">Reverse</span>(v22, ::bignum, <span class="number">360</span>i64);</span><br><span class="line">    v31 = t;</span><br><span class="line">    v29 |= <span class="number">1u</span>;</span><br><span class="line">    bignum = <span class="built_in">strcopy</span>(t);</span><br><span class="line">    Wbignum = <span class="built_in">W</span>(v21, bignum);                   <span class="comment">// 四位一组 尾巴开始</span></span><br><span class="line">    v32 = <span class="built_in">vbtable</span>(v19, Wbignum);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    v32 = <span class="number">0</span>i64;</span><br><span class="line">  &#125;</span><br><span class="line">  v18 = v32;</span><br><span class="line">  vbtable1 = v32;</span><br><span class="line">  <span class="keyword">if</span> ( (v29 &amp; <span class="number">1</span>) != <span class="number">0</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v29 &amp;= <span class="number">0xFFFFFFFE</span>;</span><br><span class="line">    <span class="built_in">clear</span>(v22);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">sub_7FF6BD841226</span>(vbtable1);                   <span class="comment">// 触发异常</span></span><br><span class="line">  v24 = <span class="built_in">malloc_0</span>(<span class="number">0x7D4</span>ui64);</span><br><span class="line">  <span class="keyword">if</span> ( v24 )</span><br><span class="line">    t = <span class="built_in">sub_7FF6BD84152D</span>(v24, Winput);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    t = <span class="number">0</span>i64;</span><br><span class="line">  v23 = t;</span><br><span class="line">  v13 = t;</span><br><span class="line">  (**vbtable1)(vbtable1, t);</span><br><span class="line">  <span class="built_in">SUB</span>(v13, v14, (vbtable1 + <span class="number">1</span>));</span><br><span class="line">  <span class="keyword">if</span> ( <span class="built_in">check</span>(v14) )</span><br><span class="line">  &#123;</span><br><span class="line">    t = <span class="built_in">Reverse</span>(v25, &amp;unk_7FF6BD85F910, <span class="number">4</span>i64);</span><br><span class="line">    v31 = t;</span><br><span class="line">    <span class="built_in">LODWORD</span>(v6) = <span class="built_in">printf</span>(std::cout, t);</span><br><span class="line">    std::ostream::<span class="keyword">operator</span>&lt;&lt;(v6, sub_7FF6BD84105A);</span><br><span class="line">    <span class="built_in">clear</span>(v25);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    t = <span class="built_in">Reverse</span>(v26, &amp;unk_7FF6BD85F920, <span class="number">5</span>i64);</span><br><span class="line">    v31 = t;</span><br><span class="line">    <span class="built_in">LODWORD</span>(v7) = <span class="built_in">printf</span>(std::cout, t);</span><br><span class="line">    std::ostream::<span class="keyword">operator</span>&lt;&lt;(v7, sub_7FF6BD84105A);</span><br><span class="line">    <span class="built_in">clear</span>(v26);</span><br><span class="line">  &#125;</span><br><span class="line">  v27 = vbtable1;</span><br><span class="line">  <span class="keyword">if</span> ( vbtable1 )</span><br><span class="line">    t = <span class="built_in">sub_7FF6BD841316</span>(v27, <span class="number">1</span>i64);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    t = <span class="number">0</span>i64;</span><br><span class="line">  v28 = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">clear</span>(input);</span><br><span class="line">  <span class="keyword">return</span> v28;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>挑真正的执行流来讲，稍加调试即可知</p>
+<p><img src="/2022/06/29/ACTF2022-dropper/image-20220630130436613.png" alt="image-20220630130436613"></p>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>在触发异常的函数来，有个F5看不到的地方，就是这，然而触发异常会跑过来（如果有时候知道这个异常是怎么设置的务必教教！</p>
+<p><img src="/2022/06/29/ACTF2022-dropper/image-20220630130636790.png" alt="image-20220630130636790"></p>
+<p>随后跑到这执行虚表函数，而t就是我们的输入</p>
+<p><img src="/2022/06/29/ACTF2022-dropper/image-20220630130910752.png" alt="image-20220630130910752"></p>
+<h2 id="RealEncrypt"><a href="#RealEncrypt" class="headerlink" title="RealEncrypt"></a>RealEncrypt</h2><p>可能一开始进去有点bangzhu，但起始都是同一个函数，是以万进制进行加减乘操作（所以要做好函数命名）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">_DWORD *__fastcall <span class="title">realVbtable</span><span class="params">(__int64 bignum, __int64 input)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> *v2; <span class="comment">// rdi</span></span><br><span class="line">  __int64 i; <span class="comment">// rcx</span></span><br><span class="line">  __int64 v4; <span class="comment">// rax</span></span><br><span class="line">  __int64 v5; <span class="comment">// rax</span></span><br><span class="line">  __int64 v6; <span class="comment">// rax</span></span><br><span class="line">  __int64 v7; <span class="comment">// rax</span></span><br><span class="line">  __int64 v8; <span class="comment">// rax</span></span><br><span class="line">  __int64 v9; <span class="comment">// rax</span></span><br><span class="line">  __int64 v10; <span class="comment">// rax</span></span><br><span class="line">  __int64 v11; <span class="comment">// rax</span></span><br><span class="line">  __int64 v12; <span class="comment">// rax</span></span><br><span class="line">  __int64 v13; <span class="comment">// rax</span></span><br><span class="line">  __int64 v14; <span class="comment">// rax</span></span><br><span class="line">  __int64 v15; <span class="comment">// rax</span></span><br><span class="line">  __int64 v16; <span class="comment">// rax</span></span><br><span class="line">  __int64 v17; <span class="comment">// rax</span></span><br><span class="line">  __int64 v18; <span class="comment">// rax</span></span><br><span class="line">  __int64 v19; <span class="comment">// rax</span></span><br><span class="line">  __int64 v20; <span class="comment">// rax</span></span><br><span class="line">  __int64 v21; <span class="comment">// rax</span></span><br><span class="line">  __int64 v22; <span class="comment">// rax</span></span><br><span class="line">  __int64 v23; <span class="comment">// rax</span></span><br><span class="line">  <span class="keyword">char</span> v25; <span class="comment">// [rsp+20h] [rbp+0h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> key1[<span class="number">2048</span>]; <span class="comment">// [rsp+30h] [rbp+10h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> key2[<span class="number">2048</span>]; <span class="comment">// [rsp+830h] [rbp+810h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> key3[<span class="number">2048</span>]; <span class="comment">// [rsp+1030h] [rbp+1010h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> key4[<span class="number">2048</span>]; <span class="comment">// [rsp+1830h] [rbp+1810h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v30[<span class="number">2048</span>]; <span class="comment">// [rsp+2030h] [rbp+2010h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v31[<span class="number">2048</span>]; <span class="comment">// [rsp+2830h] [rbp+2810h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v32[<span class="number">2048</span>]; <span class="comment">// [rsp+3030h] [rbp+3010h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v33[<span class="number">2048</span>]; <span class="comment">// [rsp+3830h] [rbp+3810h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v34[<span class="number">2048</span>]; <span class="comment">// [rsp+4030h] [rbp+4010h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v35[<span class="number">2048</span>]; <span class="comment">// [rsp+4830h] [rbp+4810h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> copy_input[<span class="number">3576</span>]; <span class="comment">// [rsp+5030h] [rbp+5010h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v37[<span class="number">64</span>]; <span class="comment">// [rsp+5E28h] [rbp+5E08h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v38[<span class="number">64</span>]; <span class="comment">// [rsp+5E68h] [rbp+5E48h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v39[<span class="number">64</span>]; <span class="comment">// [rsp+5EA8h] [rbp+5E88h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v40[<span class="number">64</span>]; <span class="comment">// [rsp+5EE8h] [rbp+5EC8h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v41[<span class="number">64</span>]; <span class="comment">// [rsp+5F28h] [rbp+5F08h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v42[<span class="number">64</span>]; <span class="comment">// [rsp+5F68h] [rbp+5F48h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v43[<span class="number">64</span>]; <span class="comment">// [rsp+5FA8h] [rbp+5F88h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v44[<span class="number">64</span>]; <span class="comment">// [rsp+5FE8h] [rbp+5FC8h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v45[<span class="number">64</span>]; <span class="comment">// [rsp+6028h] [rbp+6008h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v46[<span class="number">72</span>]; <span class="comment">// [rsp+6068h] [rbp+6048h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v47[<span class="number">2048</span>]; <span class="comment">// [rsp+60B0h] [rbp+6090h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v48[<span class="number">2048</span>]; <span class="comment">// [rsp+68B0h] [rbp+6890h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v49[<span class="number">2048</span>]; <span class="comment">// [rsp+70B0h] [rbp+7090h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v50[<span class="number">2048</span>]; <span class="comment">// [rsp+78B0h] [rbp+7890h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v51[<span class="number">2048</span>]; <span class="comment">// [rsp+80B0h] [rbp+8090h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v52[<span class="number">2048</span>]; <span class="comment">// [rsp+88B0h] [rbp+8890h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v53[<span class="number">2048</span>]; <span class="comment">// [rsp+90B0h] [rbp+9090h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v54[<span class="number">2048</span>]; <span class="comment">// [rsp+98B0h] [rbp+9890h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v55[<span class="number">2048</span>]; <span class="comment">// [rsp+A0B0h] [rbp+A090h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> v56[<span class="number">2024</span>]; <span class="comment">// [rsp+A8B0h] [rbp+A890h] BYREF</span></span><br><span class="line">  __int64 v57; <span class="comment">// [rsp+B098h] [rbp+B078h]</span></span><br><span class="line">  __int64 v58; <span class="comment">// [rsp+B0A0h] [rbp+B080h]</span></span><br><span class="line"></span><br><span class="line">  v2 = &amp;v25;</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">10918</span>i64; i; --i )</span><br><span class="line">  &#123;</span><br><span class="line">    *v2 = <span class="number">0xCCCCCCCC</span>;</span><br><span class="line">    v2 += <span class="number">4</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">what</span>(dword_7FF6BD8660F2);</span><br><span class="line">  v57 = <span class="built_in">Reverse</span>(v37, &amp;data1, <span class="number">80</span>i64);</span><br><span class="line">  v58 = v57;</span><br><span class="line">  v4 = <span class="built_in">strcopy</span>(v57);</span><br><span class="line">  <span class="built_in">W</span>(key1, v4);</span><br><span class="line">  <span class="built_in">clear</span>(v37);</span><br><span class="line">  v57 = <span class="built_in">Reverse</span>(v38, &amp;dword_7FF6BD85E7C0, <span class="number">80</span>i64);</span><br><span class="line">  v58 = v57;</span><br><span class="line">  v5 = <span class="built_in">strcopy</span>(v57);</span><br><span class="line">  <span class="built_in">W</span>(key2, v5);</span><br><span class="line">  <span class="built_in">clear</span>(v38);</span><br><span class="line">  v57 = <span class="built_in">Reverse</span>(v39, &amp;unk_7FF6BD85E900, <span class="number">80</span>i64);</span><br><span class="line">  v58 = v57;</span><br><span class="line">  v6 = <span class="built_in">strcopy</span>(v57);</span><br><span class="line">  <span class="built_in">W</span>(key3, v6);</span><br><span class="line">  <span class="built_in">clear</span>(v39);</span><br><span class="line">  v57 = <span class="built_in">Reverse</span>(v40, &amp;unk_7FF6BD85EA40, <span class="number">80</span>i64);</span><br><span class="line">  v58 = v57;</span><br><span class="line">  v7 = <span class="built_in">strcopy</span>(v57);</span><br><span class="line">  <span class="built_in">W</span>(key4, v7);</span><br><span class="line">  <span class="built_in">clear</span>(v40);</span><br><span class="line">  v57 = <span class="built_in">Reverse</span>(v41, &amp;unk_7FF6BD85EB80, <span class="number">80</span>i64);</span><br><span class="line">  v58 = v57;</span><br><span class="line">  v8 = <span class="built_in">strcopy</span>(v57);</span><br><span class="line">  <span class="built_in">W</span>(v30, v8);</span><br><span class="line">  <span class="built_in">clear</span>(v41);</span><br><span class="line">  v57 = <span class="built_in">Reverse</span>(v42, &amp;unk_7FF6BD85ECC0, <span class="number">80</span>i64);</span><br><span class="line">  v58 = v57;</span><br><span class="line">  v9 = <span class="built_in">strcopy</span>(v57);</span><br><span class="line">  <span class="built_in">W</span>(v31, v9);</span><br><span class="line">  <span class="built_in">clear</span>(v42);</span><br><span class="line">  v57 = <span class="built_in">Reverse</span>(v43, &amp;unk_7FF6BD85EE00, <span class="number">80</span>i64);</span><br><span class="line">  v58 = v57;</span><br><span class="line">  v10 = <span class="built_in">strcopy</span>(v57);</span><br><span class="line">  <span class="built_in">W</span>(v32, v10);</span><br><span class="line">  <span class="built_in">clear</span>(v43);</span><br><span class="line">  v57 = <span class="built_in">Reverse</span>(v44, &amp;unk_7FF6BD85EF40, <span class="number">80</span>i64);</span><br><span class="line">  v58 = v57;</span><br><span class="line">  v11 = <span class="built_in">strcopy</span>(v57);</span><br><span class="line">  <span class="built_in">W</span>(v33, v11);</span><br><span class="line">  <span class="built_in">clear</span>(v44);</span><br><span class="line">  v57 = <span class="built_in">Reverse</span>(v45, &amp;unk_7FF6BD85F080, <span class="number">80</span>i64);</span><br><span class="line">  v58 = v57;</span><br><span class="line">  v12 = <span class="built_in">strcopy</span>(v57);</span><br><span class="line">  <span class="built_in">W</span>(v34, v12);</span><br><span class="line">  <span class="built_in">clear</span>(v45);</span><br><span class="line">  v57 = <span class="built_in">Reverse</span>(v46, &amp;unk_7FF6BD85F1C0, <span class="number">80</span>i64);</span><br><span class="line">  v58 = v57;</span><br><span class="line">  v13 = <span class="built_in">strcopy</span>(v57);</span><br><span class="line">  <span class="built_in">W</span>(v35, v13);</span><br><span class="line">  <span class="built_in">clear</span>(v46);</span><br><span class="line">  <span class="built_in">sub_7FF6BD84152D</span>(copy_input, input);</span><br><span class="line">  v14 = <span class="built_in">ADD</span>(copy_input, v47, key1);</span><br><span class="line">  <span class="built_in">a2toa1</span>(copy_input, v14);</span><br><span class="line">  v15 = <span class="built_in">MUL</span>(copy_input, v48, key2);</span><br><span class="line">  <span class="built_in">a2toa1</span>(copy_input, v15);</span><br><span class="line">  v16 = <span class="built_in">SUB</span>(copy_input, v49, key3);</span><br><span class="line">  <span class="built_in">a2toa1</span>(copy_input, v16);</span><br><span class="line">  v17 = <span class="built_in">ADD</span>(copy_input, v50, key4);</span><br><span class="line">  <span class="built_in">a2toa1</span>(copy_input, v17);</span><br><span class="line">  v18 = <span class="built_in">MUL</span>(copy_input, v51, v30);</span><br><span class="line">  <span class="built_in">a2toa1</span>(copy_input, v18);</span><br><span class="line">  v19 = <span class="built_in">SUB</span>(copy_input, v52, v31);</span><br><span class="line">  <span class="built_in">a2toa1</span>(copy_input, v19);</span><br><span class="line">  v20 = <span class="built_in">ADD</span>(copy_input, v53, v32);</span><br><span class="line">  <span class="built_in">a2toa1</span>(copy_input, v20);</span><br><span class="line">  v21 = <span class="built_in">SUB</span>(copy_input, v54, v33);</span><br><span class="line">  <span class="built_in">a2toa1</span>(copy_input, v21);</span><br><span class="line">  v22 = <span class="built_in">ADD</span>(copy_input, v55, v34);</span><br><span class="line">  <span class="built_in">a2toa1</span>(copy_input, v22);</span><br><span class="line">  v23 = <span class="built_in">SUB</span>(copy_input, v56, v35);</span><br><span class="line">  <span class="built_in">a2toa1</span>(copy_input, v23);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">a2toa1</span>(input, copy_input);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以密钥全部拿上，这个虚表出去后还有一轮SUB</p>
+<p>再取上最后一轮SUB的密钥，不过在SUB的结尾有个小细节，这个是设置a1[500]的值，</p>
+<p><img src="/2022/06/29/ACTF2022-dropper/image-20220630131750885.png" alt="image-20220630131750885"></p>
+<h1 id="0x04-GetFlag"><a href="#0x04-GetFlag" class="headerlink" title="0x04 GetFlag!"></a>0x04 GetFlag!</h1><p>在最后的check函数是判断这轮加密后是否为0和a1[500] == 1<br>没错密文为0！（如何优雅的手撕密文0</p>
+<p><img src="/2022/06/29/ACTF2022-dropper/image-20220630131613812.png" alt="image-20220630131613812"></p>
+<p>key取出来直接加减除回去即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line">key = [<span class="number">0x000020F1</span>, <span class="number">0x00001DA9</span>, <span class="number">0x00000156</span>, <span class="number">0x00000B37</span>, <span class="number">0x000007C0</span>, <span class="number">0x0000066A</span>, <span class="number">0x000024E0</span>, <span class="number">0x00000D42</span>, <span class="number">0x00002077</span>, <span class="number">0x000007EC</span>, <span class="number">0x00001BA7</span>, <span class="number">0x00002071</span>, <span class="number">0x000000F8</span>, <span class="number">0x00000291</span>, <span class="number">0x000003DA</span>, <span class="number">0x0000157C</span>, <span class="number">0x00001EF4</span>, <span class="number">0x00002519</span>, <span class="number">0x00000C25</span>, <span class="number">0x00002062</span>, <span class="number">0x00002253</span>, <span class="number">0x00000640</span>, <span class="number">0x000008DF</span>, <span class="number">0x00001E34</span>, <span class="number">0x00002140</span>, <span class="number">0x00000F92</span>, <span class="number">0x0000039B</span>, <span class="number">0x0000126F</span>, <span class="number">0x00002403</span>, <span class="number">0x00000E65</span>, <span class="number">0x000001F0</span>, <span class="number">0x00001868</span>, <span class="number">0x0000016D</span>, <span class="number">0x000006B6</span>, <span class="number">0x00002214</span>, <span class="number">0x00001603</span>, <span class="number">0x00001925</span>, <span class="number">0x000016AE</span>, <span class="number">0x000012D0</span>, <span class="number">0x00001831</span>, <span class="number">0x0000018C</span>, <span class="number">0x00000BF7</span>, <span class="number">0x00000E97</span>, <span class="number">0x000000CE</span>, <span class="number">0x0000061C</span>, <span class="number">0x00000390</span>, <span class="number">0x000019E9</span>, <span class="number">0x000022A5</span>, <span class="number">0x00001601</span>, <span class="number">0x00001A1E</span>, <span class="number">0x000013D1</span>, <span class="number">0x00000DBC</span>, <span class="number">0x0000117D</span>, <span class="number">0x0000225F</span>, <span class="number">0x00002272</span>, <span class="number">0x0000007B</span>, <span class="number">0x000023E6</span>, <span class="number">0x0000069F</span>, <span class="number">0x000002D3</span>, <span class="number">0x00001BEF</span>, <span class="number">0x000003E6</span>, <span class="number">0x000017D4</span>, <span class="number">0x00002284</span>, <span class="number">0x000003B8</span>, <span class="number">0x00000251</span>, <span class="number">0x00001646</span>, <span class="number">0x00000176</span>, <span class="number">0x0000081E</span>, <span class="number">0x000024C3</span>, <span class="number">0x00001E85</span>, <span class="number">0x00001097</span>, <span class="number">0x00001264</span>, <span class="number">0x00000A34</span>, <span class="number">0x00001A3B</span>, <span class="number">0x00000FE7</span>, <span class="number">0x000026A6</span>, <span class="number">0x00001F43</span>, <span class="number">0x00001832</span>, <span class="number">0x000021AE</span>, <span class="number">0x0000023C</span>, <span class="number">0x000004C2</span>, <span class="number">0x00002585</span>, <span class="number">0x000017E7</span>, <span class="number">0x000015DD</span>, <span class="number">0x00002610</span>, <span class="number">0x00001B86</span>, <span class="number">0x00000D2A</span>, <span class="number">0x00000716</span>, <span class="number">0x00001C25</span>, <span class="number">0x00002099</span>]</span><br><span class="line">keys = [[<span class="number">0x000024AC</span>, <span class="number">0x00000116</span>, <span class="number">0x000004F4</span>, <span class="number">0x00000B64</span>, <span class="number">0x00001DC3</span>, <span class="number">0x00001B4A</span>, <span class="number">0x000001B2</span>, <span class="number">0x00001FCE</span>, <span class="number">0x00000E81</span>, <span class="number">0x000025AB</span>, <span class="number">0x0000015B</span>, <span class="number">0x0000252D</span>, <span class="number">0x000002AC</span>, <span class="number">0x00000F77</span>, <span class="number">0x000022F5</span>, <span class="number">0x000019E3</span>, <span class="number">0x00001C53</span>, <span class="number">0x00000B66</span>, <span class="number">0x000011BC</span>, <span class="number">0x0000193A</span>],</span><br><span class="line">        [<span class="number">0x00000DC6</span>, <span class="number">0x00000854</span>, <span class="number">0x000015F5</span>, <span class="number">0x00002567</span>, <span class="number">0x000008FA</span>, <span class="number">0x00000E20</span>, <span class="number">0x00000807</span>, <span class="number">0x00001007</span>, <span class="number">0x000018CC</span>, <span class="number">0x00001E84</span>, <span class="number">0x00001F11</span>, <span class="number">0x000013D4</span>, <span class="number">0x0000076A</span>, <span class="number">0x00001461</span>, <span class="number">0x00000B0F</span>, <span class="number">0x00001F70</span>, <span class="number">0x00001B3D</span>, <span class="number">0x00001008</span>, <span class="number">0x00000D52</span>, <span class="number">0x0000049A</span>],</span><br><span class="line">        [<span class="number">0x00001A89</span>, <span class="number">0x00000E42</span>, <span class="number">0x000000FA</span>, <span class="number">0x0000100D</span>, <span class="number">0x000014DD</span>, <span class="number">0x00001BFC</span>, <span class="number">0x000026DB</span>, <span class="number">0x00001AC2</span>, <span class="number">0x00001CA0</span>, <span class="number">0x000005ED</span>, <span class="number">0x00000834</span>, <span class="number">0x000016BF</span>, <span class="number">0x00000704</span>, <span class="number">0x00001FAD</span>, <span class="number">0x000025FD</span>, <span class="number">0x00001142</span>, <span class="number">0x00001EEE</span>, <span class="number">0x00001E60</span>, <span class="number">0x00000353</span>, <span class="number">0x000015A8</span>],</span><br><span class="line">        [<span class="number">0x00000E17</span>, <span class="number">0x00000706</span>, <span class="number">0x00000C1F</span>, <span class="number">0x00000169</span>, <span class="number">0x00002248</span>, <span class="number">0x000007FD</span>, <span class="number">0x00001768</span>, <span class="number">0x00001F54</span>, <span class="number">0x00001574</span>, <span class="number">0x00002458</span>, <span class="number">0x00000374</span>, <span class="number">0x00001D6B</span>, <span class="number">0x00000918</span>, <span class="number">0x00000ECF</span>, <span class="number">0x0000211D</span>, <span class="number">0x00001D96</span>, <span class="number">0x00001BEB</span>, <span class="number">0x00001703</span>, <span class="number">0x00001B87</span>, <span class="number">0x000006FA</span>],</span><br><span class="line">        [<span class="number">0x00000AE3</span>, <span class="number">0x0000069F</span>, <span class="number">0x000001EF</span>, <span class="number">0x00001C15</span>, <span class="number">0x00001378</span>, <span class="number">0x000020D1</span>, <span class="number">0x0000211D</span>, <span class="number">0x00002275</span>, <span class="number">0x000005F4</span>, <span class="number">0x00002475</span>, <span class="number">0x00000D13</span>, <span class="number">0x000008EF</span>, <span class="number">0x00000E10</span>, <span class="number">0x000006D4</span>, <span class="number">0x0000215A</span>, <span class="number">0x000004D6</span>, <span class="number">0x0000202F</span>, <span class="number">0x00001B99</span>, <span class="number">0x00001C86</span>, <span class="number">0x000002F1</span>],</span><br><span class="line">        [<span class="number">0x00000680</span>, <span class="number">0x000000D4</span>, <span class="number">0x00000677</span>, <span class="number">0x00001E21</span>, <span class="number">0x0000220D</span>, <span class="number">0x00000933</span>, <span class="number">0x00000973</span>, <span class="number">0x00001947</span>, <span class="number">0x00000D61</span>, <span class="number">0x0000247F</span>, <span class="number">0x00001D21</span>, <span class="number">0x00001FA2</span>, <span class="number">0x00001606</span>, <span class="number">0x000007B0</span>, <span class="number">0x00001829</span>, <span class="number">0x000016C0</span>, <span class="number">0x000026C9</span>, <span class="number">0x0000248C</span>, <span class="number">0x00000C9A</span>, <span class="number">0x00001F8F</span>],</span><br><span class="line">        [<span class="number">0x0000257F</span>, <span class="number">0x00000359</span>, <span class="number">0x00001831</span>, <span class="number">0x000021B7</span>, <span class="number">0x00000BA8</span>, <span class="number">0x00000FC5</span>, <span class="number">0x00000BA4</span>, <span class="number">0x000024E2</span>, <span class="number">0x00001241</span>, <span class="number">0x00000D53</span>, <span class="number">0x00000C82</span>, <span class="number">0x00001240</span>, <span class="number">0x00002241</span>, <span class="number">0x00001156</span>, <span class="number">0x0000116A</span>, <span class="number">0x000005F3</span>, <span class="number">0x000022D5</span>, <span class="number">0x000008DA</span>, <span class="number">0x000014A3</span>, <span class="number">0x0000059E</span>],</span><br><span class="line">        [<span class="number">0x00001675</span>, <span class="number">0x00000AA9</span>, <span class="number">0x00000D8B</span>, <span class="number">0x00000D31</span>, <span class="number">0x00001722</span>, <span class="number">0x000006C8</span>, <span class="number">0x0000151B</span>, <span class="number">0x000017D8</span>, <span class="number">0x00001FEF</span>, <span class="number">0x00001624</span>, <span class="number">0x00002307</span>, <span class="number">0x00000CB9</span>, <span class="number">0x0000053C</span>, <span class="number">0x00000230</span>, <span class="number">0x00001EAA</span>, <span class="number">0x00001FD1</span>, <span class="number">0x00000FAD</span>, <span class="number">0x00001E30</span>, <span class="number">0x00002345</span>, <span class="number">0x00001583</span>],</span><br><span class="line">        [<span class="number">0x000001D1</span>, <span class="number">0x0000056E</span>, <span class="number">0x00000AA3</span>, <span class="number">0x0000223C</span>, <span class="number">0x000009A4</span>, <span class="number">0x000006C9</span>, <span class="number">0x00000112</span>, <span class="number">0x00001977</span>, <span class="number">0x00002512</span>, <span class="number">0x00000B60</span>, <span class="number">0x0000081A</span>, <span class="number">0x00000F06</span>, <span class="number">0x00001329</span>, <span class="number">0x000011AA</span>, <span class="number">0x00002404</span>, <span class="number">0x00000E57</span>, <span class="number">0x0000011E</span>, <span class="number">0x000011DC</span>, <span class="number">0x00002474</span>, <span class="number">0x00001BC7</span>],</span><br><span class="line">        [<span class="number">0x000022BE</span>, <span class="number">0x00001F17</span>, <span class="number">0x00000588</span>, <span class="number">0x00001B80</span>, <span class="number">0x00001479</span>, <span class="number">0x000016EF</span>, <span class="number">0x000008CA</span>, <span class="number">0x00000D6E</span>, <span class="number">0x0000138F</span>, <span class="number">0x00001054</span>, <span class="number">0x000021FA</span>, <span class="number">0x00000102</span>, <span class="number">0x000013A6</span>, <span class="number">0x00000195</span>, <span class="number">0x000002D1</span>, <span class="number">0x00002594</span>, <span class="number">0x00001369</span>, <span class="number">0x00002534</span>, <span class="number">0x000015C5</span>, <span class="number">0x0000168A</span>]]</span><br><span class="line">encInput = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> key[::-<span class="number">1</span>]:</span><br><span class="line">    encInput = encInput * <span class="number">10000</span> + i</span><br><span class="line">data= [<span class="number">0</span>] * <span class="number">10</span></span><br><span class="line"><span class="keyword">for</span> i, val <span class="keyword">in</span> <span class="built_in">enumerate</span>(keys):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> val[::-<span class="number">1</span>]:</span><br><span class="line">        data[i] = data[i] * <span class="number">10000</span> + j</span><br><span class="line">encInput += data[<span class="number">9</span>]</span><br><span class="line">encInput -= data[<span class="number">8</span>]</span><br><span class="line">encInput += data[<span class="number">7</span>]</span><br><span class="line">encInput -= data[<span class="number">6</span>]</span><br><span class="line">encInput += data[<span class="number">5</span>]</span><br><span class="line">encInput //= data[<span class="number">4</span>]</span><br><span class="line">encInput -= data[<span class="number">3</span>]</span><br><span class="line">encInput += data[<span class="number">2</span>]</span><br><span class="line">encInput //= data[<span class="number">1</span>]</span><br><span class="line">encInput -= data[<span class="number">0</span>]</span><br><span class="line">ans = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">while</span> encInput:</span><br><span class="line">    ans += <span class="built_in">chr</span>(encInput % <span class="number">128</span>)</span><br><span class="line">    encInput //= <span class="number">128</span></span><br><span class="line"><span class="built_in">print</span>(base64.b64decode(ans))</span><br></pre></td></tr></table></figure>
+
+<p>GetFlag!</p>
+<p><img src="/2022/06/29/ACTF2022-dropper/image-20220630132306663.png" alt="image-20220630132306663"></p>
+<h1 id="文章参考"><a href="#文章参考" class="headerlink" title="文章参考"></a>文章参考</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="https://hxz3zo0taq.feishu.cn/docx/doxcnvG34b3f65w5st0bu8Jd7d7">https://hxz3zo0taq.feishu.cn/docx/doxcnvG34b3f65w5st0bu8Jd7d7</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzIzMTQ4NzE2Ng==&amp;mid=2247492349&amp;idx=1&amp;sn=b108b8a122ebe6423dbb90e2deb1b591&amp;chksm=e8a1c12cdfd6483a35b5dcdc91a915df9095f90fb35dc51a248075a1dafa9cb37448ba197664&amp;mpshare=1&amp;scene=23&amp;srcid=0629gArbU9CbyORIgBf1Dpno&amp;sharer_sharetime=1656500672749&amp;sharer_shareid=122e5be9c4961e59957c3603ed41e762#rd">https://mp.weixin.qq.com/s?__biz=MzIzMTQ4NzE2Ng==&amp;mid=2247492349&amp;idx=1&amp;sn=b108b8a122ebe6423dbb90e2deb1b591&amp;chksm=e8a1c12cdfd6483a35b5dcdc91a915df9095f90fb35dc51a248075a1dafa9cb37448ba197664&amp;mpshare=1&amp;scene=23&amp;srcid=0629gArbU9CbyORIgBf1Dpno&amp;sharer_sharetime=1656500672749&amp;sharer_shareid=122e5be9c4961e59957c3603ed41e762#rd</a></p>
+</blockquote>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2022/06/29/ACTF2022-dropper/" class="leancloud_visitors" data-flag-title="ACTF2022-dropper">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2024 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>

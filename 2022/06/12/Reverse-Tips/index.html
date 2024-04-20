@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>Reverse-Tips - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            <span>June</span>
+            
+            
+            
+            
+            
+            
+            
+            <span>12,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">Reverse-Tips</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p><a target="_blank" rel="noopener" href="https://www.youtube.com/c/OALabs/videos">OALABS系列小教程</a>，病毒分析的little tips!（还没搞懂名字是什么意思</p>
+<h1 id="How-to-Identify-Dynamic-Imports-In-Malware"><a href="#How-to-Identify-Dynamic-Imports-In-Malware" class="headerlink" title="How to Identify Dynamic Imports In Malware"></a>How to Identify Dynamic Imports In Malware</h1><p>一个函数指向的地方是个空s的地方，那么可能以动态解析的形式填入</p>
+<p>当调用这个地址时，这个地址会已经填入了函数地址</p>
+<p>我们通过交叉引用查看这个地方的引用</p>
+<ol>
+<li> 这里的地址是以导入地址表的方式动态解析</li>
+<li> 这个地址可能只是一个大表中的一个条目（可能会被不通函数迭代解析</li>
+</ol>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412091530366.png" alt="image-20220412091530366"></p>
+<h1 id="Setup-IDA-Pro-Type-Librares-For-Windows-Malware-Analysis"><a href="#Setup-IDA-Pro-Type-Librares-For-Windows-Malware-Analysis" class="headerlink" title="Setup IDA Pro Type Librares For Windows Malware Analysis"></a>Setup IDA Pro Type Librares For Windows Malware Analysis</h1><p>识别Windows的恶意软件，里面一般会有一些WIN API，我们可以直接导入<strong>类型库</strong>，方便查看这些类型库，去解析代码</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412092704547.png" alt="image-20220412092704547"></p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412092843816.png" alt="image-20220412092843816"></p>
+<p>当我们不知道是什么，可以<strong>首选这个</strong>，<strong>不用太接近到底是什么</strong></p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412092958773.png" alt="image-20220412092958773"></p>
+<h1 id="How-to-view-disassembly-and-pseudocode-windows-side-by-side-in-IDA-Pro"><a href="#How-to-view-disassembly-and-pseudocode-windows-side-by-side-in-IDA-Pro" class="headerlink" title="How to view disassembly and pseudocode windows side-by-side in IDA Pro"></a>How to view disassembly and pseudocode windows side-by-side in IDA Pro</h1><p>同时查看反汇编和汇编窗口的命令</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412093352004.png" alt="image-20220412093352004"></p>
+<p>方便查看</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412093432063.png" alt="image-20220412093432063"></p>
+<h1 id="C-Malware-With-IDA-Pro"><a href="#C-Malware-With-IDA-Pro" class="headerlink" title="C++ Malware With IDA Pro"></a>C++ Malware With IDA Pro</h1><p>主要讨论的是这个，关于C++类和对象的关系，在IDA里会丢失类和对象的概念</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412150805638.png" alt="image-20220412150805638"></p>
+<p>必须要先实例化类，才能在内存中创建变量</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412151050573.png" alt="image-20220412151050573"></p>
+<p>在源代码里没什么问题，但IDA反编译之后不知道这是个结构体，只知道这是个指针</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412151458803.png" alt="image-20220412151458803"></p>
+<p>显然易见的流程图</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412151804698.png" alt="image-20220412151804698"></p>
+<p>于是要在IDA修复这个对象，先重置解析指针</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412152315147.png" alt="image-20220412152315147"></p>
+<p>然后创建结构体</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412152841016.png" alt="image-20220412152841016"></p>
+<p>这是根据内存自动创建的，不一定是对的，不过先去尝试到底是多大的字节什么类型变量，来逐步确定结构体中的变量</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412152941984.png" alt="image-20220412152941984"></p>
+<p>在这可以看自己创建的结构体，之前做的login是去本地结构库（shift + F9）去添加结构，这里是我们自己创建的</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220412153744045.png" alt="image-20220412153744045"></p>
+<h1 id="Debugging-a-DLL-Export"><a href="#Debugging-a-DLL-Export" class="headerlink" title="Debugging a DLL Export"></a>Debugging a DLL Export</h1><p>主要就是记录如何调试dll，首先要开始dll入口，这样就会停在加载dll的入口，后面通过查找关键函数的地址，直接改eip跳过去，然后提取数据即可 </p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220415130000597.png" alt="image-20220415130000597"></p>
+<h1 id="Why-Is-The-PE-Enter-Point-Not-The-Same-As-Main-SEH-and-The-security-init-cookie"><a href="#Why-Is-The-PE-Enter-Point-Not-The-Same-As-Main-SEH-and-The-security-init-cookie" class="headerlink" title="Why Is The PE Enter Point Not The Same As Main SEH and The_security_init_cookie"></a>Why Is The PE Enter Point Not The Same As Main SEH and The_security_init_cookie</h1><p>当我们调试程序时，调试器停了PE入口点，诗人困惑，然而此代码为样板代码，是作为逆向分析的首要目标</p>
+<p>主要讲解的是在<strong>start函数</strong>的意思，注意这是<strong>mscv Visual Studio编译的二进制文件，这就是mscv的标签，样板代码</strong></p>
+<p><strong><img src="/2022/06/12/Reverse-Tips/image-20220418165009278.png" alt="image-20220418165009278"></strong></p>
+<h2 id="security-init-cookie"><a href="#security-init-cookie" class="headerlink" title="_security_init_cookie"></a>_security_init_cookie</h2><p>这边的cookie检查，里面没有很多有意思的代码，对于一个文件的逆向工程没有什么关系，看了<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/security-init-cookie?view=msvc-170">官网文档</a>，有点像canary保护</p>
+<p>(可以通过里面的一些常量来确认这是_security_init_cookie)</p>
+<p>(32位的cookie和64位的cookie有些不一样)</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220418165627728.png" alt="image-20220418165627728"></p>
+<h2 id="scrt-common-main-seh"><a href="#scrt-common-main-seh" class="headerlink" title="_scrt_common_main_seh"></a>_scrt_common_main_seh</h2><p>然后就是<strong>结构化异常处理程序</strong></p>
+<p>就是额外的一些异常，如果你的程序出现一些错误抛出异常，在该异常处理链中添加一些额外的信息，这对再次调试很有用</p>
+<p>当jmp到这seh时，会有一长串代码，在<strong>去掉符号表的情况下很难理解</strong></p>
+<p>然而在这里面就是调用main函数的地方，而<strong>32位和64位的main函数原型都是固有</strong>的</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220418172114020.png" alt="image-20220418172114020"></p>
+<h1 id="Bypassing-BlackMatter-Anti-Debug"><a href="#Bypassing-BlackMatter-Anti-Debug" class="headerlink" title="Bypassing BlackMatter Anti-Debug"></a>Bypassing BlackMatter Anti-Debug</h1><p>先记录个简单小技巧，关于x64dbg的快捷键G</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220420205845185.png" alt="image-20220420205845185"></p>
+<p>在BlackMatter中调用了此API，我们只要F7跟一下就能找到，不过要<strong>装个插件silehide</strong>（先复现Jump去了</p>
+<h3 id="NtSetInformationThread-Anti-Debug"><a href="#NtSetInformationThread-Anti-Debug" class="headerlink" title="NtSetInformationThread() Anti Debug"></a>NtSetInformationThread() Anti Debug</h3><p><a target="_blank" rel="noopener" href="https://anti-debug.checkpoint.com/techniques/interactive.html#ntsetinformationthread">参考此文章</a></p>
+<p>该API会对调试器<strong>隐藏线程</strong>，当隐藏后，它将继续运行，但<strong>调试器不会收到任何该线程的相关事件</strong></p>
+<p><strong>该线程可以执行反调试检查，例如代码校验和调试标志验证等</strong></p>
+<p>但是，如果<strong>隐藏线程中有断点</strong>，或者我们对调试器隐藏了主线程，那么进程就会崩溃，调试器就会卡住</p>
+<p>（出个题不错嘿嘿，还想自己写Hook题）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NtCurrentThread ((HANDLE)-2)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">AntiDebug</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    NTSTATUS status = ntdll::<span class="built_in">NtSetInformationThread</span>(</span><br><span class="line">        NtCurrentThread, </span><br><span class="line">        ntdll::THREAD_INFORMATION_CLASS::ThreadHideFromDebugger, </span><br><span class="line">        <span class="literal">NULL</span>, </span><br><span class="line">        <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> status &gt;= <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="What-is-a-Breakpoint"><a href="#What-is-a-Breakpoint" class="headerlink" title="What is a Breakpoint"></a>What is a Breakpoint</h1><p>What is a breakpoint and how does it work under the hood(在底层) of debugger</p>
+<p>This tips both of hardware and software breakpoints work!</p>
+<h2 id="Software-Breakpoint"><a href="#Software-Breakpoint" class="headerlink" title="Software Breakpoint"></a>Software Breakpoint</h2><p>每当有一个软件断点在windows内核中就有一个异常断点带有异常断点类型的异常调试事件</p>
+<p>关于软件断点实质是向<strong>目标进程要断下的字节改变成0xCC</strong></p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220420223328249.png" alt="image-20220420223328249"></p>
+<p><strong>当我们要设置一个软件断点</strong></p>
+<ol>
+<li> 调试器将读取要设置断点的位置，并存储在断点表中</li>
+<li> 再在断点的位置设置成0xCC，然后继续运行</li>
+<li> 于是当CPU遇到CC值，就会触发INT 3，并将异常断点引发到debug</li>
+<li> 然后debug发现这个是个用户</li>
+<li> 当要继续执行时，将断点表中保存的值放回目标进程  </li>
+<li>  然后再将把指令指针寄存器向回移动一格</li>
+<li>  再执行原来要执行的代码</li>
+</ol>
+<p>如果在做一些反调试什么，这实质上是在改变目标进程所执行代码，非常容易被检查到，这也就是软件断点的一个坏处</p>
+<p>10 minutes + 1 hour + 1 hour 30 minutes + 2 hours + 3 hours + all the time left, Tomorrow will be hard. But I can do it! –4.20</p>
+<h2 id="Hardware-Breakpoints"><a href="#Hardware-Breakpoints" class="headerlink" title="Hardware Breakpoints"></a>Hardware Breakpoints</h2><p><strong>硬件断点实际上是CPU完成的</strong>，并设置在CPU的寄存器中，有四个寄存器<strong>DR0, DR1, DR2, DR3</strong>，专门来存放硬件断点的地址</p>
+<p>硬件断点有几个优点</p>
+<ol>
+<li> 就算程序处于未解密状态，只要在该地方设置，当CPU运行就会断住</li>
+<li> 不会改变目标进程的内存，所以更隐秘</li>
+</ol>
+<p><strong>这些断点是注册在DR7寄存器</strong>，使用一组标志控制，这些标志会记录每个断点如何设置已经是如何触发的</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220420225306296.png" alt="image-20220420225306296"></p>
+<p>DR7的低八位以启用DR0 to DR3作为本地或全局断点</p>
+<p>而在windows上是没有全局断点的，所以只用来设置本地断点</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220420231724850.png" alt="image-20220420231724850"></p>
+<p>DR7的高十六位来设置</p>
+<ol>
+<li> 断点类型</li>
+<li> 断点如何触发 </li>
+<li> 断点大小</li>
+</ol>
+<p>低两位来告诉你断点的类型和断点如何触发</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220420232103155.png" alt="image-20220420232103155"></p>
+<p>高两位来告诉你这个地址大小</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220420232121959.png" alt="image-20220420232121959"></p>
+<p>但对于下一个硬件执行断点，就要设置一个本地断点、一个字节的可执行断点</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220420232459446.png" alt="image-20220420232459446"></p>
+<h1 id="The-Thread-Context"><a href="#The-Thread-Context" class="headerlink" title="The Thread Context"></a>The Thread Context</h1><p>你注入的进程，那到底是什么？</p>
+<p>CPU只有有限的内核，一次只能运行有限的线程，而我们关注的是对进程的影响</p>
+<p>当一个进程想插入进来直接执行时，它需要占用，于是会拍一个CPU的快照，这个信息我们称之为<strong>Context</strong></p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220421234657352.png" alt="image-20220421234657352"></p>
+<ol>
+<li><p> 一旦准备继续执行这个进程，它可以恢复到CPU上继续执行</p>
+</li>
+<li><p> Context是所有一个进程CPU所有寄存器的快照，每一个Context都绑定着一个线程</p>
+</li>
+<li><p> 我们可以dbg每个context，有两个API来调试使用context</p>
+</li>
+<li><p> 可以通过<strong>GetThreadContext来获取Context</strong></p>
+</li>
+<li><p> 再用<strong>SetThreadContext将修改过的Context重新放回内核</strong>，告诉内核你可以继续<strong>塔塔开</strong>了</p>
+</li>
+</ol>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220421235200654.png" alt="image-20220421235200654"></p>
+<h1 id="How-Dose-Debugger-Work"><a href="#How-Dose-Debugger-Work" class="headerlink" title="How Dose Debugger Work"></a>How Dose Debugger Work</h1><p>微软喜欢称调试为事件驱动的调试，你的调试器将会调试你的目标进程在内核的接收事件，也就是会冻结这一切，然后干了你想干的就继续执行了</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220425204440072.png" alt="image-20220425204440072"></p>
+<p>调用WaitForDebugEvent去堵塞，直到你干了想做的事情然后可以调用ContinueDebugEvent继续从内核接收事件</p>
+<p>现在从<strong>等待事件返回的事件非常重要</strong>，事实上这处理了如何处理核心调试器工作</p>
+<p>事件的结构体就是**_DEBUG_EVENT**</p>
+<ol>
+<li> dwDebugEventCode，<strong>事件代码</strong>，告诉你<strong>这是什么类型的事件</strong></li>
+<li> dwProcessId，<strong>进程ID</strong>，<strong>以防你的调试器正在调试多个进程</strong></li>
+<li> dwThreadId，<strong>线程ID</strong>，这实际上就是<strong>触发事件的线程</strong>，这就是最重要的信息</li>
+<li> union，这具体取决于<strong>触发事件的类型</strong></li>
+</ol>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220425204953099.png" alt="image-20220425204953099"></p>
+<p>关于这个结构体的具体说明</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220425205755847.png" alt="image-20220425205755847"></p>
+<p>在x64 debug，调试器可以选择在这里断不断，这样可以更清楚的选择这些选项</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220425210010439.png" alt="image-20220425210010439"></p>
+<h1 id="x64dbg-System-Breakpoint"><a href="#x64dbg-System-Breakpoint" class="headerlink" title="x64dbg System Breakpoint"></a>x64dbg System Breakpoint</h1><p><strong>主要是讲了到底什么是系统断点</strong>，微软称为 loader breakpoint 或 loader do debugger break，这是个软件断点，是<strong>编写在ntdll的的软件断点</strong></p>
+<p>当程序加载会加载所有dll，这是个而图中的的int 3，就是我们的系统断点，系统断点不是总是触发，得有一个<strong>调试器触发它</strong></p>
+<p>在系统断点期间要注意的事情</p>
+<ol>
+<li><p> 不要在系统断点的时候<strong>设置任何寄存器</strong>或者<strong>硬件断点</strong>，当系统断点一返回所有的操作都会被清空！</p>
+</li>
+<li><p> 系统断点期间可以<strong>查看进程内存</strong>，可以<strong>设置软件断点</strong></p>
+</li>
+</ol>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220425211255617.png" alt="image-20220425211255617"></p>
+<h1 id="Control-Flow-Flattening-Obfuscation-Explained"><a href="#Control-Flow-Flattening-Obfuscation-Explained" class="headerlink" title="Control Flow Flattening Obfuscation Explained"></a>Control Flow Flattening Obfuscation Explained</h1><p>先举例一个经过混淆的控制流这样</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220504220552800.png" alt="image-20220504220552800"></p>
+<ol>
+<li> 最下面的一个个基本块是我们的控制流平坦化（是真正要执行的代码）</li>
+<li> 中间的dispatcher是我们的调度程序（程序通过这来执行我们的每个基本块）</li>
+<li> 而这个调度程序并不是直接一条条读，而是通过一个jmp表（也就是右边那块）从一块跳到另一块执行</li>
+</ol>
+<p>所以我们想去掉这个混淆就得先去掉表，再去掉调度程序（根据jmp表），再恢复我们的基本块的执行流程（根据调度程序）</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220504220846689.png" alt="image-20220504220846689"></p>
+<h1 id="Auto-Comments"><a href="#Auto-Comments" class="headerlink" title="Auto Comments"></a>Auto Comments</h1><p>关于一些<strong>不熟悉的架构</strong>或者<strong>标志位</strong>不熟悉，又没有网的情况下（指浙江省省赛</p>
+<p>这个8086架构还行，不过还能看标志位倒是挺新奇</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220506102807065.png" alt="image-20220506102807065"></p>
+<p>xdbg也可以，挺详细的</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220506103041251.png" alt="image-20220506103041251"></p>
+<h1 id="Assembly-Calling-Conventions"><a href="#Assembly-Calling-Conventions" class="headerlink" title="Assembly Calling Conventions"></a>Assembly Calling Conventions</h1><p>关于x86下的调用细节</p>
+<p>（省流，多看MSDN）</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220508203404611.png" alt="image-20220508203404611"></p>
+<p>记录一下windows编译器下cdecl的传参细节，调用者恢复堆栈</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220508203632145.png" alt="image-20220508203632145"></p>
+<p>这期有意思的变长参数的识别（这还是学完C后的第一次碰到这个）</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220508203759089.png" alt="image-20220508203759089"></p>
+<p>这本IDA无法正常识别，顺便记录按Y可以改变参数形式（当IDA识别错的时候），不过这里最多只能是记录后面是变长参数</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220508203926043.png" alt="image-20220508203926043"></p>
+<h1 id="IDA-Plugins-For-Malware"><a href="#IDA-Plugins-For-Malware" class="headerlink" title="IDA Plugins For Malware"></a>IDA Plugins For Malware</h1><p>记录一下几个IDA插件的安装</p>
+<p>首先是我们IDA的这里其实就是如CMD里的命令行一样</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220509211430480.png" alt="image-20220509211430480"></p>
+<p>如果不确定现在IDA在用哪个，可以在IDA主目录看这个</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220509214259872.png" alt="image-20220509214259872"></p>
+<p>这次视频留个链接<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=pfBA6y4VLwM">https://www.youtube.com/watch?v=pfBA6y4VLwM</a></p>
+<p>主要讲了5个插件，第二个第三个配套还有个视频<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=3FPY4cLaELU">https://www.youtube.com/watch?v=3FPY4cLaELU</a></p>
+<p>第四个 flare ida目前还不知道干啥估计也是识别些什么东西</p>
+<p>第五个 是根据病毒签名什么的识别</p>
+<h1 id="How-to-ignore-exceptions-in-IDA"><a href="#How-to-ignore-exceptions-in-IDA" class="headerlink" title="How to ignore exceptions in IDA"></a>How to ignore exceptions in IDA</h1><p>做到zsky师傅的题，关于子进程报异常但被IDA拦了之后，该怎么让IDA忽略，让异常正确发到主进程</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220519142307707.png" alt="image-20220519142307707"></p>
+<p>这样即可，选择你喜欢的异常！</p>
+<p><img src="/2022/06/12/Reverse-Tips/image-20220519142358890.png" alt="image-20220519142358890"></p>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2022/06/12/Reverse-Tips/" class="leancloud_visitors" data-flag-title="Reverse-Tips">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2024 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
