@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>FUD Aegis Crypter - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            <span>April</span>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>7,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">FUD Aegis Crypter</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>主要记录一下恶意加载器，也算是Scr1pt师傅带我的第一次入门，笔记拖更很久，上周连休三天感觉还可以又有些无聊。–4.11</p>
+<h1 id="FUD-Aegis-Crypter"><a href="#FUD-Aegis-Crypter" class="headerlink" title="FUD Aegis Crypter"></a>FUD Aegis Crypter</h1><p><strong>恶意加载器</strong>，主要是保护了所加载内容！</p>
+<p>一个2016年的病毒加载器，雀氏有点老，不过当成我入门的一个分析属实不错</p>
+<p>关于<strong>病毒签名</strong>，这个软件的<strong>存根</strong>已经被很多恶意软件所使用，所以会被立即检测，如果想做个自己的，最好的是构建自己的存根 <strong>自定义存根</strong></p>
+<p>很多时候，在打包一个恶意软件时，会得到一小段代码叫做存根，和加密后的恶意代码部分，通过那段存根，才解密恶意代码部分（好像SMC）</p>
+<p>简单讲几个选项</p>
+<ol>
+<li><p> 想<strong>StubPath是指向存根</strong>，103KB的存根（自带的），如果使用这个基本都被检测出来</p>
+</li>
+<li><p> Resource Data就在把Encrypt Section放到Resource Section</p>
+</li>
+<li><p> EOF DATA就是把Encrypt Section附加到文件</p>
+</li>
+</ol>
+<p><img src="/2022/04/07/FUD-Aegis-Crypter/image-20220411091603183.png" alt="image-20220411091603183"></p>
+<h1 id="Dump-Aegis-Packed"><a href="#Dump-Aegis-Packed" class="headerlink" title="Dump Aegis_Packed"></a>Dump Aegis_Packed</h1><p><strong>现在的目标是dump出经Aegis加载的calc</strong></p>
+<h2 id="VirtualAlloc断点"><a href="#VirtualAlloc断点" class="headerlink" title="VirtualAlloc断点"></a>VirtualAlloc断点</h2><p>在没加什么保护器的情况下</p>
+<p>我们设置一个断点 在<strong>创建进程</strong>的API上，也就是<strong>VirtualAlloc</strong>，在这个<strong>API返回时</strong>，会将<strong>新分配的内存地址存储在EAX</strong>上</p>
+<p>于是在他返回时查看EAX所指向的内存地址</p>
+<p>通过 Ctrl + G 找到VirtualAlloc</p>
+<p><img src="/2022/04/07/FUD-Aegis-Crypter/image-20220411100124864.png" alt="image-20220411100124864"></p>
+<p>跟随jmp跳转可以找到VirtualAlloc函数返回的地方</p>
+<p><img src="/2022/04/07/FUD-Aegis-Crypter/image-20220411100208206.png" alt="image-20220411100208206"></p>
+<h2 id="First-Dum-and-Second-Dump"><a href="#First-Dum-and-Second-Dump" class="headerlink" title="First Dum and Second Dump"></a>First Dum and Second Dump</h2><p>第一次断点打断，直接跟随到地址（由于是刚分配的所以这个内存区域还是空的）</p>
+<p><img src="/2022/04/07/FUD-Aegis-Crypter/image-20220411100657124.png" alt="image-20220411100657124"></p>
+<p>F9一下发现已经创建了一个<strong>虚拟进程</strong></p>
+<p><img src="/2022/04/07/FUD-Aegis-Crypter/image-20220411100800561.png" alt="image-20220411100800561"></p>
+<p>我们可以dump出来看一下，是否是我们的calc</p>
+<p>右键在内部布局转到</p>
+<p><img src="/2022/04/07/FUD-Aegis-Crypter/image-20220411101009013.png" alt="image-20220411101009013"></p>
+<p>再dump出文件，注意不要点到其他的内存区域，要不然dump出来的不一样</p>
+<p><img src="/2022/04/07/FUD-Aegis-Crypter/image-20220411101057045.png" alt="image-20220411101057045"></p>
+<p>我们可以通过010来比较两个文件，虽然有<strong>少许字节不同</strong>，或者有多的<strong>空字节填充</strong>，但我们<strong>不用hash来比较文件</strong></p>
+<p>文件是大致相同的，所以这并不是我们要找的calc</p>
+<p>再跟着dump一次会发现依然不是真正的calc</p>
+<h2 id="Third-Dump"><a href="#Third-Dump" class="headerlink" title="Third Dump"></a>Third Dump</h2><p>这次dump出来发现就是calc</p>
+<p><img src="/2022/04/07/FUD-Aegis-Crypter/image-20220411102643949.png" alt="image-20220411102643949"></p>
+<h1 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h1><ol>
+<li> <strong>前两次dump</strong>并不是真正的calc，是用来解密的，<strong>进程注入的暂存代码</strong> （ 所以把前两次dump出来做放进ida做下逆向工程分析一下就会知道原理）</li>
+<li> 这种<strong>自我注入</strong>代码的程序一般都打<strong>VirtualAlloc</strong>就好了，因为最后都会调用这个API（<strong>除非是CreateProcess或者多线程</strong>）</li>
+</ol>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2022/04/07/FUD-Aegis-Crypter/" class="leancloud_visitors" data-flag-title="FUD Aegis Crypter">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2024 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>

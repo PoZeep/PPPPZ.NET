@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>FlareOn4-greek_to_me - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>September</span>
+            
+            
+            
+            
+            <span>15,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">FlareOn4-greek_to_me</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>又感觉好久没写WP。–2022.9.15</p>
+<h1 id="0x00-Daily-Shell-Check"><a href="#0x00-Daily-Shell-Check" class="headerlink" title="0x00 Daily Shell Check"></a>0x00 Daily Shell Check</h1><p>无壳32位</p>
+<p><img src="/2022/09/15/FlareOn4-greek-to-me/image-20220915094603084.png" alt="image-20220915094603084"></p>
+<h1 id="0x01-Analyze-Main"><a href="#0x01-Analyze-Main" class="headerlink" title="0x01 Analyze Main"></a>0x01 Analyze Main</h1><p>首先是 sub_401121 函数，第一个知识点就是Socket通信，这里可知接收了数据然后返回</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">SOCKET __cdecl <span class="title">sub_401121</span><span class="params">(<span class="keyword">char</span> *buf)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  SOCKET v2; <span class="comment">// esi</span></span><br><span class="line">  SOCKET v3; <span class="comment">// eax</span></span><br><span class="line">  SOCKET v4; <span class="comment">// edi</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">WSAData</span> <span class="title">WSAData</span>;</span> <span class="comment">// [esp+0h] [ebp-1A0h] BYREF</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> <span class="title">name</span>;</span> <span class="comment">// [esp+190h] [ebp-10h] BYREF</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( WSAStartup(<span class="number">0x202</span>u, &amp;WSAData) )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  v2 = socket(<span class="number">2</span>, <span class="number">1</span>, <span class="number">6</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v2 != <span class="number">-1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    name.sa_family = <span class="number">2</span>;</span><br><span class="line">    *(_DWORD *)&amp;name.sa_data[<span class="number">2</span>] = inet_addr(<span class="string">&quot;127.0.0.1&quot;</span>);</span><br><span class="line">    *(_WORD *)name.sa_data = htons(<span class="number">2222u</span>);</span><br><span class="line">    <span class="keyword">if</span> ( bind(v2, &amp;name, <span class="number">16</span>) != <span class="number">-1</span> &amp;&amp; listen(v2, <span class="number">0x7FFFFFFF</span>) != <span class="number">-1</span> )<span class="comment">// 监听本地端口为2222的套接字</span></span><br><span class="line">    &#123;</span><br><span class="line">      v3 = accept(v2, <span class="number">0</span>, <span class="number">0</span>);                    <span class="comment">// 堵塞 等待链接</span></span><br><span class="line">      v4 = v3;</span><br><span class="line">      <span class="keyword">if</span> ( v3 != <span class="number">-1</span> )</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">if</span> ( recv(v3, buf, <span class="number">4</span>, <span class="number">0</span>) &gt; <span class="number">0</span> )          <span class="comment">// 接收长度为4个字节的数据放到buf</span></span><br><span class="line">          <span class="keyword">return</span> v4;</span><br><span class="line">        closesocket(v4);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    closesocket(v2);</span><br><span class="line">  &#125;</span><br><span class="line">  WSACleanup();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（更多的Socket通信逆向可以看 DASCTF2022 X SU-login 该题）</p>
+<p>随后在主函数，程序进程SMC解密，而这里的<strong>解密实际只异或了一个字节</strong>，那么只有256种可能性</p>
+<p><img src="/2022/09/15/FlareOn4-greek-to-me/image-20220915145427065.png" alt="image-20220915145427065"></p>
+<p>同时 sub_4011E6 会验证 40107C 地址的数据是否正确解密，如果成功进入了判断会发送 Congratulations!</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __usercall sub_401008@&lt;eax&gt;(<span class="keyword">int</span> _EDI@&lt;edi&gt;, _DWORD *a2@&lt;esi&gt;)</span><br><span class="line">&#123;</span><br><span class="line">  _BYTE *v2; <span class="comment">// eax</span></span><br><span class="line">  <span class="keyword">char</span> copy_buf; <span class="comment">// dl</span></span><br><span class="line">  <span class="keyword">int</span> _EBX; <span class="comment">// ebx</span></span><br><span class="line">  <span class="keyword">bool</span> v5; <span class="comment">// cf</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v6; <span class="comment">// ett</span></span><br><span class="line">  <span class="keyword">int</span> v7; <span class="comment">// edx</span></span><br><span class="line">  <span class="keyword">int</span> v9; <span class="comment">// [esp+10h] [ebp-1Ch]</span></span><br><span class="line">  <span class="keyword">char</span> buf[<span class="number">4</span>]; <span class="comment">// [esp+24h] [ebp-8h] BYREF</span></span><br><span class="line">  SOCKET s; <span class="comment">// [esp+28h] [ebp-4h]</span></span><br><span class="line">  <span class="keyword">int</span> savedregs; <span class="comment">// [esp+2Ch] [ebp+0h] BYREF</span></span><br><span class="line"></span><br><span class="line">  s = sub_401121(buf);</span><br><span class="line">  <span class="keyword">if</span> ( !s )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  v2 = &amp;loc_40107C;</span><br><span class="line">  copy_buf = buf[<span class="number">0</span>];</span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">  &#123;</span><br><span class="line">    *v2 = (copy_buf ^ *v2) + <span class="number">34</span>;</span><br><span class="line">    ++v2;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> ( (<span class="keyword">int</span>)v2 &lt; (<span class="keyword">int</span>)&amp;loc_40107C + <span class="number">0x79</span> );  <span class="comment">// 40107C等待SMC解密的数据</span></span><br><span class="line">  <span class="keyword">if</span> ( (<span class="keyword">unsigned</span> __int16)sub_4011E6((<span class="keyword">unsigned</span> __int8 *)&amp;loc_40107C, <span class="number">0x79</span>u) == <span class="number">0xFB5E</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    _EBX = *(_DWORD *)(v9 + <span class="number">377554449</span>);</span><br><span class="line">    __asm &#123; lock <span class="keyword">xor</span> bl, [edi+<span class="number">61791</span>C4h] &#125;</span><br><span class="line">    v5 = __CFADD__(*(_DWORD *)(<span class="number">8</span> * (_DWORD)a2 + <span class="number">0xFB5E</span>), <span class="number">-250248954</span>);</span><br><span class="line">    *(_DWORD *)(<span class="number">8</span> * (_DWORD)a2 + <span class="number">0xFB5E</span>) -= <span class="number">250248954</span>;</span><br><span class="line">    <span class="keyword">if</span> ( v9 == <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      v6 = v5 + <span class="number">427886322</span>;</span><br><span class="line">      v5 = MEMORY[<span class="number">0xFB5E</span>] &lt; v6;</span><br><span class="line">      MEMORY[<span class="number">0xFB5E</span>] -= v6;</span><br><span class="line">    &#125;</span><br><span class="line">    __asm &#123; icebp &#125;</span><br><span class="line">    *a2 -= v5 + <span class="number">530171120</span>;</span><br><span class="line">    v7 = *(_DWORD *)(v9 - <span class="number">1</span> + <span class="number">494994972</span>);</span><br><span class="line">    __outbyte(<span class="number">6u</span>, <span class="number">0x5E</span>u);</span><br><span class="line">    *(_DWORD *)(v7 - <span class="number">17</span>) &amp;= <span class="number">0xF2638106</span>;</span><br><span class="line">    MEMORY[<span class="number">0xFB41</span>] &amp;= <span class="number">0x66199C4</span>u;</span><br><span class="line">    *(a2 - <span class="number">17</span>) &amp;= <span class="number">0xE6678106</span>;</span><br><span class="line">    *(_DWORD *)(<span class="number">8</span> * (_DWORD)&amp;savedregs + <span class="number">0xFB5E</span> + <span class="number">6</span>) &amp;= <span class="number">0x69D6581</span>u;</span><br><span class="line">    *(_DWORD *)(v7 - <span class="number">14</span>) -= <span class="number">107715012</span>;</span><br><span class="line">    MEMORY[<span class="number">0xFB07</span>] += <span class="number">278298362</span>;</span><br><span class="line">    *(_DWORD *)((<span class="keyword">char</span> *)a2 - <span class="number">18</span>) += <span class="number">1368424186</span>;</span><br><span class="line">    *(_DWORD *)(_EBX + <span class="number">6</span>) -= <span class="number">116354433</span>;</span><br><span class="line">    *(_DWORD *)(v7 - <span class="number">23</span>) ^= <span class="number">0x7C738106</span>u;</span><br><span class="line">    send(s, <span class="string">&quot;Congratulations! But wait, where&#x27;s my flag?&quot;</span>, <span class="number">43</span>, <span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    send(s, <span class="string">&quot;Nope, that&#x27;s not it.&quot;</span>, <span class="number">20</span>, <span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  closesocket(s);</span><br><span class="line">  <span class="keyword">return</span> WSACleanup();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="0x02-GetFlag"><a href="#0x02-GetFlag" class="headerlink" title="0x02 GetFlag"></a>0x02 GetFlag</h1><p>那么了解以上，就可以开始去想方法获得我们的flag了，首先是第一个方法，爆破我们的发送过去的值，如果返回Congratulations 就打印我们所爆破的值</p>
+<h2 id="Crack-Socket"><a href="#Crack-Socket" class="headerlink" title="Crack Socket"></a>Crack Socket</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line">TCP_IP = <span class="string">&#x27;127.0.0.1&#x27;</span></span><br><span class="line">TCP_PORT = <span class="number">2222</span></span><br><span class="line">BUFFER_SIZE = <span class="number">1024</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span> (<span class="number">0</span>,<span class="number">256</span>):</span><br><span class="line">    os.startfile(sys.argv[<span class="number">1</span>])</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    s.connect((TCP_IP, TCP_PORT))</span><br><span class="line">    s.send(<span class="built_in">chr</span>(i))</span><br><span class="line">    data = s.recv(BUFFER_SIZE)</span><br><span class="line">    s.close()</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;Congratulations&#x27;</span> <span class="keyword">in</span> data:</span><br><span class="line">        <span class="built_in">print</span>(i)</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<p>从这里我们可以直接知道我们要的值是0xA2，但不能直接拿到flag，估计是在SMC解密后的内容，于是我们可以IDA调试，随后这里发送字节过去</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line">TCP_IP = <span class="string">&#x27;127.0.0.1&#x27;</span></span><br><span class="line">TCP_PORT = <span class="number">2222</span></span><br><span class="line">BUFFER_SIZE = <span class="number">1024</span></span><br><span class="line"></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">s.connect((TCP_IP, TCP_PORT))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(<span class="string">b&#x27;\xA2&#x27;</span>))</span><br><span class="line">s.send(<span class="string">b&#x27;\xA2&#x27;</span>)</span><br><span class="line">data = s.recv(BUFFER_SIZE)</span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line">s.close()</span><br></pre></td></tr></table></figure>
+
+<p>调试至此，GetFlag!</p>
+<p><img src="/2022/09/15/FlareOn4-greek-to-me/image-20220915145940474.png" alt="image-20220915145940474"></p>
+<h2 id="unicorn"><a href="#unicorn" class="headerlink" title="unicorn"></a>unicorn</h2><p>那么还有个方法就是 unicorn 模拟执行</p>
+<p>参考文章：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-223473-1.htm">https://bbs.pediy.com/thread-223473-1.htm</a></p>
+</blockquote>
+<p>那么unicorn的本意就是帮我们模拟执行代码，稍稍回忆两个点</p>
+<ul>
+<li>loc_40107C 为我们要解密的代码</li>
+<li>sub_4011E6 为我们验证解密是否成功的代码</li>
+</ul>
+<p>那么与之前思路相同，<strong>我们模拟执行 sub_4011E6 的代码让该函数验证我们的 loc_40107C（我们尝试解密后的） 是否正确</strong></p>
+<ol>
+<li>先取出我们需要的数据并转成字节</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">CHECKSUM_CODE = binascii.unhexlify(</span><br><span class="line">    <span class="string">&#x27;55 8B EC 51 8B 55 0C B9 FF 00 00 00 89 4D FC 85 D2 74 51 53 8B 5D 08 56 57 &#x27;</span></span><br><span class="line">    <span class="string">&#x27;6A 14 58 66 8B 7D FC 3B D0 8B F2 0F 47 F0 2B D6 0F B6 03 66 03 F8 66 89 7D &#x27;</span></span><br><span class="line">    <span class="string">&#x27;FC 03 4D FC 43 83 EE 01 75 ED 0F B6 45 FC 66 C1 EF 08 66 03 C7 0F B7 C0 89 &#x27;</span></span><br><span class="line">    <span class="string">&#x27;45 FC 0F B6 C1 66 C1 E9 08 66 03 C1 0F B7 C8 6A 14 58 85 D2 75 BB 5F 5E 5B &#x27;</span></span><br><span class="line">    <span class="string">&#x27;0F B6 55 FC 8B C1 C1 E1 08 25 00 FF 00 00 03 C1 66 8B 4D FC 66 C1 E9 08 66 &#x27;</span></span><br><span class="line">    <span class="string">&#x27;03 D1 66 0B C2 8B E5 5D&#x27;</span>.replace(<span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;&#x27;</span>))</span><br><span class="line">ENCODED_BYTES = binascii.unhexlify(</span><br><span class="line">    <span class="string">&#x27;33 E1 C4 99 11 06 81 16 F0 32 9F C4 91 17 06 81 14 F0 06 81 15 F1 C4 91 1A &#x27;</span></span><br><span class="line">    <span class="string">&#x27;06 81 1B E2 06 81 18 F2 06 81 19 F1 06 81 1E F0 C4 99 1F C4 91 1C 06 81 1D &#x27;</span></span><br><span class="line">    <span class="string">&#x27;E6 06 81 62 EF 06 81 63 F2 06 81 60 E3 C4 99 61 06 81 66 BC 06 81 67 E6 06 &#x27;</span></span><br><span class="line">    <span class="string">&#x27;81 64 E8 06 81 65 9D 06 81 6A F2 C4 99 6B 06 81 68 A9 06 81 69 EF 06 81 6E &#x27;</span></span><br><span class="line">    <span class="string">&#x27;EE 06 81 6F AE 06 81 6C E3 06 81 6D EF 06 81 72 E9 06 81 73 7C&#x27;</span>.replace(<span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>那么我们模拟执行的代码如下</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">emulate_checksum</span>(<span class="params">decoded_bytes</span>):</span></span><br><span class="line">    <span class="comment"># establish memory addresses for checksum code, stack, and decoded bytes</span></span><br><span class="line">    address = <span class="number">0x400000</span> <span class="comment"># 运行地址</span></span><br><span class="line">    stack_addr = <span class="number">0x410000</span> <span class="comment"># 堆栈地址</span></span><br><span class="line">    dec_bytes_addr = <span class="number">0x420000</span> <span class="comment"># loc_40107C的数据</span></span><br><span class="line">    <span class="comment"># write checksum code and decoded bytes into memory</span></span><br><span class="line">    mu = Uc(UC_ARCH_X86, UC_MODE_32) <span class="comment"># 要启动的架构与位数</span></span><br><span class="line">    mu.mem_map(address, <span class="number">2</span> * <span class="number">1024</span> * <span class="number">1024</span>) <span class="comment"># 加载的地址与大小</span></span><br><span class="line">    mu.mem_write(address, CHECKSUM_CODE) <span class="comment"># 将 sub_4011E6 的数据写入运行地址</span></span><br><span class="line">    mu.mem_write(dec_bytes_addr, decoded_bytes)</span><br><span class="line">    <span class="comment"># place the address of decoded bytes and size on the stack</span></span><br><span class="line">    mu.reg_write(UC_X86_REG_ESP, stack_addr) <span class="comment"># 堆栈地址</span></span><br><span class="line">    mu.mem_write(stack_addr + <span class="number">4</span>, struct.pack(<span class="string">&#x27;&lt;I&#x27;</span>, dec_bytes_addr)) <span class="comment"># 填好 sub_4011E6 的参数</span></span><br><span class="line">    mu.mem_write(stack_addr + <span class="number">8</span>, struct.pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x79</span>))</span><br><span class="line">    <span class="comment"># emulate and read result in AX</span></span><br><span class="line">    mu.emu_start(address, address + <span class="built_in">len</span>(CHECKSUM_CODE)) <span class="comment"># 开始执行</span></span><br><span class="line">    checksum = mu.reg_read(UC_X86_REG_AX) <span class="comment"># 读取结果，注意最后的返回值在ax中</span></span><br><span class="line">    <span class="keyword">return</span> checksum</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>最后利用 capstone 打印出SMC后的语句</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="keyword">from</span> unicorn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> unicorn.x86_const <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> capstone <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">CHECKSUM_CODE = binascii.unhexlify(</span><br><span class="line">    <span class="string">&#x27;55 8B EC 51 8B 55 0C B9 FF 00 00 00 89 4D FC 85 D2 74 51 53 8B 5D 08 56 57 &#x27;</span></span><br><span class="line">    <span class="string">&#x27;6A 14 58 66 8B 7D FC 3B D0 8B F2 0F 47 F0 2B D6 0F B6 03 66 03 F8 66 89 7D &#x27;</span></span><br><span class="line">    <span class="string">&#x27;FC 03 4D FC 43 83 EE 01 75 ED 0F B6 45 FC 66 C1 EF 08 66 03 C7 0F B7 C0 89 &#x27;</span></span><br><span class="line">    <span class="string">&#x27;45 FC 0F B6 C1 66 C1 E9 08 66 03 C1 0F B7 C8 6A 14 58 85 D2 75 BB 5F 5E 5B &#x27;</span></span><br><span class="line">    <span class="string">&#x27;0F B6 55 FC 8B C1 C1 E1 08 25 00 FF 00 00 03 C1 66 8B 4D FC 66 C1 E9 08 66 &#x27;</span></span><br><span class="line">    <span class="string">&#x27;03 D1 66 0B C2 8B E5 5D&#x27;</span>.replace(<span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;&#x27;</span>))</span><br><span class="line">ENCODED_BYTES = binascii.unhexlify(</span><br><span class="line">    <span class="string">&#x27;33 E1 C4 99 11 06 81 16 F0 32 9F C4 91 17 06 81 14 F0 06 81 15 F1 C4 91 1A &#x27;</span></span><br><span class="line">    <span class="string">&#x27;06 81 1B E2 06 81 18 F2 06 81 19 F1 06 81 1E F0 C4 99 1F C4 91 1C 06 81 1D &#x27;</span></span><br><span class="line">    <span class="string">&#x27;E6 06 81 62 EF 06 81 63 F2 06 81 60 E3 C4 99 61 06 81 66 BC 06 81 67 E6 06 &#x27;</span></span><br><span class="line">    <span class="string">&#x27;81 64 E8 06 81 65 9D 06 81 6A F2 C4 99 6B 06 81 68 A9 06 81 69 EF 06 81 6E &#x27;</span></span><br><span class="line">    <span class="string">&#x27;EE 06 81 6F AE 06 81 6C E3 06 81 6D EF 06 81 72 E9 06 81 73 7C&#x27;</span>.replace(<span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decode_bytes</span>(<span class="params">i</span>):</span></span><br><span class="line">    decoded_bytes = []</span><br><span class="line">    <span class="keyword">for</span> byte <span class="keyword">in</span> ENCODED_BYTES:</span><br><span class="line">        decoded_bytes.append(((<span class="built_in">int</span>(byte) ^ i) + <span class="number">34</span>) &amp; <span class="number">0xFF</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">bytes</span>(decoded_bytes)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">emulate_checksum</span>(<span class="params">decoded_bytes</span>):</span></span><br><span class="line">    <span class="comment"># establish memory addresses for checksum code, stack, and decoded bytes</span></span><br><span class="line">    address = <span class="number">0x400000</span> <span class="comment"># 运行地址</span></span><br><span class="line">    stack_addr = <span class="number">0x410000</span> <span class="comment"># 堆栈地址</span></span><br><span class="line">    dec_bytes_addr = <span class="number">0x420000</span> <span class="comment"># loc_40107C的数据</span></span><br><span class="line">    <span class="comment"># write checksum code and decoded bytes into memory</span></span><br><span class="line">    mu = Uc(UC_ARCH_X86, UC_MODE_32) <span class="comment"># 要启动的架构与位数</span></span><br><span class="line">    mu.mem_map(address, <span class="number">2</span> * <span class="number">1024</span> * <span class="number">1024</span>) <span class="comment"># 加载的地址与大小</span></span><br><span class="line">    mu.mem_write(address, CHECKSUM_CODE) <span class="comment"># 将 sub_4011E6 的数据写入运行地址</span></span><br><span class="line">    mu.mem_write(dec_bytes_addr, decoded_bytes)</span><br><span class="line">    <span class="comment"># place the address of decoded bytes and size on the stack</span></span><br><span class="line">    mu.reg_write(UC_X86_REG_ESP, stack_addr) <span class="comment"># 堆栈地址</span></span><br><span class="line">    mu.mem_write(stack_addr + <span class="number">4</span>, struct.pack(<span class="string">&#x27;&lt;I&#x27;</span>, dec_bytes_addr)) <span class="comment"># 填好 sub_4011E6 的参数</span></span><br><span class="line">    mu.mem_write(stack_addr + <span class="number">8</span>, struct.pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">0x79</span>))</span><br><span class="line">    <span class="comment"># emulate and read result in AX</span></span><br><span class="line">    mu.emu_start(address, address + <span class="built_in">len</span>(CHECKSUM_CODE)) <span class="comment"># 开始执行</span></span><br><span class="line">    checksum = mu.reg_read(UC_X86_REG_AX) <span class="comment"># 读取结果，注意最后的返回值在ax中</span></span><br><span class="line">    <span class="keyword">return</span> checksum</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">256</span>):</span><br><span class="line">    decoded_bytes = decode_bytes(i)</span><br><span class="line">    checksum = emulate_checksum(decoded_bytes)</span><br><span class="line">    <span class="keyword">if</span> checksum == <span class="number">0xFB5E</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Checksum matched with byte %X&#x27;</span> % i)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Decoded bytes disassembly:&#x27;</span>)</span><br><span class="line">        md = Cs(CS_ARCH_X86, CS_MODE_32)</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> md.disasm(decoded_bytes, <span class="number">0x40107C</span>):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;0x%x:\t%s\t%s&quot;</span> % (j.address, j.mnemonic, j.op_str))</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<p>GetFlag!!</p>
+<p><img src="/2022/09/15/FlareOn4-greek-to-me/image-20220915151325227.png" alt="image-20220915151325227"></p>
+<h2 id="Angr"><a href="#Angr" class="headerlink" title="Angr"></a>Angr</h2><p>那么该题当然也能 Angr 解题</p>
+<p>参考文章</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42680294/article/details/112976617">https://blog.csdn.net/qq_42680294/article/details/112976617</a></p>
+</blockquote>
+<p>思路与unicorn一样，从我们的 sub_4011E6 开始模拟执行，再验证该函数返回值是否为 0xFB5E</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> angr</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"></span><br><span class="line">p = angr.Project(<span class="string">&#x27;greek_to_me.exe&#x27;</span>, load_options=&#123;<span class="string">&#x27;auto_load_libs&#x27;</span>: <span class="literal">False</span>&#125;) <span class="comment"># 加载一个二进制文件</span></span><br><span class="line">f2 = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">ENCODED_BYTES = binascii.unhexlify(</span><br><span class="line">    <span class="string">&#x27;33 E1 C4 99 11 06 81 16 F0 32 9F C4 91 17 06 81 14 F0 06 81 15 F1 C4 91 1A &#x27;</span></span><br><span class="line">    <span class="string">&#x27;06 81 1B E2 06 81 18 F2 06 81 19 F1 06 81 1E F0 C4 99 1F C4 91 1C 06 81 1D &#x27;</span></span><br><span class="line">    <span class="string">&#x27;E6 06 81 62 EF 06 81 63 F2 06 81 60 E3 C4 99 61 06 81 66 BC 06 81 67 E6 06 &#x27;</span></span><br><span class="line">    <span class="string">&#x27;81 64 E8 06 81 65 9D 06 81 6A F2 C4 99 6B 06 81 68 A9 06 81 69 EF 06 81 6E &#x27;</span></span><br><span class="line">    <span class="string">&#x27;EE 06 81 6F AE 06 81 6C E3 06 81 6D EF 06 81 72 E9 06 81 73 7C&#x27;</span>.replace(<span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Interate through all of the possible byte values to find the correct &quot;user&quot; input to de-mask the flag</span></span><br><span class="line"><span class="keyword">for</span> buf <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">256</span>):</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>((<span class="string">&quot;Trying buf = &#123;0&#125;&quot;</span>.<span class="built_in">format</span>(buf)))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Variable to store the bits written to disk using IDA</span></span><br><span class="line">    asm = <span class="literal">None</span></span><br><span class="line">    <span class="comment"># Store the output from the first de-obfuscation routine</span></span><br><span class="line">    b2 = []</span><br><span class="line">    <span class="comment"># Read in bytes written to file from IDA</span></span><br><span class="line">    <span class="comment"># with open(&#x27;greek_to_me_buffer.asm&#x27;, &#x27;rb&#x27;) as f:</span></span><br><span class="line">    <span class="comment">#     asm = f.read()</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Re-implement loc_401039</span></span><br><span class="line">    dl = buf </span><br><span class="line">    <span class="keyword">for</span> byte <span class="keyword">in</span> ENCODED_BYTES:</span><br><span class="line">        <span class="comment">#bl = ord(byte)</span></span><br><span class="line">        bl = <span class="built_in">int</span>(byte)</span><br><span class="line">        bl = bl ^ dl</span><br><span class="line">        bl = bl &amp; <span class="number">0xff</span></span><br><span class="line">        bl = bl + <span class="number">0x22</span></span><br><span class="line">        bl = bl &amp; <span class="number">0xff</span></span><br><span class="line">        b2.append(bl)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Set up angr to &quot;run&quot; sub_4011E6 </span></span><br><span class="line">    s = p.factory.blank_state(addr = <span class="number">0x4011E6</span>) <span class="comment"># 从0x4011E6开始执行</span></span><br><span class="line">    <span class="comment"># 设置 sub_4011E6 的参数</span></span><br><span class="line">    s.mem[s.regs.esp+<span class="number">4</span>:].dword = <span class="number">1</span>    <span class="comment"># Angr memory location to hold the xor&#x27;ed and add&#x27;ed bytes</span></span><br><span class="line">    s.mem[s.regs.esp+<span class="number">8</span>:].dword = <span class="number">0x79</span> <span class="comment"># Length of ASM</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Copy bytes output from loc_401039 into address 0x1 so Angr can run it</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#asm = &#x27;&#x27;.join(map(lambda x: chr(x), b2))</span></span><br><span class="line">    </span><br><span class="line">    asm = <span class="built_in">bytes</span>(b2)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 将 loc_40107C 的数据放入该地址</span></span><br><span class="line">    s.memory.store(<span class="number">1</span>, s.se.BVV(<span class="built_in">int</span>.from_bytes(asm, byteorder=<span class="string">&#x27;big&#x27;</span>, signed=<span class="literal">False</span>), <span class="number">0x79</span> * <span class="number">8</span> ))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Create a simulation manager...</span></span><br><span class="line">    <span class="comment">#import pdb; pdb.set_trace()</span></span><br><span class="line">    simgr = p.factory.simulation_manager(s)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Tell Angr where to go, though there is only one way through this function, </span></span><br><span class="line">    <span class="comment"># we just need to stop after ax is set</span></span><br><span class="line">    simgr.explore(find = <span class="number">0x401268</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Once ax is set, check to see if the value in ax matches the comparison value</span></span><br><span class="line">    <span class="keyword">for</span> found <span class="keyword">in</span> simgr.found:</span><br><span class="line">        <span class="comment">#import pdb; pdb.set_trace()</span></span><br><span class="line">        <span class="built_in">print</span>((<span class="string">&#x27;        ax = %s&#x27;</span> % <span class="built_in">hex</span>(found.solver.<span class="built_in">eval</span>(found.regs.ax))))</span><br><span class="line">        <span class="comment"># Comparison check</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">hex</span>(found.solver.<span class="built_in">eval</span>(found.regs.ax)) == <span class="string">&#x27;0xfb5e&#x27;</span>:</span><br><span class="line">            <span class="comment"># Upon success, dump the asm</span></span><br><span class="line">            code = (<span class="string">&quot;%x&quot;</span> % found.solver.eval_upto(found.memory.load(<span class="number">1</span>, <span class="number">0x79</span>), <span class="number">1</span>)[<span class="number">0</span>])</span><br><span class="line">            <span class="built_in">print</span>((<span class="string">&#x27;\n        Winner is: &#123;0&#125;\n\n&#x27;</span>.<span class="built_in">format</span>(buf)))</span><br><span class="line">            <span class="built_in">print</span>((<span class="string">&#x27;          %s&#x27;</span> % code))</span><br><span class="line">            bl = <span class="literal">None</span></span><br><span class="line">            dl = <span class="literal">None</span></span><br><span class="line">            flag = []</span><br><span class="line">            <span class="comment"># Using capstone, interpret the ASM</span></span><br><span class="line">            <span class="keyword">from</span> capstone <span class="keyword">import</span> *</span><br><span class="line">            md = Cs(CS_ARCH_X86, CS_MODE_32)</span><br><span class="line">            code = binascii.unhexlify(code)</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> md.disasm(code, <span class="number">0x1000</span>):</span><br><span class="line">                flag_char = <span class="literal">None</span></span><br><span class="line">                <span class="comment">#print(i.op_str)</span></span><br><span class="line">                <span class="comment"># The if statements do the work of interpreting the ASCII codes to their value counterpart</span></span><br><span class="line">                <span class="keyword">try</span>:</span><br><span class="line">                    <span class="keyword">if</span> i.op_str.split(<span class="string">&#x27;,&#x27;</span>)[<span class="number">0</span>].startswith(<span class="string">&quot;byte ptr&quot;</span>):</span><br><span class="line">                        flag_char = <span class="built_in">chr</span>(<span class="built_in">int</span>(i.op_str.split(<span class="string">&#x27;,&#x27;</span>)[<span class="number">1</span>], <span class="number">16</span>)) </span><br><span class="line">                    <span class="keyword">if</span> i.op_str.split(<span class="string">&#x27;,&#x27;</span>)[<span class="number">0</span>].startswith(<span class="string">&#x27;bl&#x27;</span>):</span><br><span class="line">                        bl = <span class="built_in">chr</span>(<span class="built_in">int</span>(i.op_str.split(<span class="string">&#x27;,&#x27;</span>)[<span class="number">1</span>], <span class="number">16</span>))  </span><br><span class="line">                    <span class="keyword">if</span> i.op_str.split(<span class="string">&#x27;,&#x27;</span>)[<span class="number">0</span>].startswith(<span class="string">&#x27;dl&#x27;</span>):</span><br><span class="line">                        dl = <span class="built_in">chr</span>(<span class="built_in">int</span>(i.op_str.split(<span class="string">&#x27;,&#x27;</span>)[<span class="number">1</span>], <span class="number">16</span>))  </span><br><span class="line">                <span class="keyword">except</span>:</span><br><span class="line">                    <span class="keyword">if</span> i.op_str.split(<span class="string">&#x27;,&#x27;</span>)[<span class="number">1</span>].strip() == <span class="string">&#x27;dl&#x27;</span>:</span><br><span class="line">                        flag_char = dl</span><br><span class="line">                    <span class="keyword">if</span> i.op_str.split(<span class="string">&#x27;,&#x27;</span>)[<span class="number">1</span>].strip() == <span class="string">&#x27;bl&#x27;</span>:</span><br><span class="line">                        flag_char = bl </span><br><span class="line">                </span><br><span class="line">                <span class="keyword">if</span> (flag_char):</span><br><span class="line">                    flag.append(flag_char.strip())</span><br><span class="line"></span><br><span class="line">                <span class="built_in">print</span>((<span class="string">&quot;          0x%x\t%s\t%s\t%s&quot;</span> %(i.address, i.mnemonic, i.op_str, flag_char)))</span><br><span class="line"></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;\n\n&#x27;</span>)</span><br><span class="line">            <span class="built_in">print</span>((<span class="string">&#x27;&#x27;</span>.join(flag)))</span><br><span class="line"></span><br><span class="line">            sys.exit(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<p> GetFlag!!!</p>
+<p><img src="/2022/09/15/FlareOn4-greek-to-me/image-20220915153324745.png" alt="image-20220915153324745"></p>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2022/09/15/FlareOn4-greek-to-me/" class="leancloud_visitors" data-flag-title="FlareOn4-greek_to_me">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2024 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>

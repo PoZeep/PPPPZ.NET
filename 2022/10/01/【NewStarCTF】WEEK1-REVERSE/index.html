@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>【NewStarCTF】WEEK1-REVERSE - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>October</span>
+            
+            
+            
+            <span>1,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">【NewStarCTF】WEEK1-REVERSE</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>欢迎来到逆向世界</p>
+<h1 id="Hello-Reverse"><a href="#Hello-Reverse" class="headerlink" title="Hello_Reverse"></a>Hello_Reverse</h1><h2 id="0x00-Daily-Shell-Check"><a href="#0x00-Daily-Shell-Check" class="headerlink" title="0x00 Daily Shell Check"></a>0x00 Daily Shell Check</h2><p>一般对一个程序进行逆向，要懂得该文件的基本信息，PE文件ELF等等，那对于CTF逆向题，我们一般所做的就是先查壳</p>
+<p>一开始看不懂这么多信息没关系，关注这是<strong>PE文件64位</strong>和<strong>无壳</strong>即可</p>
+<p><img src="/2022/10/01/%E3%80%90NewStarCTF%E3%80%91WEEK1-REVERSE/image-20221001194201945.png" alt="image-20221001194201945"></p>
+<h2 id="0x01-Analyze-Main-Function"><a href="#0x01-Analyze-Main-Function" class="headerlink" title="0x01 Analyze Main Function"></a>0x01 Analyze Main Function</h2><p>那么这题运行一下就知道就是要我们找flag，在主函数已经找到了flag的后半截3vers1ng_w0rld}，再去找找前半截即可</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+20h] [rbp-48h]</span></span><br><span class="line">  <span class="keyword">int</span> v5; <span class="comment">// [rsp+24h] [rbp-44h]</span></span><br><span class="line">  <span class="keyword">char</span> Source[<span class="number">16</span>]; <span class="comment">// [rsp+30h] [rbp-38h] BYREF</span></span><br><span class="line">  <span class="keyword">char</span> Destination[<span class="number">24</span>]; <span class="comment">// [rsp+40h] [rbp-28h] BYREF</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">strcpy</span>(Source, <span class="string">&quot;3vers1ng_w0rld&#125;&quot;</span>);</span><br><span class="line">  sub_140001230(<span class="string">&quot;%s\n&quot;</span>, off_140005000[<span class="number">0</span>]);</span><br><span class="line">  sub_140001230(<span class="string">&quot;%s\n&quot;</span>, off_140005008[<span class="number">0</span>]);</span><br><span class="line">  sub_1400012B0(<span class="string">&quot;%s&quot;</span>, Destination);</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="built_in">strlen</span>(Str); ++i )</span><br><span class="line">    sub_140001230(<span class="string">&quot;%c&quot;</span>, (<span class="keyword">unsigned</span> <span class="keyword">int</span>)Str[i]);</span><br><span class="line">  v5 = <span class="number">0</span>;</span><br><span class="line">  <span class="function"><span class="keyword">do</span></span></span><br><span class="line"><span class="function">    <span class="title">sub_140001230</span><span class="params">(<span class="string">&quot;%c&quot;</span>, (<span class="keyword">unsigned</span> <span class="keyword">int</span>)off_140005018[v5++])</span></span>;</span><br><span class="line">  <span class="keyword">while</span> ( off_140005018[v5] );</span><br><span class="line">  <span class="built_in">strcpy</span>(Destination, Source);</span><br><span class="line">  system(<span class="string">&quot;pause&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="0x02-GetFlag"><a href="#0x02-GetFlag" class="headerlink" title="0x02 GetFlag"></a>0x02 GetFlag</h2><p>这时候就有个好用的快捷键就是shift + F12，搜索整个文件的字符，即可拿到前半串flag</p>
+<p><img src="/2022/10/01/%E3%80%90NewStarCTF%E3%80%91WEEK1-REVERSE/image-20221002144754554.png" alt="image-20221002144754554"></p>
+<p>GetFlag!</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;h3llo_r3vers1ng_w0rld&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="Baby-Re"><a href="#Baby-Re" class="headerlink" title="Baby_Re"></a>Baby_Re</h1><h2 id="0x00-Daily-Shell-Check-1"><a href="#0x00-Daily-Shell-Check-1" class="headerlink" title="0x00 Daily Shell Check"></a>0x00 Daily Shell Check</h2><p>无壳64位</p>
+<p><img src="/2022/10/01/%E3%80%90NewStarCTF%E3%80%91WEEK1-REVERSE/image-20221002145003324.png" alt="image-20221002145003324"></p>
+<h2 id="0x01-Init"><a href="#0x01-Init" class="headerlink" title="0x01 Init"></a>0x01 Init</h2><p>可以发现我们的输入经过了异或自身下标的操作，随后进去compare函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">size_t</span> v3; <span class="comment">// rbx</span></span><br><span class="line">  <span class="keyword">char</span> input[<span class="number">8</span>]; <span class="comment">// [rsp+0h] [rbp-40h] BYREF</span></span><br><span class="line">  __int64 v6; <span class="comment">// [rsp+8h] [rbp-38h]</span></span><br><span class="line">  __int64 v7; <span class="comment">// [rsp+10h] [rbp-30h]</span></span><br><span class="line">  __int64 v8; <span class="comment">// [rsp+18h] [rbp-28h]</span></span><br><span class="line">  <span class="keyword">char</span> v9; <span class="comment">// [rsp+20h] [rbp-20h]</span></span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+2Ch] [rbp-14h]</span></span><br><span class="line"></span><br><span class="line">  *(_QWORD *)input = <span class="number">0LL</span>;</span><br><span class="line">  v6 = <span class="number">0LL</span>;</span><br><span class="line">  v7 = <span class="number">0LL</span>;</span><br><span class="line">  v8 = <span class="number">0LL</span>;</span><br><span class="line">  v9 = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;Welcome to RE world,Can you solve the problem?&quot;</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Now you should input your flag and i&#x27;ll tell you if it is right:&quot;</span>);</span><br><span class="line">  __isoc99_scanf(<span class="string">&quot;%s&quot;</span>, input);</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; ; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    v3 = i;</span><br><span class="line">    <span class="keyword">if</span> ( v3 &gt;= <span class="built_in">strlen</span>(input) )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    input[i] ^= i;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> ( (<span class="keyword">unsigned</span> <span class="keyword">int</span>)compare(input) )</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;Well done! You find the secret!&quot;</span>);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;The flag is wrong! Maybe something run before main&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以发现直接与密文比较，那么直接提取密文与自身下标异或</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">compare</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+1Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( <span class="built_in">strlen</span>(a1) != <span class="number">32</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;The length of flag is Wrong!!&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">31</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( <span class="keyword">final</span>[i] != a1[i] )</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0LL</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1LL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><del>然后就上当</del></p>
+<p>加载一个程序并不是从main函数最先开始，而是一个init段</p>
+<p>简单来说程序的运行流程</p>
+<ul>
+<li>Init -&gt; main</li>
+</ul>
+<p>那么！对抗这种Init段该了些数值的办法一个是动调（下题会讲，一会有回来试试）</p>
+<p>另一个就是 X！交叉引用</p>
+<h2 id="0x02-GetFlag-1"><a href="#0x02-GetFlag-1" class="headerlink" title="0x02 GetFlag"></a>0x02 GetFlag</h2><p>首先我们点进final这个数组，这里按a是为了能找到哪里引用了此字符串</p>
+<p><img src="/2022/10/01/%E3%80%90NewStarCTF%E3%80%91WEEK1-REVERSE/image-20221002145437486.png" alt="image-20221002145437486"></p>
+<p>随后在任意点入一个引用</p>
+<p><img src="/2022/10/01/%E3%80%90NewStarCTF%E3%80%91WEEK1-REVERSE/image-20221002145534839.png" alt="image-20221002145534839"></p>
+<p>即可在目标地方发现了改了密文的地方，也就是说程序真正验证的时候密文是用此比较</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FunctionName</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">final</span>[<span class="number">6</span>] = <span class="number">54</span>;</span><br><span class="line">  <span class="keyword">final</span>[<span class="number">11</span>] = <span class="number">58</span>;</span><br><span class="line">  <span class="keyword">final</span>[<span class="number">22</span>] = <span class="number">38</span>;</span><br><span class="line">  <span class="keyword">final</span>[<span class="number">30</span>] = <span class="number">63</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么拿到正确密文</p>
+<p>GetFlag!</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">enc = [0x66, 0x6D, 0x63, 0x64, 0x7F, 0x56, 0x36, 0x6A, 0x6D, 0x7D, 0x62, 0x3A, 0x62, 0x6A, 0x51, 0x7D, 0x65, 0x7F, 0x4D, 0x71, 0x71, 0x73, 0x26, 0x65, 0x7D, 0x46, 0x77, 0x7A, 0x75, 0x73, 0x3F, 0x62]</span><br><span class="line">for i in range(len(enc)):</span><br><span class="line">    print(chr(enc[i] ^ i), end = &quot;&quot;)</span><br><span class="line">    </span><br><span class="line">#flag&#123;S0meth1ng_run_bef0re_main!&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="Pyre"><a href="#Pyre" class="headerlink" title="Pyre"></a>Pyre</h1><h2 id="0x00-Python逆向"><a href="#0x00-Python逆向" class="headerlink" title="0x00 Python逆向"></a>0x00 Python逆向</h2><p>对几种常见Python逆向做了个总结</p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1JL4y1p7Tt/?spm_id_from=333.337.search-card.all.click">https://www.bilibili.com/video/BV1JL4y1p7Tt/?spm_id_from=333.337.search-card.all.click</a></p>
+<h2 id="0x01-GetSource"><a href="#0x01-GetSource" class="headerlink" title="0x01 GetSource"></a>0x01 GetSource</h2><p>那么这种打包成exe的python文件，我们一般用此来解包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/extremecoders-re/pyinstxtractor</span><br></pre></td></tr></table></figure>
+
+<p>那么拿到该解包文件再放到题目的根目标解包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 .\pyinstxtractor.py pyre.exe</span><br></pre></td></tr></table></figure>
+
+<p>随后再用一个反编译pyc的工具即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uncompyle6.exe .\pyre.pyc</span><br></pre></td></tr></table></figure>
+
+<p>该uncompyle6直接 pip3 install uncompyle6 下载即可</p>
+<p>随后就可以进行快乐的Python逆向了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># uncompyle6 version 3.8.0</span></span><br><span class="line"><span class="comment"># Python bytecode 3.6 (3379)</span></span><br><span class="line"><span class="comment"># Decompiled from: Python 3.9.0 (tags/v3.9.0:9cf6752, Oct  5 2020, 15:34:40) [MSC v.1927 64 bit (AMD64)]</span></span><br><span class="line"><span class="comment"># Embedded file name: pyre.py</span></span><br><span class="line">flag = <span class="string">&#x27;&#x27;</span></span><br><span class="line">encode = <span class="string">&#x27;REla&#123;PSF!!fg&#125;!Y_SN_1_0U&#x27;</span></span><br><span class="line">table = [<span class="number">7</span>, <span class="number">8</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">13</span>, <span class="number">16</span>, <span class="number">20</span>, <span class="number">21</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">22</span>, <span class="number">19</span>, <span class="number">6</span>, <span class="number">12</span>, <span class="number">11</span>, <span class="number">18</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">14</span>, <span class="number">17</span>]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">enc</span>(<span class="params"><span class="built_in">input</span></span>):</span></span><br><span class="line">    tmp = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(<span class="built_in">input</span>)):</span><br><span class="line">        tmp += <span class="built_in">input</span>[table[i]]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> tmp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Please input your flag:&#x27;</span>)</span><br><span class="line">    flag = <span class="built_in">input</span>()</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(flag) != <span class="number">23</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Length Wrong!!&#x27;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        final = enc(flag)</span><br><span class="line">        <span class="keyword">if</span> final == encode:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;Wow,you get the right flag!!&#x27;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;Sorry,Your input is Wrong&#x27;</span>)</span><br><span class="line"><span class="comment"># okay decompiling .\pyre.pyc</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="0x02-GetFlag-2"><a href="#0x02-GetFlag-2" class="headerlink" title="0x02 GetFlag"></a>0x02 GetFlag</h2><p>可以发现我们的输入只是进行了经过table表的下标混淆，直接经过table表还原即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">table = [<span class="number">7</span>, <span class="number">8</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">13</span>, <span class="number">16</span>, <span class="number">20</span>, <span class="number">21</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">22</span>, <span class="number">19</span>, <span class="number">6</span>, <span class="number">12</span>, <span class="number">11</span>, <span class="number">18</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">14</span>, <span class="number">17</span>]</span><br><span class="line">flag = <span class="string">&#x27;REla&#123;PSF!!fg&#125;!Y_SN_1_0U&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(flag)):</span><br><span class="line">    <span class="built_in">print</span>(flag[table.index(i)], end = <span class="string">&quot;&quot;</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># flag&#123;PYRE_1S_S0_FUN!!!&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="EasyRe"><a href="#EasyRe" class="headerlink" title="EasyRe"></a>EasyRe</h1><h2 id="0x00-Daily-Shell-Check-2"><a href="#0x00-Daily-Shell-Check-2" class="headerlink" title="0x00 Daily Shell Check"></a>0x00 Daily Shell Check</h2><p>无壳64位，然而这题还有个dll，可以把dll理解成一个函数库，我们的主程序在里面获取我们想要的函数即可</p>
+<p><img src="/2022/10/01/%E3%80%90NewStarCTF%E3%80%91WEEK1-REVERSE/image-20221002150534977.png" alt="image-20221002150534977"></p>
+<h2 id="0x01-easyre-exe"><a href="#0x01-easyre-exe" class="headerlink" title="0x01 easyre.exe"></a>0x01 easyre.exe</h2><p>那么首先看我们的主程序，那么我们在这里就知道两个信息即可</p>
+<ul>
+<li>我们的密文是什么</li>
+<li>我们的明文经过了dll函数库中一个encode函数的加密，随后出来和密文比较</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> Str2[<span class="number">96</span>]; <span class="comment">// [rsp+20h] [rbp-60h] BYREF</span></span><br><span class="line">  <span class="keyword">int</span> v5; <span class="comment">// [rsp+80h] [rbp+0h]</span></span><br><span class="line">  <span class="keyword">char</span> input[<span class="number">96</span>]; <span class="comment">// [rsp+90h] [rbp+10h] BYREF</span></span><br><span class="line">  <span class="keyword">int</span> v7; <span class="comment">// [rsp+F0h] [rbp+70h]</span></span><br><span class="line">  <span class="keyword">char</span> Str1[<span class="number">96</span>]; <span class="comment">// [rsp+100h] [rbp+80h] BYREF</span></span><br><span class="line">  <span class="keyword">int</span> v9; <span class="comment">// [rsp+160h] [rbp+E0h]</span></span><br><span class="line">  FARPROC ProcAddress; <span class="comment">// [rsp+170h] [rbp+F0h]</span></span><br><span class="line">  HMODULE hModule; <span class="comment">// [rsp+178h] [rbp+F8h]</span></span><br><span class="line"></span><br><span class="line">  _main(argc, argv, envp);</span><br><span class="line">  <span class="built_in">memset</span>(Str1, <span class="number">0</span>, <span class="keyword">sizeof</span>(Str1));</span><br><span class="line">  v9 = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">memset</span>(input, <span class="number">0</span>, <span class="keyword">sizeof</span>(input));</span><br><span class="line">  v7 = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">memset</span>(Str2, <span class="number">0</span>, <span class="keyword">sizeof</span>(Str2));</span><br><span class="line">  v5 = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">memset</span>(Str2, <span class="number">8</span>, <span class="number">2</span>);</span><br><span class="line">  Str2[<span class="number">2</span>] = <span class="number">14</span>;</span><br><span class="line">  Str2[<span class="number">3</span>] = <span class="number">13</span>;</span><br><span class="line">  Str2[<span class="number">4</span>] = <span class="number">40</span>;</span><br><span class="line">  Str2[<span class="number">5</span>] = <span class="number">64</span>;</span><br><span class="line">  Str2[<span class="number">6</span>] = <span class="number">17</span>;</span><br><span class="line">  Str2[<span class="number">7</span>] = <span class="number">17</span>;</span><br><span class="line">  Str2[<span class="number">8</span>] = <span class="number">60</span>;</span><br><span class="line">  Str2[<span class="number">9</span>] = <span class="number">46</span>;</span><br><span class="line">  Str2[<span class="number">10</span>] = <span class="number">43</span>;</span><br><span class="line">  Str2[<span class="number">11</span>] = <span class="number">30</span>;</span><br><span class="line">  Str2[<span class="number">12</span>] = <span class="number">61</span>;</span><br><span class="line">  Str2[<span class="number">13</span>] = <span class="number">15</span>;</span><br><span class="line">  Str2[<span class="number">15</span>] = <span class="number">3</span>;</span><br><span class="line">  Str2[<span class="number">16</span>] = <span class="number">59</span>;</span><br><span class="line">  Str2[<span class="number">17</span>] = <span class="number">61</span>;</span><br><span class="line">  Str2[<span class="number">18</span>] = <span class="number">60</span>;</span><br><span class="line">  Str2[<span class="number">19</span>] = <span class="number">21</span>;</span><br><span class="line">  Str2[<span class="number">20</span>] = <span class="number">40</span>;</span><br><span class="line">  Str2[<span class="number">21</span>] = <span class="number">5</span>;</span><br><span class="line">  Str2[<span class="number">22</span>] = <span class="number">80</span>;</span><br><span class="line">  Str2[<span class="number">23</span>] = <span class="number">70</span>;</span><br><span class="line">  Str2[<span class="number">24</span>] = <span class="number">63</span>;</span><br><span class="line">  Str2[<span class="number">25</span>] = <span class="number">42</span>;</span><br><span class="line">  Str2[<span class="number">26</span>] = <span class="number">57</span>;</span><br><span class="line">  Str2[<span class="number">27</span>] = <span class="number">9</span>;</span><br><span class="line">  Str2[<span class="number">28</span>] = <span class="number">49</span>;</span><br><span class="line">  Str2[<span class="number">29</span>] = <span class="number">86</span>;</span><br><span class="line">  Str2[<span class="number">30</span>] = <span class="number">36</span>;</span><br><span class="line">  Str2[<span class="number">31</span>] = <span class="number">28</span>;</span><br><span class="line">  qmemcpy(&amp;Str2[<span class="number">32</span>], <span class="string">&quot;?$P&lt;,%#K&quot;</span>, <span class="number">8</span>);            <span class="comment">// 这些值在内存中是连续的，所以其实源代码中并不是这样写的，而IDA没有识别好，要记住IDA的F5窗口并不是真实的</span></span><br><span class="line">  hModule = LoadLibraryA(<span class="string">&quot;enc.dll&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> ( !hModule )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;Dll Loading Failed&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  ProcAddress = <span class="number">0</span>i64;</span><br><span class="line">  ProcAddress = GetProcAddress(hModule, <span class="string">&quot;encode&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> ( !ProcAddress )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;Get Function Failed&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Please input your flag:&quot;</span>);</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>, input);</span><br><span class="line">  ((<span class="keyword">void</span> (__fastcall *)(<span class="keyword">char</span> *, <span class="keyword">char</span> *))ProcAddress)(input, Str1);<span class="comment">// 调用了dll里的 encode 函数</span></span><br><span class="line">  <span class="keyword">if</span> ( !<span class="built_in">strcmp</span>(Str1, Str2) )</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;Your input is right:)&quot;</span>);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;The flag is Wrong:(&quot;</span>);</span><br><span class="line">  FreeLibrary(hModule);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="0x02-enc-dll"><a href="#0x02-enc-dll" class="headerlink" title="0x02 enc.dll"></a>0x02 enc.dll</h2><p>随后将该dll拉进IDA搜索encode函数（为什么出现两个encode，这其实是C++逆向的特性，具体原因以后会慢慢明白）</p>
+<p><img src="/2022/10/01/%E3%80%90NewStarCTF%E3%80%91WEEK1-REVERSE/image-20221002151031641.png" alt="image-20221002151031641"></p>
+<p>那么该加密可能第一次看比较陌生，但其实是最常见的BASE64编码，随后进入sub_18001132A函数</p>
+<p>于一个字符串异或</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span> *__fastcall <span class="title">sub_180011660</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+24h] [rbp+4h]</span></span><br><span class="line"></span><br><span class="line">  j___CheckForDebuggerJustMyCode(&amp;unk_180021001);</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; j_strlen(a1); ++i )</span><br><span class="line">    a1[i] ^= Str[i % j_strlen(Str)];</span><br><span class="line">  <span class="keyword">return</span> a1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="0x03-GetFlag"><a href="#0x03-GetFlag" class="headerlink" title="0x03 GetFlag"></a>0x03 GetFlag</h2><p>那么逆向的过程就是将密文异或字符串，再Base64解密即可</p>
+<p>Base64的具体过程我不多说如果感兴趣可以去了解原理，毕竟以后入坑逆向会经常碰到各种魔改的换表的）</p>
+<h3 id="Take-enc"><a href="#Take-enc" class="headerlink" title="Take enc"></a>Take enc</h3><p>那么该篇再引用一个IDA的技巧就是IDA动调，像该题的密文是这个样子，静态提取很麻烦，所以一个方法就是动调提取</p>
+<p><img src="/2022/10/01/%E3%80%90NewStarCTF%E3%80%91WEEK1-REVERSE/image-20221002151442950.png" alt="image-20221002151442950"></p>
+<p>随后一路yes即可，跑到该处！恭喜你，你成功第一次动态调试了</p>
+<p><img src="/2022/10/01/%E3%80%90NewStarCTF%E3%80%91WEEK1-REVERSE/image-20221002151522186.png" alt="image-20221002151522186"></p>
+<p>我们在任意一个[rbp+110h+var_149]按enter进入，可以发现就是我们此处的密文了</p>
+<p>同样，全部选中按shift + e即可提取数据</p>
+<p><img src="/2022/10/01/%E3%80%90NewStarCTF%E3%80%91WEEK1-REVERSE/image-20221002151711915.png" alt="image-20221002151711915"></p>
+<p>既然有了密文直接解密即可</p>
+<ul>
+<li>异或解密</li>
+<li>Base64解码</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">enc = [<span class="number">0x08</span>, <span class="number">0x08</span>, <span class="number">0x0E</span>, <span class="number">0x0D</span>, <span class="number">0x28</span>, <span class="number">0x40</span>, <span class="number">0x11</span>, <span class="number">0x11</span>, <span class="number">0x3C</span>, <span class="number">0x2E</span>, <span class="number">0x2B</span>, <span class="number">0x1E</span>, <span class="number">0x3D</span>, <span class="number">0x0F</span>, <span class="number">0x00</span>, <span class="number">0x03</span>, <span class="number">0x3B</span>, <span class="number">0x3D</span>, <span class="number">0x3C</span>, <span class="number">0x15</span>, <span class="number">0x28</span>, <span class="number">0x05</span>, <span class="number">0x50</span>, <span class="number">0x46</span>, <span class="number">0x3F</span>, <span class="number">0x2A</span>, <span class="number">0x39</span>, <span class="number">0x09</span>, <span class="number">0x31</span>, <span class="number">0x56</span>, <span class="number">0x24</span>, <span class="number">0x1C</span>, <span class="number">0x3F</span>, <span class="number">0x24</span>, <span class="number">0x50</span>, <span class="number">0x3C</span>, <span class="number">0x2C</span>, <span class="number">0x25</span>, <span class="number">0x23</span>, <span class="number">0x4B</span>]</span><br><span class="line">key = <span class="string">&quot;Reverse&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(enc)):</span><br><span class="line">    enc[i] = enc[i] ^ <span class="built_in">ord</span>(key[i % <span class="built_in">len</span>(key)])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(base64.b64decode(<span class="built_in">bytes</span>(enc)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># flag&#123;Base64_1s_1nterestr1ng!!&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="NewStarCTF-WEEK1-艾克体悟题"><a href="#NewStarCTF-WEEK1-艾克体悟题" class="headerlink" title="NewStarCTF-WEEK1-艾克体悟题"></a>NewStarCTF-WEEK1-艾克体悟题</h1><h2 id="0x01-Frida-hook"><a href="#0x01-Frida-hook" class="headerlink" title="0x01 Frida hook"></a>0x01 Frida hook</h2><p>这题用JEB打开，看主程序可知只要点10000下，让FlagActivity.this.cnt变为10000即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.droidlearn.activity_travel;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> android.os.Bundle;</span><br><span class="line"><span class="keyword">import</span> android.view.View$OnClickListener;</span><br><span class="line"><span class="keyword">import</span> android.view.View;</span><br><span class="line"><span class="keyword">import</span> android.widget.Toast;</span><br><span class="line"><span class="keyword">import</span> androidx.appcompat.app.AppCompatActivity;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FlagActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> cnt;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FlagActivity</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.cnt = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> access$<span class="number">000</span>(FlagActivity arg0) &#123;</span><br><span class="line">        <span class="keyword">return</span> arg0.cnt;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> access$<span class="number">004</span>(FlagActivity arg1) &#123;</span><br><span class="line">        <span class="keyword">int</span> v0 = arg1.cnt + <span class="number">1</span>;</span><br><span class="line">        arg1.cnt = v0;</span><br><span class="line">        <span class="keyword">return</span> v0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle arg4)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(arg4);</span><br><span class="line">        <span class="keyword">this</span>.setContentView(<span class="number">0x7F0B002D</span>);</span><br><span class="line">        <span class="keyword">this</span>.findViewById(<span class="number">0x7F080058</span>).setOnClickListener(<span class="keyword">new</span> View$OnClickListener(<span class="keyword">this</span>.findViewById(<span class="number">0x7F080181</span>), <span class="keyword">this</span>.findViewById(<span class="number">0x7F080097</span>)) &#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View arg3)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">this</span>.val$tv_cnt.setText(Integer.toString(FlagActivity.access$<span class="number">004</span>(FlagActivity.<span class="keyword">this</span>)));</span><br><span class="line">                <span class="keyword">if</span>(FlagActivity.<span class="keyword">this</span>.cnt &gt;= <span class="number">10000</span>) &#123;</span><br><span class="line">                    Toast.makeText(FlagActivity.<span class="keyword">this</span>, <span class="keyword">this</span>.val$str.getText().toString(), <span class="number">0</span>).show();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="0x02-GetFlag-3"><a href="#0x02-GetFlag-3" class="headerlink" title="0x02 GetFlag"></a>0x02 GetFlag</h2><p><del>那么一个思路就是点一万下</del></p>
+<p>另一个思路就是hook access$000 函数让该函数直接返回10000，判断就成立了，我们就GetFlag了</p>
+<p>所以此时就可以用 Frida 了，就是在程序运行的时候 hook 返回值变为1000即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./data/local/tmp/frida-server # 进入shell Frida启动！</span><br></pre></td></tr></table></figure>
+
+<p>再进入一个shell 启动指定控件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">am start -n com.droidlearn.activity_travel/com.droidlearn.activity_travel.FlagActivity</span><br></pre></td></tr></table></figure>
+
+<p>查看我们启动控件的PID</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Pz&gt;frida-ps -aU</span><br><span class="line">  PID  Name             Identifier</span><br><span class="line">-----  ---------------  ---------------------------------------</span><br><span class="line">10738  Activity_Travel  com.droidlearn.activity_travel</span><br><span class="line"> 9870  Android Auto     com.google.android.projection.gearhead</span><br><span class="line">23407  Google           com.google.android.googlequicksearchbox</span><br><span class="line"> 9063  Google Play 商店   com.android.vending</span><br><span class="line"> 9022  Google Play 电影   com.google.android.videos</span><br><span class="line">11206  Magisk           com.topjohnwu.magisk</span><br></pre></td></tr></table></figure>
+
+<p>接着我们就是 attach 上了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> frida</span><br><span class="line"></span><br><span class="line"><span class="comment"># 连接安卓机上的frida-server</span></span><br><span class="line">device = frida.get_usb_device()</span><br><span class="line">session = device.attach(<span class="number">10738</span>)</span><br></pre></td></tr></table></figure>
+
+<p>接着可以编写我们的 js 脚本用来重写要hook的类方法</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">&quot;Script loaded successfully &quot;</span>);</span><br><span class="line">Java.perform(<span class="function"><span class="keyword">function</span> <span class="title">x</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&quot;Inside java perform function&quot;</span>);</span><br><span class="line">    <span class="comment">//定位类</span></span><br><span class="line">    <span class="keyword">var</span> my_class = Java.use(<span class="string">&quot;com.droidlearn.activity_travel.FlagActivity&quot;</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&quot;Java.Use.Successfully!&quot;</span>);</span><br><span class="line">    <span class="comment">//在这里更改类的方法的实现（implementation）</span></span><br><span class="line">    my_class.access$000.implementation = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>)</span>&#123;</span><br><span class="line">        <span class="comment">//打印替换前的参数</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&quot;Successfully!&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">10001</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>接着让我们的 js 脚本加载到该目标进程上即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> frida</span><br><span class="line"></span><br><span class="line"><span class="comment"># 连接安卓机上的frida-server</span></span><br><span class="line">device = frida.get_usb_device()</span><br><span class="line">session = device.attach(<span class="number">10738</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载hooook.js脚本</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;hooook.js&quot;</span>, encoding=<span class="string">&#x27;UTF-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    script = session.create_script(f.read())</span><br><span class="line">script.load()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 脚本会持续运行等待输入</span></span><br><span class="line"><span class="built_in">input</span>()</span><br></pre></td></tr></table></figure>
+
+<p>运行脚本，再点击 CLICK ME 即可！</p>
+<p>GetFlag!</p>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2022/10/01/【NewStarCTF】WEEK1-REVERSE/" class="leancloud_visitors" data-flag-title="【NewStarCTF】WEEK1-REVERSE">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2024 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>

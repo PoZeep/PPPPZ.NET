@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>Salsa20 X ChaCha20 - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>August</span>
+            
+            
+            
+            
+            
+            <span>17,</span>
+            <span>2023</span>
+        </div>
+        
+
+        <h2 class="title">Salsa20 X ChaCha20</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>本文基本都是 ctrl + cv，用于学习记录，由于历史遗留问题发至博客记录。</p>
+<h1 id="Salsa20"><a href="#Salsa20" class="headerlink" title="Salsa20"></a>Salsa20</h1><p>Salsa20是一种流加密算法，它使用一个称为Salsa20核心的函数来加密或解密数据。下面是Salsa20算法的详细解释，包括加密和解密流程。</p>
+<ol>
+<li>Salsa20算法的核心函数</li>
+</ol>
+<p>Salsa20核心函数是一个置换函数，它将输入的128位密钥和随机的64位初始向量（IV）作为输入，然后生成一个256位的密钥流。密钥流是通过对128位输入块进行加密和异或操作生成的。下面是Salsa20核心函数的数学表达式：</p>
+<p>Salsa20核心函数输入：密钥K（128位）、初始向量IV（64位）、计数器C（64位）。</p>
+<p>Salsa20核心函数输出：密钥流（256位）。</p>
+<p>Salsa20核心函数的伪代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Salsa20(K, IV, C)</span><br><span class="line">    state[<span class="number">16</span>] = constants</span><br><span class="line">    state[<span class="number">1</span>:<span class="number">4</span>] = K[<span class="number">0</span>:<span class="number">3</span>], K[<span class="number">4</span>:<span class="number">7</span>], K[<span class="number">8</span>:<span class="number">11</span>], K[<span class="number">12</span>:<span class="number">15</span>]</span><br><span class="line">    state[<span class="number">11</span>:<span class="number">14</span>] = IV[<span class="number">0</span>:<span class="number">3</span>], IV[<span class="number">4</span>:<span class="number">7</span>], C[<span class="number">0</span>:<span class="number">3</span>], C[<span class="number">4</span>:<span class="number">7</span>]</span><br><span class="line">    <span class="keyword">for</span> i = <span class="number">0</span> to <span class="number">9</span> <span class="keyword">do</span></span><br><span class="line">        state = QuarterRound(state[<span class="number">0</span>], state[<span class="number">4</span>], state[<span class="number">8</span>], state[<span class="number">12</span>])</span><br><span class="line">        state = QuarterRound(state[<span class="number">5</span>], state[<span class="number">9</span>], state[<span class="number">13</span>], state[<span class="number">1</span>])</span><br><span class="line">        state = QuarterRound(state[<span class="number">10</span>], state[<span class="number">14</span>], state[<span class="number">2</span>], state[<span class="number">6</span>])</span><br><span class="line">        state = QuarterRound(state[<span class="number">15</span>], state[<span class="number">3</span>], state[<span class="number">7</span>], state[<span class="number">11</span>])</span><br><span class="line">    end <span class="keyword">for</span></span><br><span class="line">    output = state + constants + K[<span class="number">0</span>:<span class="number">3</span>] + IV[<span class="number">4</span>:<span class="number">7</span>] + C[<span class="number">0</span>:<span class="number">3</span>] + C[<span class="number">4</span>:<span class="number">7</span>]</span><br><span class="line">    <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
+
+<p>其中，constants是一个常量数组，QuarterRound是一个四元运算函数，它对输入的四个32位数进行加密和异或操作，生成四个32位数作为输出。</p>
+<ol>
+<li>Salsa20算法的加密流程</li>
+</ol>
+<p>Salsa20算法使用密钥流对明文进行加密。加密流程可以分为以下步骤：</p>
+<p>（1）将明文分成若干个128位的块。</p>
+<p>（2）对每个块进行密钥流加密，使用异或操作将密钥流和明文块进行混合。</p>
+<p>（3）将加密后的密文块组合在一起，形成加密后的数据。</p>
+<p>下面是Salsa20算法加密流程的数学表达式：</p>
+<p>Salsa20加密流程输入：明文M（n * 128位）、密钥K（128位）、初始向量IV（64位）。</p>
+<p>Salsa20加密流程输出：密文C（n * 128位）。</p>
+<p>Salsa20加密流程的伪代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Salsa20Encrypt(M, K, IV)</span><br><span class="line">    C = []</span><br><span class="line">    C[<span class="number">0</span>] = Salsa20(K, IV, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">for</span> i = <span class="number">1</span> to n <span class="keyword">do</span></span><br><span class="line">        C[i] = M[i] <span class="keyword">xor</span> C[i<span class="number">-1</span>]</span><br><span class="line">        C[i] = Salsa20(K, IV, i) <span class="keyword">xor</span> C[i]</span><br><span class="line">    end <span class="keyword">for</span></span><br><span class="line">    <span class="keyword">return</span> C</span><br></pre></td></tr></table></figure>
+
+<p>其中，n表示明文块的数量，M[i]表示第i个明文块，C[i]表示第i个密文块。</p>
+<ol>
+<li>Salsa20算法的解密流程</li>
+</ol>
+<p>Salsa20算法使用密钥流对密文进行解密。解密流程可以分为以下步骤：</p>
+<p>（1）将密文分成若干个128位的块。</p>
+<p>（2）对每个块进行密钥流解密，使用异或操作将密钥流和密文块进行混合。</p>
+<p>（3）将解密后的明文块组合在一起，形成解密后的数据。</p>
+<p>下面是Salsa20算法解密流程的数学表达式：</p>
+<p>Salsa20解密流程输入：密文C（n * 128位）、密钥K（128位）、初始向量IV（64位）。</p>
+<p>Salsa20解密流程输出：明文M（n * 128位）。</p>
+<p>Salsa20解密流程的伪代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Salsa20Decrypt(C, K, IV)</span><br><span class="line">    M = []</span><br><span class="line">    M[<span class="number">0</span>] = Salsa20(K, IV, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">for</span> i = <span class="number">1</span> to n <span class="keyword">do</span></span><br><span class="line">        M[i] = C[i]</span><br><span class="line">        M[i] = Salsa20(K, IV, i) <span class="keyword">xor</span> M[i]</span><br><span class="line">        M[i] = M[i] <span class="keyword">xor</span> C[i<span class="number">-1</span>]</span><br><span class="line">    end <span class="keyword">for</span></span><br><span class="line">    <span class="keyword">return</span> M</span><br></pre></td></tr></table></figure>
+
+<p>其中，n表示密文块的数量，C[i]表示第i个密文块，M[i]表示第i个明文块。</p>
+<p>综上所述，Salsa20算法是一种高效、安全的流加密算法，它可以用于数据通信、数据存储等多种场景。在实际应用中，需要注意密钥的生成、密钥流的保密性等问题，以确保数据的安全性。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdint.h&gt;</span> <span class="comment">// we use 32-bit words</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// rotate x to left by n bits, the bits that go over the left edge reappear on the right</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R(x,n) (((x) <span class="meta-string">&lt;&lt; (n)) | ((x) &gt;</span>&gt; (32-(n))))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// addition wraps modulo 2^32</span></span><br><span class="line"><span class="comment">// the choice of 7,9,13,18 &quot;doesn&#x27;t seem very important&quot; (spec)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> quarter(a,b,c,d) do &#123;\</span></span><br><span class="line"><span class="meta">    b ^= R(d+a, 7);\</span></span><br><span class="line"><span class="meta">    c ^= R(a+b, 9);\</span></span><br><span class="line"><span class="meta">    d ^= R(b+c, 13);\</span></span><br><span class="line"><span class="meta">    a ^= R(c+d, 18);\</span></span><br><span class="line"><span class="meta">&#125; while (0)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">salsa20_words</span><span class="params">(<span class="keyword">uint32_t</span>* out, <span class="keyword">uint32_t</span> in[<span class="number">16</span>])</span> </span>&#123;            <span class="comment">//chacha20_quarterround(x, 0, 4,  8, 12);</span></span><br><span class="line">                                                                <span class="comment">//chacha20_quarterround(x, 1, 5,  9, 13);</span></span><br><span class="line">                                                                <span class="comment">//chacha20_quarterround(x, 2, 6, 10, 14);</span></span><br><span class="line">                                                                <span class="comment">//chacha20_quarterround(x, 3, 7, 11, 15);</span></span><br><span class="line">                                                                <span class="comment">////even round </span></span><br><span class="line">                                                                <span class="comment">//chacha20_quarterround(x, 0, 5, 10, 15);</span></span><br><span class="line">                                                                <span class="comment">//chacha20_quarterround(x, 1, 6, 11, 12);</span></span><br><span class="line">                                                                <span class="comment">//chacha20_quarterround(x, 2, 7,  8, 13);</span></span><br><span class="line">                                                                <span class="comment">//chacha20_quarterround(x, 3, 4,  9, 14);   其实这俩的置换是一模一样的 </span></span><br><span class="line">    <span class="keyword">uint32_t</span> x[<span class="number">4</span>][<span class="number">4</span>];</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">16</span>; ++i) </span><br><span class="line">        x[i / <span class="number">4</span>][i % <span class="number">4</span>] = in[i];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i) &#123; <span class="comment">// 10 double rounds = 20 rounds</span></span><br><span class="line">        <span class="comment">// column round: quarter round on each column; start at ith element and wrap</span></span><br><span class="line">        quarter(x[<span class="number">0</span>][<span class="number">0</span>], x[<span class="number">1</span>][<span class="number">0</span>], x[<span class="number">2</span>][<span class="number">0</span>], x[<span class="number">3</span>][<span class="number">0</span>]);</span><br><span class="line">        quarter(x[<span class="number">1</span>][<span class="number">1</span>], x[<span class="number">2</span>][<span class="number">1</span>], x[<span class="number">3</span>][<span class="number">1</span>], x[<span class="number">0</span>][<span class="number">1</span>]);</span><br><span class="line">        quarter(x[<span class="number">2</span>][<span class="number">2</span>], x[<span class="number">3</span>][<span class="number">2</span>], x[<span class="number">0</span>][<span class="number">2</span>], x[<span class="number">1</span>][<span class="number">2</span>]);</span><br><span class="line">        quarter(x[<span class="number">3</span>][<span class="number">3</span>], x[<span class="number">0</span>][<span class="number">3</span>], x[<span class="number">1</span>][<span class="number">3</span>], x[<span class="number">2</span>][<span class="number">3</span>]);</span><br><span class="line">        <span class="comment">// row round: quarter round on each row; start at ith element and wrap around</span></span><br><span class="line">        quarter(x[<span class="number">0</span>][<span class="number">0</span>], x[<span class="number">0</span>][<span class="number">1</span>], x[<span class="number">0</span>][<span class="number">2</span>], x[<span class="number">0</span>][<span class="number">3</span>]);</span><br><span class="line">        quarter(x[<span class="number">1</span>][<span class="number">1</span>], x[<span class="number">1</span>][<span class="number">2</span>], x[<span class="number">1</span>][<span class="number">3</span>], x[<span class="number">1</span>][<span class="number">0</span>]);</span><br><span class="line">        quarter(x[<span class="number">2</span>][<span class="number">2</span>], x[<span class="number">2</span>][<span class="number">3</span>], x[<span class="number">2</span>][<span class="number">0</span>], x[<span class="number">2</span>][<span class="number">1</span>]);</span><br><span class="line">        quarter(x[<span class="number">3</span>][<span class="number">3</span>], x[<span class="number">3</span>][<span class="number">0</span>], x[<span class="number">3</span>][<span class="number">1</span>], x[<span class="number">3</span>][<span class="number">2</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">16</span>; ++i) </span><br><span class="line">        out[i] = x[i / <span class="number">4</span>][i % <span class="number">4</span>] + in[i];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// inputting a key, message nonce, keystream index and constants to that transormation</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">salsa20_block</span><span class="params">(<span class="keyword">uint8_t</span>* out, <span class="keyword">uint8_t</span> key[<span class="number">32</span>], <span class="keyword">uint64_t</span> nonce, <span class="keyword">uint64_t</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> c[<span class="number">16</span>] = <span class="string">&quot;expand 32-byte k&quot;</span>; <span class="comment">// arbitrary constant</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LE(p) ( (p)[0] | ((p)[1]&lt;&lt;8) | ((p)[2]&lt;&lt;16) | ((p)[3]&lt;&lt;24) )</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">uint32_t</span> in[<span class="number">16</span>] = &#123; LE(c),            LE(key),    LE(key + <span class="number">4</span>),        LE(key + <span class="number">8</span>),</span><br><span class="line">                       LE(key + <span class="number">12</span>),       LE(c + <span class="number">4</span>),    nonce &amp; <span class="number">0xffffffff</span>, nonce &gt;&gt; <span class="number">32</span>,</span><br><span class="line">                       index &amp; <span class="number">0xffffffff</span>, index &gt;&gt; <span class="number">32</span>,  LE(c + <span class="number">8</span>),          LE(key + <span class="number">16</span>),</span><br><span class="line">                       LE(key + <span class="number">20</span>),       LE(key + <span class="number">24</span>), LE(key + <span class="number">28</span>),       LE(c + <span class="number">12</span>) &#125;;</span><br><span class="line">    <span class="keyword">uint32_t</span> wordout[<span class="number">16</span>];</span><br><span class="line">    salsa20_words(wordout, in);</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">64</span>; ++i) </span><br><span class="line">        out[i] = <span class="number">0xff</span> &amp; (wordout[i / <span class="number">4</span>] &gt;&gt; (<span class="number">8</span> * (i % <span class="number">4</span>)));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// enc/dec: xor a message with transformations of key, a per-message nonce and block index</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">salsa20</span><span class="params">(<span class="keyword">uint8_t</span>* message, <span class="keyword">uint64_t</span> mlen, <span class="keyword">uint8_t</span> key[<span class="number">32</span>], <span class="keyword">uint64_t</span> nonce)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">uint8_t</span> block[<span class="number">64</span>];</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; mlen; i++) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (i % <span class="number">64</span> == <span class="number">0</span>) salsa20_block(block, key, nonce, i / <span class="number">64</span>);</span><br><span class="line">        message[i] ^= block[i % <span class="number">64</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">uint8_t</span> key[<span class="number">32</span>] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">    <span class="keyword">uint64_t</span> nonce = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">uint8_t</span> msg[<span class="number">64</span>] = &#123; <span class="number">0</span> &#125;;            <span class="comment">// 密文        </span></span><br><span class="line"></span><br><span class="line">    salsa20(msg, <span class="keyword">sizeof</span>(msg), key, nonce);</span><br><span class="line">    <span class="keyword">int</span> i; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="keyword">sizeof</span>(msg); ++i) </span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%02X &quot;</span>, msg[i]); <span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>但感觉这代码怪怪的，和文章看到的不太一样，没找到个喜欢的代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> Salsa20</span><br><span class="line"></span><br><span class="line">plaintext = <span class="string">b&#x27;Attack at dawn&#x27;</span></span><br><span class="line">secret = <span class="string">b&#x27;*Thirty-two byte (256 bits) key*&#x27;</span></span><br><span class="line">cipher = Salsa20.new(key=secret)</span><br><span class="line">msg = cipher.nonce + cipher.encrypt(plaintext)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> Salsa20</span><br><span class="line"></span><br><span class="line">secret = <span class="string">b&#x27;*Thirty-two byte (256 bits) key*&#x27;</span></span><br><span class="line">msg_nonce = msg[:<span class="number">8</span>]</span><br><span class="line">ciphertext = msg[<span class="number">8</span>:]</span><br><span class="line">cipher = Salsa20.new(key=secret, nonce=msg_nonce)</span><br><span class="line">plaintext = cipher.decrypt(ciphertext)</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="ChaCha20"><a href="#ChaCha20" class="headerlink" title="ChaCha20"></a>ChaCha20</h1><p>一、简介</p>
+<p>Chacha20流密码经常和Poly1305消息认证码结合使用，被称为ChaCha20-Poly1305,由Google公司率先在Andriod移动平台中的Chrome中代替<a target="_blank" rel="noopener" href="https://link.segmentfault.com/?enc=Jw4W5N7uij3iRKM/ueaoIw==.xavVgGQqH0E7pYdoiviOH03lkE5iS0I3l3MTyUNAzCMXOni9DUz/Ikdr4o7NDtgM">RC4</a>使用,由于其算法精简、安全性强、兼容性强等特点，目前Google致力于全面将其在移动端推广</p>
+<p>二、初始化矩阵</p>
+<p>ChaCha20加密的初始状态包括了包括了</p>
+<p>1、一个128位常量(Constant)</p>
+<p>常量的内容为0x61707865,0x3320646e,0x79622d32,0x6b206574.)</p>
+<p>2、一个256位密钥(Key)</p>
+<p>3、一个64位计数(Counter)</p>
+<p>4、一个64位随机数(Nonce)</p>
+<p>一共64字节其排列成4 * 4的32位字矩阵如下所示：（实际运算为小端)</p>
+<p>![image-20230818132802555](Salsa20 X ChaCha20/image-20230818132802555.png)</p>
+<p>ChaCha20.h</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> once</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;assert.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stddef.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus </span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">chacha20_context</span></span></span><br><span class="line"><span class="class">	&#123;</span></span><br><span class="line">		<span class="keyword">uint32_t</span> keystream32[<span class="number">16</span>];</span><br><span class="line">		<span class="keyword">size_t</span> position;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">uint8_t</span> key[<span class="number">32</span>];</span><br><span class="line">		<span class="keyword">uint8_t</span> nonce[<span class="number">12</span>];</span><br><span class="line">		<span class="keyword">uint64_t</span> counter;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">uint32_t</span> state[<span class="number">16</span>];</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">chacha20_init_context</span><span class="params">(struct chacha20_context* ctx, <span class="keyword">uint8_t</span> key[], <span class="keyword">uint8_t</span> nounc[], <span class="keyword">uint64_t</span> counter)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">chacha20_xor</span><span class="params">(struct chacha20_context* ctx, <span class="keyword">uint8_t</span>* bytes, <span class="keyword">size_t</span> n_bytes)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus </span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> </span></span><br></pre></td></tr></table></figure>
+
+<p>ChaCha.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;ChaCha20.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">uint16_t</span> <span class="title">rotl32</span><span class="params">(<span class="keyword">uint16_t</span> x, <span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (x &lt;&lt; n) | (x &gt;&gt; (<span class="number">32</span> - n));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">uint32_t</span> <span class="title">pack4</span><span class="params">(<span class="keyword">const</span> <span class="keyword">uint8_t</span>* a)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">uint32_t</span> res = <span class="number">0</span>;</span><br><span class="line">	res |= (<span class="keyword">uint32_t</span>)a[<span class="number">0</span>] &lt;&lt; <span class="number">0</span> * <span class="number">8</span>;</span><br><span class="line">	res |= (<span class="keyword">uint32_t</span>)a[<span class="number">1</span>] &lt;&lt; <span class="number">1</span> * <span class="number">8</span>;</span><br><span class="line">	res |= (<span class="keyword">uint32_t</span>)a[<span class="number">2</span>] &lt;&lt; <span class="number">2</span> * <span class="number">8</span>;</span><br><span class="line">	res |= (<span class="keyword">uint32_t</span>)a[<span class="number">3</span>] &lt;&lt; <span class="number">3</span> * <span class="number">8</span>;</span><br><span class="line">	<span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">unpack4</span><span class="params">(<span class="keyword">uint32_t</span> src, <span class="keyword">uint8_t</span>* dst)</span> </span>&#123;</span><br><span class="line">	dst[<span class="number">0</span>] = (src &gt;&gt; <span class="number">0</span> * <span class="number">8</span>) &amp; <span class="number">0xff</span>;</span><br><span class="line">	dst[<span class="number">1</span>] = (src &gt;&gt; <span class="number">1</span> * <span class="number">8</span>) &amp; <span class="number">0xff</span>;</span><br><span class="line">	dst[<span class="number">2</span>] = (src &gt;&gt; <span class="number">2</span> * <span class="number">8</span>) &amp; <span class="number">0xff</span>;</span><br><span class="line">	dst[<span class="number">3</span>] = (src &gt;&gt; <span class="number">3</span> * <span class="number">8</span>) &amp; <span class="number">0xff</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">chacha20_init_block</span><span class="params">(struct chacha20_context* ctx, <span class="keyword">uint8_t</span> key[], <span class="keyword">uint8_t</span> nonce[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">memcpy</span>(ctx-&gt;key, key, <span class="keyword">sizeof</span>(ctx-&gt;key));</span><br><span class="line">	<span class="built_in">memcpy</span>(ctx-&gt;nonce, nonce, <span class="keyword">sizeof</span>(ctx-&gt;nonce));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">uint8_t</span>* magic_constant = (<span class="keyword">uint8_t</span>*)<span class="string">&quot;expand 32-byte k&quot;</span>;</span><br><span class="line">	ctx-&gt;state[<span class="number">0</span>] = pack4(magic_constant + <span class="number">0</span> * <span class="number">4</span>);</span><br><span class="line">	ctx-&gt;state[<span class="number">1</span>] = pack4(magic_constant + <span class="number">1</span> * <span class="number">4</span>);</span><br><span class="line">	ctx-&gt;state[<span class="number">2</span>] = pack4(magic_constant + <span class="number">2</span> * <span class="number">4</span>);</span><br><span class="line">	ctx-&gt;state[<span class="number">3</span>] = pack4(magic_constant + <span class="number">3</span> * <span class="number">4</span>);</span><br><span class="line">	ctx-&gt;state[<span class="number">4</span>] = pack4(key + <span class="number">0</span> * <span class="number">4</span>);</span><br><span class="line">	ctx-&gt;state[<span class="number">5</span>] = pack4(key + <span class="number">1</span> * <span class="number">4</span>);</span><br><span class="line">	ctx-&gt;state[<span class="number">6</span>] = pack4(key + <span class="number">2</span> * <span class="number">4</span>);</span><br><span class="line">	ctx-&gt;state[<span class="number">7</span>] = pack4(key + <span class="number">3</span> * <span class="number">4</span>);</span><br><span class="line">	ctx-&gt;state[<span class="number">8</span>] = pack4(key + <span class="number">4</span> * <span class="number">4</span>);</span><br><span class="line">	ctx-&gt;state[<span class="number">9</span>] = pack4(key + <span class="number">5</span> * <span class="number">4</span>);</span><br><span class="line">	ctx-&gt;state[<span class="number">10</span>] = pack4(key + <span class="number">6</span> * <span class="number">4</span>);</span><br><span class="line">	ctx-&gt;state[<span class="number">11</span>] = pack4(key + <span class="number">7</span> * <span class="number">4</span>);</span><br><span class="line">	<span class="comment">// 64 bit counter initialized to zero by default.</span></span><br><span class="line">	ctx-&gt;state[<span class="number">12</span>] = <span class="number">0</span>;</span><br><span class="line">	ctx-&gt;state[<span class="number">13</span>] = pack4(nonce + <span class="number">0</span> * <span class="number">4</span>);</span><br><span class="line">	ctx-&gt;state[<span class="number">14</span>] = pack4(nonce + <span class="number">1</span> * <span class="number">4</span>);</span><br><span class="line">	ctx-&gt;state[<span class="number">15</span>] = pack4(nonce + <span class="number">2</span> * <span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">memcpy</span>(ctx-&gt;nonce, nonce, <span class="keyword">sizeof</span>(ctx-&gt;nonce));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">chacha20_block_set_counter</span><span class="params">(struct chacha20_context* ctx, <span class="keyword">uint64_t</span> counter)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ctx-&gt;state[<span class="number">12</span>] = (<span class="keyword">uint32_t</span>)counter;</span><br><span class="line">	ctx-&gt;state[<span class="number">13</span>] = pack4(ctx-&gt;nonce + <span class="number">0</span> * <span class="number">4</span>) + (<span class="keyword">uint32_t</span>)(counter &gt;&gt; <span class="number">32</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">chacha20_block_next</span><span class="params">(struct chacha20_context* ctx)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// This is where the crazy voodoo magic happens.</span></span><br><span class="line">	<span class="comment">// Mix the bytes a lot and hope that nobody finds out how to undo it.</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">16</span>; i++) ctx-&gt;keystream32[i] = ctx-&gt;state[i];</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CHACHA20_QUARTERROUND(x, a, b, c, d) \</span></span><br><span class="line"><span class="meta">    x[a] += x[b]; x[d] = rotl32(x[d] ^ x[a], 16); \</span></span><br><span class="line"><span class="meta">    x[c] += x[d]; x[b] = rotl32(x[b] ^ x[c], 12); \</span></span><br><span class="line"><span class="meta">    x[a] += x[b]; x[d] = rotl32(x[d] ^ x[a], 8); \</span></span><br><span class="line"><span class="meta">    x[c] += x[d]; x[b] = rotl32(x[b] ^ x[c], 7);</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	&#123;</span><br><span class="line">			CHACHA20_QUARTERROUND(ctx-&gt;keystream32, <span class="number">0</span>, <span class="number">4</span>, <span class="number">8</span>, <span class="number">12</span>)</span><br><span class="line">			CHACHA20_QUARTERROUND(ctx-&gt;keystream32, <span class="number">1</span>, <span class="number">5</span>, <span class="number">9</span>, <span class="number">13</span>)</span><br><span class="line">			CHACHA20_QUARTERROUND(ctx-&gt;keystream32, <span class="number">2</span>, <span class="number">6</span>, <span class="number">10</span>, <span class="number">14</span>)</span><br><span class="line">			CHACHA20_QUARTERROUND(ctx-&gt;keystream32, <span class="number">3</span>, <span class="number">7</span>, <span class="number">11</span>, <span class="number">15</span>)</span><br><span class="line">			CHACHA20_QUARTERROUND(ctx-&gt;keystream32, <span class="number">0</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">15</span>)</span><br><span class="line">			CHACHA20_QUARTERROUND(ctx-&gt;keystream32, <span class="number">1</span>, <span class="number">6</span>, <span class="number">11</span>, <span class="number">12</span>)</span><br><span class="line">			CHACHA20_QUARTERROUND(ctx-&gt;keystream32, <span class="number">2</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">13</span>)</span><br><span class="line">			CHACHA20_QUARTERROUND(ctx-&gt;keystream32, <span class="number">3</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">14</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">16</span>; i++) ctx-&gt;keystream32[i] += ctx-&gt;state[i];</span><br><span class="line"></span><br><span class="line">	<span class="keyword">uint32_t</span>* counter = ctx-&gt;state + <span class="number">12</span>;</span><br><span class="line">	<span class="comment">// increment counter</span></span><br><span class="line">	counter[<span class="number">0</span>]++;</span><br><span class="line">	<span class="keyword">if</span> (<span class="number">0</span> == counter[<span class="number">0</span>])</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">// wrap around occured, increment higher 32 bits of counter</span></span><br><span class="line">		counter[<span class="number">1</span>]++;</span><br><span class="line">		<span class="comment">// Limited to 2^64 blocks of 64 bytes each.</span></span><br><span class="line">		<span class="comment">// If you want to process more than 1180591620717411303424 bytes</span></span><br><span class="line">		<span class="comment">// you have other problems.</span></span><br><span class="line">		<span class="comment">// We could keep counting with counter[2] and counter[3] (nonce),</span></span><br><span class="line">		<span class="comment">// but then we risk reusing the nonce which is very bad.</span></span><br><span class="line">		assert(<span class="number">0</span> != counter[<span class="number">1</span>]);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">chacha20_init_context</span><span class="params">(struct chacha20_context* ctx, <span class="keyword">uint8_t</span> key[], <span class="keyword">uint8_t</span> nonce[], <span class="keyword">uint64_t</span> counter)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">memset</span>(ctx, <span class="number">0</span>, <span class="keyword">sizeof</span>(struct chacha20_context));</span><br><span class="line"></span><br><span class="line">	chacha20_init_block(ctx, key, nonce);</span><br><span class="line">	chacha20_block_set_counter(ctx, counter);</span><br><span class="line"></span><br><span class="line">	ctx-&gt;counter = counter;</span><br><span class="line">	ctx-&gt;position = <span class="number">64</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">chacha20_xor</span><span class="params">(struct chacha20_context* ctx, <span class="keyword">uint8_t</span>* bytes, <span class="keyword">size_t</span> n_bytes)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">uint8_t</span>* keystream8 = (<span class="keyword">uint8_t</span>*)ctx-&gt;keystream32;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; n_bytes; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (ctx-&gt;position &gt;= <span class="number">64</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			chacha20_block_next(ctx);</span><br><span class="line">			ctx-&gt;position = <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		bytes[i] ^= keystream8[ctx-&gt;position];</span><br><span class="line">		ctx-&gt;position++;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>main.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span> </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;ChaCha20.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">chacha20_context</span> <span class="title">ctx</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">uint8_t</span> buffer[] = <span class="string">&quot;12345678123456781234567812345678&quot;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">uint8_t</span> key[] = <span class="string">&quot;abcd1234abcd1234abcd1234abcd1234&quot;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">uint8_t</span> nonce[] = <span class="string">&quot;1234ABCDabcd&quot;</span>;</span><br><span class="line">	<span class="comment">// 看原理 nonce 只占了 64bit，但是看大家代码都是用 96 bit</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">uint64_t</span> counter = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> i;</span><br><span class="line">	<span class="keyword">size_t</span> size_of_buffer = (<span class="keyword">size_t</span>)<span class="number">32</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Encrypt: &quot;</span>);</span><br><span class="line">	chacha20_init_context(&amp;ctx, key, nonce, counter);</span><br><span class="line">	chacha20_xor(&amp;ctx, buffer, size_of_buffer);</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;0x%X, &quot;</span>, buffer[i]);</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;\n\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Decrypt: &quot;</span>);</span><br><span class="line">	chacha20_init_context(&amp;ctx, key, nonce, counter);</span><br><span class="line">	chacha20_xor(&amp;ctx, buffer, size_of_buffer);</span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">32</span>; i++)</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;0x%X, &quot;</span>, buffer[i]);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Encrypt: 0x9A, 0x66, 0x7F, 0x13, 0xB8, 0xF2, 0x4A, 0xA2, 0x74, 0x8C, 0x1C, 0x63, 0xAC, 0xF0, 0x4A, 0x32, 0xD0, 0x48, 0x50, 0x50, 0x84, 0x54, 0x4, 0xC, 0xD0, 0x48, 0x50, 0x50, 0x84, 0x54, 0x4, 0xC,</span><br><span class="line"></span><br><span class="line">Decrypt: 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38</span><br></pre></td></tr></table></figure>
+
+
+
+<p>python版本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">from</span> base64 <span class="keyword">import</span> b64encode</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> ChaCha20</span><br><span class="line"><span class="keyword">from</span> Crypto.Random <span class="keyword">import</span> get_random_bytes</span><br><span class="line"></span><br><span class="line">plaintext = <span class="string">b&#x27;Attack at dawn&#x27;</span></span><br><span class="line">key = get_random_bytes(<span class="number">32</span>)</span><br><span class="line">cipher = ChaCha20.new(key=key)</span><br><span class="line">ciphertext = cipher.encrypt(plaintext)</span><br><span class="line"></span><br><span class="line">nonce = b64encode(cipher.nonce).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">ct = b64encode(ciphertext).decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">result = json.dumps(&#123;<span class="string">&#x27;nonce&#x27;</span>:nonce, <span class="string">&#x27;ciphertext&#x27;</span>:ct&#125;)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">from</span> base64 <span class="keyword">import</span> b64decode</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> ChaCha20</span><br><span class="line"></span><br><span class="line"><span class="comment"># We assume that the key was somehow securely shared</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    b64 = json.loads(result)</span><br><span class="line">    nonce = b64decode(b64[<span class="string">&#x27;nonce&#x27;</span>])</span><br><span class="line">    ciphertext = b64decode(b64[<span class="string">&#x27;ciphertext&#x27;</span>])</span><br><span class="line">    cipher = ChaCha20.new(key=key, nonce=nonce)</span><br><span class="line">    plaintext = cipher.decrypt(ciphertext)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;The message was &quot;</span>, plaintext)</span><br><span class="line"><span class="keyword">except</span> (ValueError, KeyError):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Incorrect decryption&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>开摆，等哪题碰到这种题再测</p>
+<p>Reference</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/lordtianqiyi/articles/16822639.html">https://www.cnblogs.com/lordtianqiyi/articles/16822639.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://openprompt.co/conversations/1861">https://openprompt.co/conversations/1861</a></p>
+<p><a target="_blank" rel="noopener" href="https://pycryptodome.readthedocs.io/en/latest/src/cipher/salsa20.html">https://pycryptodome.readthedocs.io/en/latest/src/cipher/salsa20.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://pycryptodome.readthedocs.io/en/latest/src/cipher/chacha20.html">https://pycryptodome.readthedocs.io/en/latest/src/cipher/chacha20.html</a></p>
+</blockquote>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2023/08/17/Salsa20 X ChaCha20/" class="leancloud_visitors" data-flag-title="Salsa20 X ChaCha20">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2024 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
