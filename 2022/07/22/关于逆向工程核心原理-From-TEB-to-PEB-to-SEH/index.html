@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>关于逆向工程核心原理-From TEB to PEB to SEH - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            
+            <span>July</span>
+            
+            
+            
+            
+            
+            
+            <span>22,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">关于逆向工程核心原理-From TEB to PEB to SEH</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>之前一直没机会整理下这部分知识，这次刚好要做课件了，开始梳理一下。– 2022.7.22</p>
+<h1 id="TEB"><a href="#TEB" class="headerlink" title="TEB"></a>TEB</h1><h2 id="Introduction-Of-TEB"><a href="#Introduction-Of-TEB" class="headerlink" title="Introduction Of TEB"></a>Introduction Of TEB</h2><p>TEB（Thread Environment Block）指的是线程环境块：</p>
+<ul>
+<li>该结构体包含<strong>进程中运行线程的各种信息</strong></li>
+<li>进程中的每个线程都有对应的TEB结构体</li>
+</ul>
+<blockquote>
+<p>进程：一个在内存中运行的应用程序。每个进程都有自己独立的一块内存空间，一个进程可以有多个线程，比如在Windows系统中，一个运行的xx.exe就是一个进程</p>
+<p>线程：进程中的一个执行任务（控制单元），负责当前进程中程序的执行。一个进程至少有一个线程，一个进程可以运行多个线程，多个线程可共享数据。</p>
+</blockquote>
+<p>MSDN给出的结构体，然而描述其实太过简单，想了解更多细节得借助WINDBG</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722155319976.png" alt="image-20220722155319976"></p>
+<p>（借助WINDBG的符号文件可以查看TEB结构体的所有成员，太多了就不截图了）</p>
+<h2 id="Important-Members-Of-The-TEB-Structure"><a href="#Important-Members-Of-The-TEB-Structure" class="headerlink" title="Important Members Of The TEB  Structure"></a>Important Members Of The TEB  Structure</h2><p>TEB 结构体的成员多而复杂，在用户模式调试中起着重要作用的成员有2个</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722160931981.png" alt="image-20220722160931981"></p>
+<h3 id="ProcessEnvironmentBlock"><a href="#ProcessEnvironmentBlock" class="headerlink" title="ProcessEnvironmentBlock"></a>ProcessEnvironmentBlock</h3><p>首先是Offset 30处的 ProcessEnvironmentBlock 成员，它是指向PEB（Process Environment Block，进程环境块），结构体的指针。</p>
+<p>PEB 是进程环境块，每个进程对应1个PEB结构体，一会再细说</p>
+<h3 id="NitTib"><a href="#NitTib" class="headerlink" title="NitTib"></a>NitTib</h3><p>TEB 结构体的第一个成员为 NT_TIB 结构体（TIB 是 Thread Infomation Block 的简称，意味线程信息块）</p>
+<p>结构体如下，比较关心的成员有</p>
+<ul>
+<li><p>ExceptionList 指向 _EXCEPTION_REGISTRATION_RECORD 结构体组成的链表，就是Windows OS的SEH</p>
+</li>
+<li><p>Self 指向 _NT_TIB 结构体自引用指针</p>
+<ul>
+<li>也是 TEB 结构体指针（因为 TEB 结构体的第一个成员就是 _NT_TEB 结构体）</li>
+</ul>
+</li>
+</ul>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722192748806.png" alt="image-20220722192748806"></p>
+<h2 id="TEB-Access-Method"><a href="#TEB-Access-Method" class="headerlink" title="TEB Access Method"></a>TEB Access Method</h2><p>借助 WINDBG 很容易访问 TEB 结构体，那么我们在用户模式下怎么问题？</p>
+<p>通过 OS 提供的相关 API 访问</p>
+<p>PS: 调试的地址会随计算机环境的不同而不同</p>
+<h3 id="Ntdll-NtCurrentTeb"><a href="#Ntdll-NtCurrentTeb" class="headerlink" title="Ntdll.NtCurrentTeb()"></a>Ntdll.NtCurrentTeb()</h3><p>Ctrl + G 或者 Search for Name in all modules 跳到该API</p>
+<p>可以发现 FS:[18] 就是返回TEB地址，这就是就是Self指针</p>
+<p>这里我们可以得知 TEB 与 FS 段寄存器有关系！</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722195435055.png" alt="image-20220722195435055"></p>
+<h3 id="FS-Segment-Register"><a href="#FS-Segment-Register" class="headerlink" title="FS Segment Register"></a>FS Segment Register</h3><h4 id="SDT"><a href="#SDT" class="headerlink" title="SDT"></a>SDT</h4><p>其实，FS 寄存器用来指示当前线程的 TEB 结构体</p>
+<p>然而这种段寄存器只有十六位，如何在 IA-32 系统中32位的指针表示？</p>
+<p>实际上，FS段寄存器并非直接指向 TEB 结构体的位置，它<strong>持有 SDT 的索引</strong>，而该索引持有实际 TEB 地址</p>
+<blockquote>
+<p>SDT 位于内核内存区域，其地址存储在 GDTR (Global Descriptor Table Resiger，全局描述符号表)</p>
+</blockquote>
+<p>由于段寄存器实际存储的是 SDT 的索引，所以它也被称为 “段选择符” (Segment Selector)</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722202149185.png" alt="image-20220722202149185"></p>
+<h2 id="SUMMARY"><a href="#SUMMARY" class="headerlink" title="SUMMARY"></a>SUMMARY</h2><ul>
+<li><p>FS[0x18] = TEB 起始地址</p>
+</li>
+<li><p>FS[0x30] = PEB 起始地址</p>
+</li>
+<li><p>FS[0] = SEH 起始地址</p>
+</li>
+</ul>
+<h1 id="PEB"><a href="#PEB" class="headerlink" title="PEB"></a>PEB</h1><h2 id="Introduction-Of-PEB"><a href="#Introduction-Of-PEB" class="headerlink" title="Introduction Of PEB"></a>Introduction Of PEB</h2><p>PEB (Process Environment Block，进程环境块)，这是存放进程信息的结构体，尺寸非常大。</p>
+<h2 id="PEB-Access-Method"><a href="#PEB-Access-Method" class="headerlink" title="PEB Access Method"></a>PEB Access Method</h2><p>那么访问其实就是 FS:[30] 即可，可以有多种方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MOV EAX, DWORD PTR FS:[30] ; FS[30] = ADDRESS OF PEB</span><br><span class="line"></span><br><span class="line">MOV EAX, DWORD PTR FS:[18] ; FS[18] = ADDRESS OF TEB</span><br><span class="line">MOV EAX, DWORD PTR FS:[EAX + 30] ; DS[EAX + 30] = ADDRESS OF PEB</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Important-Members-Of-The-PEB-Structure"><a href="#Important-Members-Of-The-PEB-Structure" class="headerlink" title="Important Members Of The PEB Structure"></a>Important Members Of The PEB Structure</h2><p>MSDN 提供的 PEB 结构体如下</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722204751164.png" alt="image-20220722204751164"></p>
+<p>（那么经过WINDBG可以详细查看 PEB 结构体成员，太长了就不贴了）</p>
+<p>关注几个重点成员</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722205015799.png" alt="image-20220722205015799"></p>
+<h3 id="PEB-BeingDebugged"><a href="#PEB-BeingDebugged" class="headerlink" title="PEB.BeingDebugged"></a>PEB.BeingDebugged</h3><p>Kenerl32.dll 中有个名为 Kernel32IsDebuggerPresent() 的API，普通程序我们一般不用到</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL WINAPI <span class="title">IsDebuggerPresent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>该 API 函数用于判断当前进程是否处于调试状态，并返回判断结果。</p>
+<p>该 API 通过检测 PEB.BeingDebuggered 成员确定是否正在调试进程（是，返回1；否，返回0）</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722210750425.png" alt="image-20220722210750425"></p>
+<p>该图中</p>
+<ul>
+<li>获取 FS:[18] 的 TEB 地址</li>
+<li>然后通过 DS:[TEB + 30] 处的 TEB.Process-EnvironmentBlock 成员访问 PEB 结构体</li>
+<li>查看 PEB.BeingDebuggered 成员的地址的值</li>
+</ul>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722211000787.png" alt="image-20220722211000787"></p>
+<h3 id="PEB-ImageBaseAddress"><a href="#PEB-ImageBaseAddress" class="headerlink" title="PEB.ImageBaseAddress"></a>PEB.ImageBaseAddress</h3><p>PEB.ImageBaseAddress 成员用来表示进程的 ImageBase</p>
+<p>GetModuleHandle() API 用来获取 ImageBase</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">HMODULE WINAPI <span class="title">GetModuleHandle</span><span class="params">(__in_opt LPCSTR lpModuleName)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>向 lpModuleHandle 参数赋值为 NULL，调用 GetModuleHandle() 函数将返回进程被加载的 ImageBase</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722211954276.png" alt="image-20220722211954276"></p>
+<h3 id="PEB-Ldr"><a href="#PEB-Ldr" class="headerlink" title="PEB.Ldr"></a>PEB.Ldr</h3><p>PEB.Ldr 成员是指向 _PEB_LDR_DATA 结构体的指针。借助 WinDbg 查看可知</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722212920103.png" alt="image-20220722212920103"></p>
+<p>当模块（DLL）加载到进程后，通过 PEB.Ldr 成员可以直接获取该模块的加载地址，所以这是非常重要的成员。</p>
+<p>_PEB_LDR_DATA 结构体成员中有3个 _LIST_ENTRY 成员，该又是个结构体</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722213140086.png" alt="image-20220722213140086"></p>
+<p>从该结构体看出这是个双向链表，那么该链表又保存着什么信息？</p>
+<p>_LDR_DATA_TABLE_ENTRY 结构体</p>
+<ul>
+<li><p><strong>每个加载到进程中的 DLL 模块都有与之相应的 _LDR_DATA_TABLE_ENTRY 结构体</strong></p>
+</li>
+<li><p>这些结构体互相链接，最终形成 _LIST_ENTRY 双向链表</p>
+</li>
+<li><p>需要注意的是，_PEB_LDR_DATA 结构体中存在3种链表</p>
+<ul>
+<li>也就是说，存在多个 _LDR_DATA_TABLE_ENTRY 结构体，并且有三种方法链接起来</li>
+</ul>
+</li>
+</ul>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722213432869.png" alt="image-20220722213432869"></p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220722213446471.png" alt="image-20220722213446471"></p>
+<h3 id="PEB-ProcessHeap-amp-PEB-NtGlobalFlag"><a href="#PEB-ProcessHeap-amp-PEB-NtGlobalFlag" class="headerlink" title="PEB.ProcessHeap &amp; PEB.NtGlobalFlag"></a>PEB.ProcessHeap &amp; PEB.NtGlobalFlag</h3><p>这两个成员都是应用于反调试，若进程处于调试状态，两个成员都有特定值。</p>
+<h1 id="SEH"><a href="#SEH" class="headerlink" title="SEH"></a>SEH</h1><h2 id="Introduction-Of-SEH"><a href="#Introduction-Of-SEH" class="headerlink" title="Introduction Of SEH"></a>Introduction Of SEH</h2><p>SEH 是 Windows 操作系统默认的异常处理机制，在程序源代码中使用 try except finally 关键字来具体实现</p>
+<blockquote>
+<p>SEH 与 Windows 中的 try、catch 具有不同结构！！</p>
+</blockquote>
+<h2 id="When-An-Exception-Occurs"><a href="#When-An-Exception-Occurs" class="headerlink" title="When An Exception Occurs"></a>When An Exception Occurs</h2><p><strong>发生异常时调试器运行</strong></p>
+<p>会出现警告语句</p>
+<blockquote>
+<p>“Access violation when writing to [00000000]- use Shift+F7/F8/F9 to pass exception to program·在内存0处发生写入异常，若想将异常抛给程序，请使用Shift+F7/F8/F9组合键。</p>
+</blockquote>
+<h3 id="OS-Exception-Handle"><a href="#OS-Exception-Handle" class="headerlink" title="OS Exception Handle"></a>OS Exception Handle</h3><p>同一程序在<strong>正常运行时</strong>与<strong>调试运行时</strong>表现出的行为行动是不同的，这是由于 Windows OS 的异常处理方法不同</p>
+<h4 id="正常运行时的异常处理方法"><a href="#正常运行时的异常处理方法" class="headerlink" title="正常运行时的异常处理方法"></a>正常运行时的异常处理方法</h4><ul>
+<li>进程运行时若发生异常，OS 委托进程进行处理，若进程代码中存在具体的异常处理代码，则能顺利完成，程序继续运行</li>
+<li>但如果进行内部没有具体的实现 SEH，OS 就会启动默认的异常处理机制，终止程序运行</li>
+</ul>
+<h4 id="调试运行时的异常处理方法"><a href="#调试运行时的异常处理方法" class="headerlink" title="调试运行时的异常处理方法"></a>调试运行时的异常处理方法</h4><p>若被调试进程内部发生异常，OS 会首先把异常抛给调试进程处理。</p>
+<ul>
+<li><p>调试器几乎拥有被调试者的所有权限</p>
+</li>
+<li><p>需要特别指出的是，被调试者内部发生的所有异常（错误）都由调试器处理</p>
+</li>
+<li><p>所以调试过程中发生的所有异常（错误）都要由调试器管理（被调试者的 SEH 依据优先顺序推给调试器）</p>
+</li>
+</ul>
+<p>像这样，被调试者发生异常时，调试器就会暂停运行，必须采取某种措施，完成后继续调试</p>
+<p>处理方法如下</p>
+<p>1）直接修改异常：代码、寄存器、内存</p>
+<p>修改引发异常的位置让其不再异常</p>
+<p>2）将异常抛给 被调试者 处理</p>
+<p>如果 被调试者 内部存在 SEH（异常处理函数）能够处理异常，那么异常通知会发送给 被调试者，由被调试器自行处理。</p>
+<p>如果当前进程在被我们的调试器所调试，我们可以按 SHIFT + F7/F8/F9 命令可以直接将当前异常抛还给 被调试者</p>
+<p>3）OS 默认的异常处理机制</p>
+<p>若调试器与被调试者都无法处理（或故意不处理）当前异常，则 OS 的默认异常处理机制会触发，终止进程。</p>
+<h2 id="Exception"><a href="#Exception" class="headerlink" title="Exception"></a>Exception</h2><p>学习异常处理前，有必要了解操作系统中定义的异常</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220806131536651.png" alt="image-20220806131536651"></p>
+<h3 id="EXCEPTION-ACCESS-VIOLATION-C000-0005"><a href="#EXCEPTION-ACCESS-VIOLATION-C000-0005" class="headerlink" title="EXCEPTION_ACCESS_VIOLATION (C000 0005)"></a>EXCEPTION_ACCESS_VIOLATION (C000 0005)</h3><p>试图访问不存在或不具有访问权限的内存区域，就会发生 EXCEPTION_ACCESS_VLOLATION（非法访问异常，该异常最常见）。</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220806212646438.png" alt="image-20220806212646438"></p>
+<h3 id="EXCEPTION-BREAKPOINT-8000-0003"><a href="#EXCEPTION-BREAKPOINT-8000-0003" class="headerlink" title="EXCEPTION_BREAKPOINT (8000 0003)"></a>EXCEPTION_BREAKPOINT (8000 0003)</h3><p>在运行代码中设置断点后，CPU 尝试执行该地址处的指令时，将会发生 EXCEPTION_BREAKPOINT 异常</p>
+<p><strong>INT3</strong></p>
+<p>设置该断点的汇编指令为 INT3，对应机器码（IA-32 指令） 0xCC</p>
+<p>调试器就是利用该功能实现断点功能</p>
+<h3 id="EXCEPTION-ILLGAL-INSTRUCTION-C000-001D"><a href="#EXCEPTION-ILLGAL-INSTRUCTION-C000-001D" class="headerlink" title="EXCEPTION_ILLGAL_INSTRUCTION (C000 001D)"></a>EXCEPTION_ILLGAL_INSTRUCTION (C000 001D)</h3><p>CPU 遇到无法解析的指令的时候，比如 “0FFF” 指令在 x86 CPU 中未定义，CPU遇到该指令将引发 EXCEPTION_ILLEGAL_INSTRUCTION 异常</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220806213650384.png" alt="image-20220806213650384"></p>
+<h3 id="EXCETION-INT-DIVIDE-BY-ZERO-C000-0094"><a href="#EXCETION-INT-DIVIDE-BY-ZERO-C000-0094" class="headerlink" title="EXCETION_INT_DIVIDE_BY_ZERO (C000 0094)"></a>EXCETION_INT_DIVIDE_BY_ZERO (C000 0094)</h3><p>INTEGER（整数）除法运算中，若分母为0（即除0）。</p>
+<h3 id="EXCEPTION-SINGLE-STEP-8000-0004"><a href="#EXCEPTION-SINGLE-STEP-8000-0004" class="headerlink" title="EXCEPTION_SINGLE_STEP (8000 0004)"></a>EXCEPTION_SINGLE_STEP (8000 0004)</h3><p>Single Step（单步）的含义是执行一条指令，然后暂停。</p>
+<p>CPU 进入单步模式后，每执行一条指令就会引发 EXCEPTION_SINGLE_STEP 异常，暂停运行。</p>
+<p>将 EFLAGS 寄存器的 TF (Trap Flag, 陷阱标志) 位设置为0，CPU就会进入单步工作模式。</p>
+<h2 id="SEH-链"><a href="#SEH-链" class="headerlink" title="SEH 链"></a>SEH 链</h2><p>SEH 以链的形式存在，第一个异常处理器中若未处理相关异常，就会传递到下个异常处理器，直到得到处理。</p>
+<p>从技术层面来看，SEH 是 _EXCEPTION_REGISTRATION_RECORD 结构体组成的链表</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220806231301323.png" alt="image-20220806231301323"></p>
+<p>Next 成员是指向下一个 _EXCEPTION_REGISTRATION_RECORD 结构体的指针，Handler 成员是异常处理函数（异常处理器）</p>
+<p>若 Next 成员的值为 FFFF FFFF，则表示它是链表的最后一个结点</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807180348413.png" alt="image-20220807180348413"></p>
+<p>异常发生时，该异常则会按照 （A）-&gt;（B）-&gt;（C）的顺序依次传递，直到有异常处理器处理</p>
+<h3 id="SEH-异常处理函数的定义-except-handler"><a href="#SEH-异常处理函数的定义-except-handler" class="headerlink" title="SEH 异常处理函数的定义 _except_handler"></a>SEH 异常处理函数的定义 _except_handler</h3><p>函数定义如下</p>
+<ul>
+<li>异常处理函数接收这4个参数</li>
+<li>返回值为 EXCEPTION_DISPOSITION 的枚举类型</li>
+</ul>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807190056601.png" alt="image-20220807190056601"></p>
+<h4 id="except-handler-gt-pRecord"><a href="#except-handler-gt-pRecord" class="headerlink" title="_except_handler-&gt; pRecord"></a>_except_handler-&gt; pRecord</h4><p><strong>首先第一个参数的结构体为 EXCEPTION_RECORD</strong></p>
+<p>定义如下，关注两个重要成员</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ExceptionCode // 异常类型</span><br><span class="line">ExceptionAddress // 发生异常的地址</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807190439883.png" alt="image-20220807190439883"></p>
+<h4 id="except-handler-gt-pContext"><a href="#except-handler-gt-pContext" class="headerlink" title="_except_handler-&gt; pContext"></a>_except_handler-&gt; pContext</h4><p><strong>其次该结构体中的第三个参数是指向 CONTEXT 结构体的指针</strong></p>
+<p>CONTEXT 是用来保存 CPU 寄存器的值，因为多线程环境下需要这样做，当切换去其他线程时，需要保存当前的线程的 CONTEXT 结构体</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807191220349.png" alt="image-20220807191220349"></p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807191233700.png" alt="image-20220807191233700"></p>
+<p>于是有趣的事情来了，当异常发生时，执行异常代码的线程就会中断运行，转而执行 SEH，OS 就会把线程的 CONTEXT 发送给异常处理函数的相应参数。</p>
+<p>该 CONTEXT 结构体的一个成员 EIP（偏移量：B8），注意该成员经常在反调试技术中应用</p>
+<p>用法如，在异常处理函数中把 CONTEXT.EIP 设置为其他地址，然后成功返回异常处理函数，这时候就成功执行到了我设置的新 EIP 的位置。</p>
+<h4 id="EXCEPTION-DISPOSITION"><a href="#EXCEPTION-DISPOSITION" class="headerlink" title="EXCEPTION_DISPOSITION"></a>EXCEPTION_DISPOSITION</h4><p>该枚举类型具体含义</p>
+<p>成功处理异常后返回 ExceptionContinueExecution(0)</p>
+<p>当前异常无法处理异常返回 ExceptionContinueSearch(1)</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807192403802.png" alt="image-20220807192403802"></p>
+<h2 id="TEB-NtTib-ExceptionList"><a href="#TEB-NtTib-ExceptionList" class="headerlink" title="TEB.NtTib.ExceptionList"></a>TEB.NtTib.ExceptionList</h2><p>通过 TEB 结构体的 NitTib 成员可以直接访问到 SEH 链</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TEB.NtTib.ExceptionList = FS:[0]</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="SEH-安装方法"><a href="#SEH-安装方法" class="headerlink" title="SEH 安装方法"></a>SEH 安装方法</h2><p>C语言中通过使用 try except finally，而汇编中更加轻松</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PUSH @MyHandler	; 要添加的异常处理器</span><br><span class="line">PUSH DWORD PTR FS:[0] ; 原先的异常列表</span><br><span class="line">MOV DWORD PTR FS:[0], ESP ; 将添加后的链表设置到链表</span><br></pre></td></tr></table></figure>
+
+<p>这就是把自身的异常处理器添加到已有的 SEH 链表</p>
+<p>从技术层面来讲就是将自身的 EXCEPTION_REGISRATION_RECORD 结构体链接到 EXCEPTION_REGISTATION_RECORD 结构体链表</p>
+<h2 id="Debugger-SEH"><a href="#Debugger-SEH" class="headerlink" title="Debugger SEH"></a>Debugger SEH</h2><p>首先是异常处理函数的注册，这里相当于直接添加一个自己写的</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220807205757155.png" alt="image-20220807205757155"></p>
+<p>接下来的代码就是触发异常，现在可以自己处理异常，或者 SHIFT + F9 将异常抛给被调试进程处理</p>
+<p>（记得此时要在异常处理函数 40105A 下个断点，因为调试器会一直跑完整个程序）</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220808225953086.png" alt="image-20220808225953086"></p>
+<p>随后调试异常处理函数</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220808230600986.png" alt="image-20220808230600986"></p>
+<p>随后删除已注册的 SEH 函数</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220808230827124.png" alt="image-20220808230827124"></p>
+<p>最后执行的到这就会跳回设置的当时所存放的context</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220808230929523.png" alt="image-20220808230929523"></p>
+<p>Hello :)</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220808231159924.png" alt="image-20220808231159924"></p>
+<p>今天被老师一carry刚觉得很轻松的心又有些吊起来了，继续加油8 –2022.8.8</p>
+<h1 id="CTF-SEH"><a href="#CTF-SEH" class="headerlink" title="CTF SEH"></a>CTF SEH</h1><p>本来该笔记已经结束，但是 CTF 中的 SEH 好像并不是这个形式，不过意思都是一样的，于是我要补充一个知识点，就是 IDA 中的 SEH 识别与确认执行流</p>
+<p>参考文章</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-252152.htm">https://bbs.pediy.com/thread-252152.htm</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/debug/exception-handler-syntax">https://docs.microsoft.com/en-us/windows/win32/debug/exception-handler-syntax</a></p>
+</blockquote>
+<p>要注意IDA自从生成的 filter</p>
+<p>4016D1 的 filter 返回1，即 EXCEPTION_EXECUTE_HANDLER，意思是捕获该异常，也就是无论发生什么异常，都会被 401687 异常处理捕获</p>
+<p><img src="/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-From-TEB-to-PEB-to-SEH/image-20220810133924996.png" alt="image-20220810133924996"></p>
+<p>（关于 EXCEPTION_EXECUTE_HANDLER 的更多在微软的文档里说明）</p>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2022/07/22/关于逆向工程核心原理-From-TEB-to-PEB-to-SEH/" class="leancloud_visitors" data-flag-title="关于逆向工程核心原理-From TEB to PEB to SEH">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2024 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>

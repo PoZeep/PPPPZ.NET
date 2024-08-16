@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>STARCTF2022-Jump - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            <span>May</span>
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>2,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">STARCTF2022-Jump</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>这题拖了好久，原因未知，总感觉充满了不想复现的恐惧，昨天硬着头皮复现几乎半天，终于搞懂了，这题简直是我思维的bug，答案就在眼前，可无法去思考理解，但总之只要愿意花时间，没什么是完不成的。</p>
+<p>还有个好用的恢复符号工具， <a target="_blank" rel="noopener" href="https://github.com/aliyunav/Finger">https://github.com/aliyunav/Finger</a> ，记得关梯子</p>
+<h1 id="0x00-日常查壳"><a href="#0x00-日常查壳" class="headerlink" title="0x00 日常查壳"></a>0x00 日常查壳</h1><p>无壳64位</p>
+<p><img src="/2022/05/02/STARCTF2022-Jump/image-20220502101323227.png" alt="image-20220502101323227"></p>
+<h1 id="0x01-setjmp-longjmp"><a href="#0x01-setjmp-longjmp" class="headerlink" title="0x01 setjmp/longjmp"></a>0x01 setjmp/longjmp</h1><p>推荐<a target="_blank" rel="noopener" href="https://blog.csdn.net/chenyiming_1990/article/details/8683413">这篇文章</a> 可以去了解一下这个技术的实现，<strong>总之是setjmp设置一个记录点，再longjmp跳回去</strong></p>
+<p>随便跟入一个setjmp可以发现，这里保存了setjmp后的eip，也就是setjmp后的地址，不过做了点混淆？（在longjmp的时候就比较清楚了</p>
+<p>这里是rdi + 38h的位置，<strong>这里所有的操作是在保存线程上下文，这里我们暂且称为env</strong>，到时候通过这个<strong>env</strong>来恢复到这里（也就是longjmp跳回来</p>
+<p><img src="/2022/05/02/STARCTF2022-Jump/image-20220503191000740.png" alt="image-20220503191000740"></p>
+<p>随后跟随到longjmp的这里</p>
+<p><img src="/2022/05/02/STARCTF2022-Jump/image-20220503191447000.png" alt="image-20220503191447000"></p>
+<p>注意我们也同样是rdi + 38h的地方取出，再经过如上的操作，跳到这个rdx地址，即是call setjmp之后的地址</p>
+<p><img src="/2022/05/02/STARCTF2022-Jump/image-20220503191530902.png" alt="image-20220503191530902"></p>
+<p>继续跟随可以发现成功跳到了call setjmp之后的地址，这边有个有趣的指令就是endbr64</p>
+<p>查询指令可知，经过间接跳转（setjmp/longjmp）需要有一条指令对应endbr64指令来回应间接跳转，如果不是endbr64那么说明程序控制流被劫持了</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/clh14281055/article/details/117446588">参考文章</a></p>
+<p><img src="/2022/05/02/STARCTF2022-Jump/image-20220503191634203.png" alt="image-20220503191634203"></p>
+<p>于是只要经过几遍调试，即可熟悉setjmp/longjmp的跳转，通过setjmp和longjmp后的第一个参数都是所对应的上下文，<strong>对应的env对应设置哪跳到哪</strong></p>
+<p>注意<strong>longjmp的第二个参数是给setjmp的返回值</strong></p>
+<p><img src="/2022/05/02/STARCTF2022-Jump/image-20220503192029297.png" alt="image-20220503192029297"></p>
+<h1 id="0x02-分析流程"><a href="#0x02-分析流程" class="headerlink" title="0x02 分析流程"></a>0x02 分析流程</h1><p>我们的输入长度为34，setjmp与longjmp的配合跳转通过在402689函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> __fastcall __noreturn <span class="title">sub_402689</span><span class="params">(__m128 a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  __int64 v1; <span class="comment">// rdx</span></span><br><span class="line">  __int64 v2; <span class="comment">// rcx</span></span><br><span class="line">  __int64 v3; <span class="comment">// r8</span></span><br><span class="line">  __int64 v4; <span class="comment">// r9</span></span><br><span class="line">  <span class="keyword">int</span> v5; <span class="comment">// er9</span></span><br><span class="line">  __int64 v6; <span class="comment">// rdx</span></span><br><span class="line">  __int64 v7; <span class="comment">// rcx</span></span><br><span class="line">  __int64 v8; <span class="comment">// r8</span></span><br><span class="line">  __int64 v9; <span class="comment">// r9</span></span><br><span class="line">  <span class="keyword">char</span> v10; <span class="comment">// [rsp+0h] [rbp-10h]</span></span><br><span class="line">  <span class="keyword">char</span> v11; <span class="comment">// [rsp+0h] [rbp-10h]</span></span><br><span class="line">  <span class="keyword">signed</span> <span class="keyword">int</span> v12; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( <span class="built_in">strchr</span>(&amp;input, <span class="number">2LL</span>) || <span class="built_in">strchr</span>(&amp;input, <span class="number">3LL</span>) )</span><br><span class="line">    longjmp(&amp;env1, <span class="number">1u</span>);</span><br><span class="line">  <span class="keyword">if</span> ( !setjmp(&amp;env3, <span class="number">3LL</span>, v1, v2, v3, v4, v10) )</span><br><span class="line">    longjmp(&amp;env1, <span class="number">2u</span>);</span><br><span class="line">  <span class="built_in">sprintf</span>(off_4C9400, <span class="string">&quot;%c%s%c&quot;</span>, <span class="number">2</span>, &amp;input, <span class="number">3</span>, v5);<span class="comment">// 头尾加个2和3</span></span><br><span class="line">  v12 = setjmp(&amp;env3, <span class="string">&quot;%c%s%c&quot;</span>, v6, v7, v8, v9, v11);</span><br><span class="line">  <span class="keyword">if</span> ( !v12 )</span><br><span class="line">    longjmp(&amp;env1, <span class="number">1u</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v12 &gt; <span class="number">0</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    input_arr = sub_428A40(len + <span class="number">1</span>, <span class="number">1uLL</span>);</span><br><span class="line">    j_strcat_ifunc_0(input_arr, off_4C9400 + v12 - <span class="number">1</span>, off_4C9400 + v12 - <span class="number">1</span>, a1);<span class="comment">// 拼接到这个数组</span></span><br><span class="line">    <span class="keyword">if</span> ( v12 &gt; <span class="number">1</span> )</span><br><span class="line">      <span class="built_in">strncat</span>(input_arr, off_4C9400, v12 - <span class="number">1</span>);  <span class="comment">// 剩余的数据拼接上</span></span><br><span class="line">    arr[v12 - <span class="number">1</span>] = input_arr;</span><br><span class="line">  &#125;</span><br><span class="line">  longjmp(&amp;env1, v12);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>找到拼接的input_arr可以查看一下地址表，然后提取出来</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;idc.idc&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">auto</span> addr = <span class="number">0xB12100</span>;</span><br><span class="line">	<span class="keyword">auto</span> i;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> ( i = addr ; i &lt; <span class="number">0xB1221F</span>; i = i + <span class="number">0x8</span> )</span><br><span class="line">	&#123;</span><br><span class="line">		Message(<span class="string">&quot;0x%X, &quot;</span>, get_wide_dword(i));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后提取字符串（接下来的数据借用了zsky师傅的数据，文末有链接）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">addr =[<span class="number">0xB12220</span>, <span class="number">0xB12850</span>, <span class="number">0xB12610</span>, <span class="number">0xB12310</span>, <span class="number">0xB124C0</span>, <span class="number">0xB12670</span>, <span class="number">0xB12430</span>, <span class="number">0xB12400</span>, <span class="number">0xB123A0</span>, <span class="number">0xB12580</span>, <span class="number">0xB127F0</span>, <span class="number">0xB126D0</span>, <span class="number">0xB12760</span>, <span class="number">0xB122E0</span>, <span class="number">0xB126A0</span>, <span class="number">0xB122B0</span>, <span class="number">0xB12790</span>, <span class="number">0xB12550</span>, <span class="number">0xB12700</span>, <span class="number">0xB12460</span>, <span class="number">0xB127C0</span>, <span class="number">0xB12640</span>, <span class="number">0xB12370</span>, <span class="number">0xB12250</span>, <span class="number">0xB12820</span>, <span class="number">0xB124F0</span>, <span class="number">0xB125E0</span>, <span class="number">0xB12490</span>, <span class="number">0xB12340</span>, <span class="number">0xB125B0</span>, <span class="number">0xB123D0</span>, <span class="number">0xB12730</span>, <span class="number">0xB12280</span>, <span class="number">0xB12520</span>, <span class="number">0xB12880</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">34</span>):</span><br><span class="line">    tmp = <span class="string">b&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">34</span>):</span><br><span class="line">        tmp += get_bytes(addr[i] + j, <span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(tmp)</span><br></pre></td></tr></table></figure>
+
+<p>就可以形成这样的数据，就如那个函数一样把字符左移放后左移放后，这样进行了34次</p>
+<p><strong>本身保证每一行每一位不数据不同，又经过34次移位保证了每一列数据也不同</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">b&#x27;\x02985236147adgjlqwesxzcvbnmfuiopvx\x03&#x27;</span><br><span class="line">b&#x27;985236147adgjlqwesxzcvbnmfuiopvx\x03\x02&#x27;</span><br><span class="line">b&#x27;85236147adgjlqwesxzcvbnmfuiopvx\x03\x029&#x27;</span><br><span class="line">b&#x27;5236147adgjlqwesxzcvbnmfuiopvx\x03\x0298&#x27;</span><br><span class="line">b&#x27;236147adgjlqwesxzcvbnmfuiopvx\x03\x02985&#x27;</span><br><span class="line">b&#x27;36147adgjlqwesxzcvbnmfuiopvx\x03\x029852&#x27;</span><br><span class="line">b&#x27;6147adgjlqwesxzcvbnmfuiopvx\x03\x0298523&#x27;</span><br><span class="line">b&#x27;147adgjlqwesxzcvbnmfuiopvx\x03\x02985236&#x27;</span><br><span class="line">b&#x27;47adgjlqwesxzcvbnmfuiopvx\x03\x029852361&#x27;</span><br><span class="line">b&#x27;7adgjlqwesxzcvbnmfuiopvx\x03\x0298523614&#x27;</span><br><span class="line">b&#x27;adgjlqwesxzcvbnmfuiopvx\x03\x02985236147&#x27;</span><br><span class="line">b&#x27;dgjlqwesxzcvbnmfuiopvx\x03\x02985236147a&#x27;</span><br><span class="line">b&#x27;gjlqwesxzcvbnmfuiopvx\x03\x02985236147ad&#x27;</span><br><span class="line">b&#x27;jlqwesxzcvbnmfuiopvx\x03\x02985236147adg&#x27;</span><br><span class="line">b&#x27;lqwesxzcvbnmfuiopvx\x03\x02985236147adgj&#x27;</span><br><span class="line">b&#x27;qwesxzcvbnmfuiopvx\x03\x02985236147adgjl&#x27;</span><br><span class="line">b&#x27;wesxzcvbnmfuiopvx\x03\x02985236147adgjlq&#x27;</span><br><span class="line">b&#x27;esxzcvbnmfuiopvx\x03\x02985236147adgjlqw&#x27;</span><br><span class="line">b&#x27;sxzcvbnmfuiopvx\x03\x02985236147adgjlqwe&#x27;</span><br><span class="line">b&#x27;xzcvbnmfuiopvx\x03\x02985236147adgjlqwes&#x27;</span><br><span class="line">b&#x27;zcvbnmfuiopvx\x03\x02985236147adgjlqwesx&#x27;</span><br><span class="line">b&#x27;cvbnmfuiopvx\x03\x02985236147adgjlqwesxz&#x27;</span><br><span class="line">b&#x27;vbnmfuiopvx\x03\x02985236147adgjlqwesxzc&#x27;</span><br><span class="line">b&#x27;bnmfuiopvx\x03\x02985236147adgjlqwesxzcv&#x27;</span><br><span class="line">b&#x27;nmfuiopvx\x03\x02985236147adgjlqwesxzcvb&#x27;</span><br><span class="line">b&#x27;mfuiopvx\x03\x02985236147adgjlqwesxzcvbn&#x27;</span><br><span class="line">b&#x27;fuiopvx\x03\x02985236147adgjlqwesxzcvbnm&#x27;</span><br><span class="line">b&#x27;uiopvx\x03\x02985236147adgjlqwesxzcvbnmf&#x27;</span><br><span class="line">b&#x27;iopvx\x03\x02985236147adgjlqwesxzcvbnmfu&#x27;</span><br><span class="line">b&#x27;opvx\x03\x02985236147adgjlqwesxzcvbnmfui&#x27;</span><br><span class="line">b&#x27;pvx\x03\x02985236147adgjlqwesxzcvbnmfuio&#x27;</span><br><span class="line">b&#x27;vx\x03\x02985236147adgjlqwesxzcvbnmfuiop&#x27;</span><br><span class="line">b&#x27;x\x03\x02985236147adgjlqwesxzcvbnmfuiopv&#x27;</span><br><span class="line">b&#x27;\x03\x02985236147adgjlqwesxzcvbnmfuiopvx&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>再接着跟有个401F62函数，经过了快速排序处理，数据如下（这是通过<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%AD%97%E5%85%B8%E5%BA%8F">字典序</a>排序后的，注意是行排序）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">b&#x27;\x02985236147adgjlqwesxzcvbnmfuiopvx\x03&#x27;</span><br><span class="line">b&#x27;985236147adgjlqwesxzcvbnmfuiopvx\x03\x02&#x27;</span><br><span class="line">b&#x27;85236147adgjlqwesxzcvbnmfuiopvx\x03\x029&#x27;</span><br><span class="line">b&#x27;5236147adgjlqwesxzcvbnmfuiopvx\x03\x0298&#x27;</span><br><span class="line">b&#x27;236147adgjlqwesxzcvbnmfuiopvx\x03\x02985&#x27;</span><br><span class="line">b&#x27;36147adgjlqwesxzcvbnmfuiopvx\x03\x029852&#x27;</span><br><span class="line">b&#x27;6147adgjlqwesxzcvbnmfuiopvx\x03\x0298523&#x27;</span><br><span class="line">b&#x27;147adgjlqwesxzcvbnmfuiopvx\x03\x02985236&#x27;</span><br><span class="line">b&#x27;47adgjlqwesxzcvbnmfuiopvx\x03\x029852361&#x27;</span><br><span class="line">b&#x27;7adgjlqwesxzcvbnmfuiopvx\x03\x0298523614&#x27;</span><br><span class="line">b&#x27;adgjlqwesxzcvbnmfuiopvx\x03\x02985236147&#x27;</span><br><span class="line">b&#x27;dgjlqwesxzcvbnmfuiopvx\x03\x02985236147a&#x27;</span><br><span class="line">b&#x27;gjlqwesxzcvbnmfuiopvx\x03\x02985236147ad&#x27;</span><br><span class="line">b&#x27;jlqwesxzcvbnmfuiopvx\x03\x02985236147adg&#x27;</span><br><span class="line">b&#x27;lqwesxzcvbnmfuiopvx\x03\x02985236147adgj&#x27;</span><br><span class="line">b&#x27;qwesxzcvbnmfuiopvx\x03\x02985236147adgjl&#x27;</span><br><span class="line">b&#x27;wesxzcvbnmfuiopvx\x03\x02985236147adgjlq&#x27;</span><br><span class="line">b&#x27;esxzcvbnmfuiopvx\x03\x02985236147adgjlqw&#x27;</span><br><span class="line">b&#x27;sxzcvbnmfuiopvx\x03\x02985236147adgjlqwe&#x27;</span><br><span class="line">b&#x27;xzcvbnmfuiopvx\x03\x02985236147adgjlqwes&#x27;</span><br><span class="line">b&#x27;zcvbnmfuiopvx\x03\x02985236147adgjlqwesx&#x27;</span><br><span class="line">b&#x27;cvbnmfuiopvx\x03\x02985236147adgjlqwesxz&#x27;</span><br><span class="line">b&#x27;vbnmfuiopvx\x03\x02985236147adgjlqwesxzc&#x27;</span><br><span class="line">b&#x27;bnmfuiopvx\x03\x02985236147adgjlqwesxzcv&#x27;</span><br><span class="line">b&#x27;nmfuiopvx\x03\x02985236147adgjlqwesxzcvb&#x27;</span><br><span class="line">b&#x27;mfuiopvx\x03\x02985236147adgjlqwesxzcvbn&#x27;</span><br><span class="line">b&#x27;fuiopvx\x03\x02985236147adgjlqwesxzcvbnm&#x27;</span><br><span class="line">b&#x27;uiopvx\x03\x02985236147adgjlqwesxzcvbnmf&#x27;</span><br><span class="line">b&#x27;iopvx\x03\x02985236147adgjlqwesxzcvbnmfu&#x27;</span><br><span class="line">b&#x27;opvx\x03\x02985236147adgjlqwesxzcvbnmfui&#x27;</span><br><span class="line">b&#x27;pvx\x03\x02985236147adgjlqwesxzcvbnmfuio&#x27;</span><br><span class="line">b&#x27;vx\x03\x02985236147adgjlqwesxzcvbnmfuiop&#x27;</span><br><span class="line">b&#x27;x\x03\x02985236147adgjlqwesxzcvbnmfuiopv&#x27;</span><br><span class="line">b&#x27;\x03\x02985236147adgjlqwesxzcvbnmfuiopvx&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>于是继续跟随我们进入了402826函数，获得了最后一列数据</p>
+<p><img src="/2022/05/02/STARCTF2022-Jump/image-20220503195228632.png" alt="image-20220503195228632"></p>
+<h1 id="0x03-GetFlag"><a href="#0x03-GetFlag" class="headerlink" title="0x03 GetFlag"></a>0x03 GetFlag</h1><p>由此我们来获取flag，那么其实也就是恢复flag的顺序，这里看了各路师傅的wp，学习到两种解法</p>
+<p>首先希望在看我WP的师傅把这个想象成一个<strong>字符矩阵</strong>，我们现在所拥有的是最后一列（可见qsort后的数据）</p>
+<p>我们的目标是<strong>恢复第一行</strong></p>
+<h2 id="Burrows-Wheeler变换"><a href="#Burrows-Wheeler变换" class="headerlink" title="Burrows-Wheeler变换"></a>Burrows-Wheeler变换</h2><p>第一种比较直观，看完<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Burrows-Wheeler%E5%8F%98%E6%8D%A2">这篇文章</a>就秒懂了</p>
+<p>当我们通过排序恢复了第一列，再与最后一列拼接（此时最后一列在第一列前面），再进行排序，恢复了第二列（因为是字典排序）</p>
+<p>那么现在有第一列和第二列再在第一列前拼接上最后一列，再继续排序，又可以恢复第三列</p>
+<p>EXP</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="string">&#x27;\03jmGn_=uaSZLvN4wFxE6R+p\02D2qV1CBTck&#x27;</span></span><br><span class="line">lst = [[<span class="number">0</span>]] * <span class="number">34</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(lst)):</span><br><span class="line">    lst[i] = s[i]</span><br><span class="line">tmp = [[<span class="number">0</span>]] * <span class="number">34</span>    <span class="comment"># 直接把最后一列放到第一列</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(tmp)):</span><br><span class="line">    tmp[i] = s[i]</span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">34</span>):</span><br><span class="line">    lst.sort()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(lst)):</span><br><span class="line">        lst[i] = tmp[i] + lst[i]</span><br><span class="line"><span class="built_in">print</span>(lst)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="未命名解法"><a href="#未命名解法" class="headerlink" title="未命名解法"></a>未命名解法</h2><p>首先得心中有张图也就是qsort之后的数据，排序完之后，不管行的顺序怎么变，每一行的数据都是一样的，只是顺序不同</p>
+<ol>
+<li> 每个字符与他的前一位一直都是紧挨着的</li>
+<li> 由此我们已知最后一位的0x3，通过此我们从第一列找到0x3</li>
+<li> 那么与0x3相同的行的最后一位就是0x3的前一位</li>
+<li> 拿到此数据我们放到flag的最后一位</li>
+<li> 再拿刚刚获取的flag最后一位再去第一列找，找到数据又是相同行的最后一位是他的前一位（重复以此）</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">b&#x27;\x02985236147adgjlqwesxzcvbnmfuiopvx\x03&#x27;</span><br><span class="line">b&#x27;985236147adgjlqwesxzcvbnmfuiopvx\x03\x02&#x27;</span><br><span class="line">b&#x27;85236147adgjlqwesxzcvbnmfuiopvx\x03\x029&#x27;</span><br><span class="line">b&#x27;5236147adgjlqwesxzcvbnmfuiopvx\x03\x0298&#x27;</span><br><span class="line">b&#x27;236147adgjlqwesxzcvbnmfuiopvx\x03\x02985&#x27;</span><br><span class="line">b&#x27;36147adgjlqwesxzcvbnmfuiopvx\x03\x029852&#x27;</span><br><span class="line">b&#x27;6147adgjlqwesxzcvbnmfuiopvx\x03\x0298523&#x27;</span><br><span class="line">b&#x27;147adgjlqwesxzcvbnmfuiopvx\x03\x02985236&#x27;</span><br><span class="line">b&#x27;47adgjlqwesxzcvbnmfuiopvx\x03\x029852361&#x27;</span><br><span class="line">b&#x27;7adgjlqwesxzcvbnmfuiopvx\x03\x0298523614&#x27;</span><br><span class="line">b&#x27;adgjlqwesxzcvbnmfuiopvx\x03\x02985236147&#x27;</span><br><span class="line">b&#x27;dgjlqwesxzcvbnmfuiopvx\x03\x02985236147a&#x27;</span><br><span class="line">b&#x27;gjlqwesxzcvbnmfuiopvx\x03\x02985236147ad&#x27;</span><br><span class="line">b&#x27;jlqwesxzcvbnmfuiopvx\x03\x02985236147adg&#x27;</span><br><span class="line">b&#x27;lqwesxzcvbnmfuiopvx\x03\x02985236147adgj&#x27;</span><br><span class="line">b&#x27;qwesxzcvbnmfuiopvx\x03\x02985236147adgjl&#x27;</span><br><span class="line">b&#x27;wesxzcvbnmfuiopvx\x03\x02985236147adgjlq&#x27;</span><br><span class="line">b&#x27;esxzcvbnmfuiopvx\x03\x02985236147adgjlqw&#x27;</span><br><span class="line">b&#x27;sxzcvbnmfuiopvx\x03\x02985236147adgjlqwe&#x27;</span><br><span class="line">b&#x27;xzcvbnmfuiopvx\x03\x02985236147adgjlqwes&#x27;</span><br><span class="line">b&#x27;zcvbnmfuiopvx\x03\x02985236147adgjlqwesx&#x27;</span><br><span class="line">b&#x27;cvbnmfuiopvx\x03\x02985236147adgjlqwesxz&#x27;</span><br><span class="line">b&#x27;vbnmfuiopvx\x03\x02985236147adgjlqwesxzc&#x27;</span><br><span class="line">b&#x27;bnmfuiopvx\x03\x02985236147adgjlqwesxzcv&#x27;</span><br><span class="line">b&#x27;nmfuiopvx\x03\x02985236147adgjlqwesxzcvb&#x27;</span><br><span class="line">b&#x27;mfuiopvx\x03\x02985236147adgjlqwesxzcvbn&#x27;</span><br><span class="line">b&#x27;fuiopvx\x03\x02985236147adgjlqwesxzcvbnm&#x27;</span><br><span class="line">b&#x27;uiopvx\x03\x02985236147adgjlqwesxzcvbnmf&#x27;</span><br><span class="line">b&#x27;iopvx\x03\x02985236147adgjlqwesxzcvbnmfu&#x27;</span><br><span class="line">b&#x27;opvx\x03\x02985236147adgjlqwesxzcvbnmfui&#x27;</span><br><span class="line">b&#x27;pvx\x03\x02985236147adgjlqwesxzcvbnmfuio&#x27;</span><br><span class="line">b&#x27;vx\x03\x02985236147adgjlqwesxzcvbnmfuiop&#x27;</span><br><span class="line">b&#x27;x\x03\x02985236147adgjlqwesxzcvbnmfuiopv&#x27;</span><br><span class="line">b&#x27;\x03\x02985236147adgjlqwesxzcvbnmfuiopvx&#x27;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">enc=[<span class="number">0x03</span>, <span class="number">0x6A</span>, <span class="number">0x6D</span>, <span class="number">0x47</span>, <span class="number">0x6E</span>, <span class="number">0x5F</span>, <span class="number">0x3D</span>, <span class="number">0x75</span>, <span class="number">0x61</span>, <span class="number">0x53</span>, <span class="number">0x5A</span>, <span class="number">0x4C</span>, <span class="number">0x76</span>, <span class="number">0x4E</span>, <span class="number">0x34</span>, <span class="number">0x77</span>, <span class="number">0x46</span>, <span class="number">0x78</span>, <span class="number">0x45</span>, <span class="number">0x36</span>, <span class="number">0x52</span>, <span class="number">0x2B</span>, <span class="number">0x70</span>, <span class="number">0x02</span>, <span class="number">0x44</span>, <span class="number">0x32</span>, <span class="number">0x71</span>, <span class="number">0x56</span>, <span class="number">0x31</span>, <span class="number">0x43</span>, <span class="number">0x42</span>, <span class="number">0x54</span>, <span class="number">0x63</span>, <span class="number">0x6B</span>]</span><br><span class="line">c=copy.deepcopy(enc)</span><br><span class="line">c.sort()</span><br><span class="line">m=[<span class="number">0</span>]*<span class="number">34</span></span><br><span class="line">m[<span class="number">0</span>]=<span class="number">2</span></span><br><span class="line">m[-<span class="number">1</span>]=<span class="number">3</span></span><br><span class="line"><span class="comment">#  首先是确定最好一个值是0x3 已知密文与他前一个的值 在最后一列和第一列 的索引相同 所以从第一列拿到索引 再以此索引拿最后一列的值 最后放到0x3的前一位 </span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0x20</span>,-<span class="number">1</span>,-<span class="number">1</span>):</span><br><span class="line">    p=c.index(m[i+<span class="number">1</span>])</span><br><span class="line">    m[i]=enc[p]</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">bytes</span>(m))</span><br><span class="line"><span class="comment">#*CTF&#123;cwNG1paBu=6Vn2kxSCqm+_4LETvFRZDj&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>或者正着往后推！道理相同</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sort_enc = <span class="built_in">list</span>(<span class="string">b&#x27;\x02\x03+1246=BCDEFGLNRSTVZ_acjkmnpquvwx&#x27;</span>)</span><br><span class="line">enc = <span class="built_in">list</span>(<span class="string">b&#x27;\x03jmGn_=uaSZLvN4wFxE6R+p\x02D2qV1CBTck&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">input</span> = [<span class="number">0</span>] * <span class="number">34</span></span><br><span class="line"><span class="built_in">input</span>[<span class="number">0</span>] = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">33</span>):</span><br><span class="line">    t = enc.index(<span class="built_in">input</span>[i])</span><br><span class="line">    <span class="built_in">input</span>[i + <span class="number">1</span>] = sort_enc[t]</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">bytes</span>(<span class="built_in">input</span>))</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p><a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-1623713-1-1.html#42357189_jump">https://www.52pojie.cn/thread-1623713-1-1.html#42357189_jump</a></p>
+<p><a target="_blank" rel="noopener" href="https://lu1u.xyz/2022/04/19/StarCTF-2022/">https://lu1u.xyz/2022/04/19/StarCTF-2022/</a></p>
+<p><a target="_blank" rel="noopener" href="https://moodyblue.cn/category/%E6%98%9FCTF-Rever/#toc-heading-3">https://moodyblue.cn/category/%E6%98%9FCTF-Rever/#toc-heading-3</a></p>
+<p><a target="_blank" rel="noopener" href="http://sma11cc.cc/2022/04/19/CTF%202022%2094d97/">http://sma11cc.cc/2022/04/19/CTF%202022%2094d97/</a></p>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2022/05/02/STARCTF2022-Jump/" class="leancloud_visitors" data-flag-title="STARCTF2022-Jump">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2024 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>

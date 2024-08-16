@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>DASCTF X CB-Landing &amp;&amp; cbNET - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Diary/Diary">Diary</a>
+            
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/CTF/CTF">CTF</a>
+            
+            
+            
+            <a class="nav-item" href="/Book/Book">Book</a>
+            
+            
+            
+            <a class="nav-item" href="/Sundry/Sundry">Sundry</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>September</span>
+            
+            
+            
+            
+            <span>22,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">DASCTF X CB-Landing &amp;&amp; cbNET</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>又感觉好久没写WP了，以前总想着把每题的WP写了，但发现实在是太慢了，因为有点强迫症，要写就写详细，一句话带过不如不写，但为了节省时间就没有每个都写了。–9.22</p>
+<h1 id="Landing"><a href="#Landing" class="headerlink" title="Landing"></a>Landing</h1><h2 id="0x00-Daily-Shell-Check"><a href="#0x00-Daily-Shell-Check" class="headerlink" title="0x00 Daily Shell Check"></a>0x00 Daily Shell Check</h2><p>无壳64位</p>
+<p><img src="/DASCTF-X-CB-Landing-cbNET/image-20220922163741052.png" alt="image-20220922163741052"></p>
+<h2 id="0x01-Throw-Catch"><a href="#0x01-Throw-Catch" class="headerlink" title="0x01 Throw Catch"></a>0x01 Throw Catch</h2><p>典型的抛异常Catch异常题目，首先是点进主函数，我们的输入经过异或0x22和+1的处理</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">std</span>::ostream *v3; <span class="comment">// rax</span></span><br><span class="line">  <span class="built_in">std</span>::ostream *v4; <span class="comment">// rax</span></span><br><span class="line">  <span class="keyword">char</span> input[<span class="number">32</span>]; <span class="comment">// [rsp+450h] [rbp+3D0h] BYREF</span></span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+48Ch] [rbp+40Ch]</span></span><br><span class="line"></span><br><span class="line">  _main(argc, argv, envp);</span><br><span class="line">  v3 = (<span class="built_in">std</span>::ostream *)<span class="built_in">std</span>::<span class="keyword">operator</span>&lt;&lt;&lt;<span class="built_in">std</span>::char_traits&lt;<span class="keyword">char</span>&gt;&gt;(refptr__ZSt4cout, <span class="string">&quot;Input something.&quot;</span>);</span><br><span class="line">  refptr__ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_(v3);</span><br><span class="line">  <span class="built_in">std</span>::<span class="keyword">operator</span>&gt;&gt;&lt;<span class="keyword">char</span>,<span class="built_in">std</span>::char_traits&lt;<span class="keyword">char</span>&gt;&gt;(refptr__ZSt3cin, input);</span><br><span class="line">  <span class="keyword">if</span> ( <span class="built_in">strlen</span>(input) == <span class="number">28</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">27</span>; ++i )</span><br><span class="line">    &#123;</span><br><span class="line">      input[i] ^= <span class="number">0x22</span>u;</span><br><span class="line">      ++input[i];</span><br><span class="line">    &#125;</span><br><span class="line">    func1(input);</span><br><span class="line">  &#125;</span><br><span class="line">  v4 = (<span class="built_in">std</span>::ostream *)<span class="built_in">std</span>::<span class="keyword">operator</span>&lt;&lt;&lt;<span class="built_in">std</span>::char_traits&lt;<span class="keyword">char</span>&gt;&gt;(refptr__ZSt4cout, <span class="string">&quot;nono&quot;</span>);</span><br><span class="line">  refptr__ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_(v4);</span><br><span class="line">  system(<span class="string">&quot;pause&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>随后点进func1再进func2，大大的一个throw的操作，那么我们找到catch块即可</p>
+<p>于是在主函数的汇编页面找找就可以发现比较异常类型于处理</p>
+<p><img src="/DASCTF-X-CB-Landing-cbNET/image-20220922164036982.png" alt="image-20220922164036982"></p>
+<h2 id="0x02-GetFlag"><a href="#0x02-GetFlag" class="headerlink" title="0x02 GetFlag"></a>0x02 GetFlag</h2><p>那么这题知识点主要就是这个throw catch了，稍微跟了catch块或审一下可以知道是生成密文和base64 Input，然后比较</p>
+<p>注意base64是有个+1的操作所以解密base前先-1</p>
+<p>（解密的时候忘记最开始的时候还有个+1，于是又学了种base64的写法</p>
+<p>GetFlag! Cyber yyds!</p>
+<p><img src="/DASCTF-X-CB-Landing-cbNET/image-20220922164354374.png" alt="image-20220922164354374"></p>
+<h1 id="cbNET"><a href="#cbNET" class="headerlink" title="cbNET"></a>cbNET</h1><h2 id="0x00-Daily-Shell-Check-1"><a href="#0x00-Daily-Shell-Check-1" class="headerlink" title="0x00 Daily Shell Check"></a>0x00 Daily Shell Check</h2><p>Confuser壳加Dotfuscator混淆</p>
+<p><img src="/DASCTF-X-CB-Landing-cbNET/image-20220922164528571.png" alt="image-20220922164528571"></p>
+<h2 id="0x01-DeShell-amp-amp-Deobfuscation"><a href="#0x01-DeShell-amp-amp-Deobfuscation" class="headerlink" title="0x01 DeShell &amp;&amp; Deobfuscation"></a>0x01 DeShell &amp;&amp; Deobfuscation</h2><p>梭了这个壳，还是第一次见这壳</p>
+<p><img src="/DASCTF-X-CB-Landing-cbNET/image-20220922165208632.png" alt="image-20220922165208632"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.\de4dot.exe -d C:\Users\Pz\Desktop\DAS9\cbNET-unpacked.exe // 检查壳类型</span><br><span class="line"></span><br><span class="line">.\de4dot.exe &quot;C:\Users\Pz\Desktop\DAS9\cbNET-unpacked.exe&quot; // 直接脱壳</span><br></pre></td></tr></table></figure>
+
+<p>再拖进dnspy即可</p>
+<h2 id="0x02-Translate-Program"><a href="#0x02-Translate-Program" class="headerlink" title="0x02 Translate Program"></a>0x02 Translate Program</h2><p>由于去混淆的不是很完全，到处都是goto所以不是很好理解，最好的办法就是自己翻译一遍</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">method_0</span>(<span class="params"><span class="built_in">input</span></span>):</span></span><br><span class="line">    text = <span class="string">&quot;0rays&quot;</span></span><br><span class="line">    flag = []</span><br><span class="line">    num = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(<span class="built_in">input</span>)):</span><br><span class="line">        flag += <span class="built_in">input</span>[i] ^ <span class="built_in">ord</span>(text[num])</span><br><span class="line">        num = (num + <span class="number">1</span>) ^ <span class="number">5</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">method_1</span>(<span class="params">n</span>):</span></span><br><span class="line">    <span class="keyword">if</span> n &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>, n):</span><br><span class="line">            <span class="keyword">if</span> (n % i == <span class="number">0</span>):    <span class="comment"># 说是不是质数</span></span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">method_2</span>(<span class="params"><span class="built_in">input</span></span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(<span class="built_in">input</span>) - <span class="number">7</span>):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="built_in">input</span>[i] = (<span class="built_in">input</span>[i] ^ (<span class="built_in">input</span>[i - <span class="number">1</span>] // (i % <span class="number">8</span>))) + (<span class="built_in">input</span>[i - <span class="number">1</span>] % (i % <span class="number">8</span>)) <span class="comment"># i = 0 或者是 i % 0 会导致异常</span></span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="built_in">input</span>[i] = (<span class="built_in">input</span>[i] ^ (<span class="built_in">input</span>[i + <span class="number">7</span>] // <span class="number">8</span>)) + <span class="built_in">input</span>[i + <span class="number">7</span>] % <span class="number">8</span></span><br><span class="line">            <span class="built_in">print</span>(i, end = <span class="string">&quot;, &quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="built_in">input</span>[i] = <span class="built_in">input</span>[i] - <span class="number">2</span> - (<span class="built_in">input</span>[i] % <span class="number">2</span>)     <span class="comment"># 减 2 或 3</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>, <span class="built_in">input</span>[i] - <span class="number">1</span>):    <span class="comment"># num2 &lt;= num3 所以是input[i] - 1取不到</span></span><br><span class="line">            <span class="keyword">if</span> method_1(j) <span class="keyword">and</span> method_1(<span class="built_in">input</span>[i] - j) != <span class="number">0</span>:</span><br><span class="line">                <span class="built_in">input</span>[i] = j * (<span class="built_in">input</span>[i] - j)</span><br><span class="line"></span><br><span class="line"><span class="built_in">input</span> = [<span class="number">0</span>] * <span class="number">24</span></span><br><span class="line">method_2(<span class="built_in">input</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="0x03-GetFlag"><a href="#0x03-GetFlag" class="headerlink" title="0x03 GetFlag"></a>0x03 GetFlag</h2><p>用官解的递归爆破脚本</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">import</span> hashlib</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">def <span class="title">isPrime</span><span class="params">(n)</span>:</span></span><br><span class="line"><span class="function">    <span class="keyword">if</span> n &lt; 2:</span></span><br><span class="line"><span class="function">        <span class="keyword">return</span> 0</span></span><br><span class="line"><span class="function">    <span class="keyword">for</span> i in <span class="title">range</span><span class="params">(<span class="number">2</span>, n - <span class="number">1</span>)</span>:</span></span><br><span class="line"><span class="function">        <span class="keyword">if</span> n % i </span>== <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def xordecrypt(key):</span><br><span class="line">    str = <span class="string">&quot;0rays&quot;</span></span><br><span class="line">    circle = <span class="number">0</span></span><br><span class="line">    flag = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> i in range(len(key)):</span><br><span class="line">        flag = flag + chr(key[i] ^ ord(str[circle]))</span><br><span class="line">        circle = (circle + <span class="number">1</span>) ^ <span class="number">5</span></span><br><span class="line">    flag = <span class="string">&quot;CBCTF&#123;&quot;</span> + flag + <span class="string">&quot;&#125;&quot;</span></span><br><span class="line">    t = hashlib.sha256()</span><br><span class="line">    t.update(flag.encode())</span><br><span class="line">    finalflag = t.hexdigest()</span><br><span class="line">    <span class="keyword">if</span> finalflag == <span class="string">&quot;15c4ac7645546a1ef8141441b48e1824954fdbb159bf96400061b17db1af9edf&quot;</span>:</span><br><span class="line">        print(flag)</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def recursion(key2, i):</span><br><span class="line">    key = key2.copy()</span><br><span class="line">    <span class="keyword">if</span> (i % <span class="number">8</span>) != <span class="number">0</span>:</span><br><span class="line">        key[i] = (key[i] - key[i - <span class="number">1</span>] % (i % <span class="number">8</span>)) ^ (key[i - <span class="number">1</span>] <span class="comment">// (i % 8))</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        key[i] = (key[i] - key[i + <span class="number">7</span>] % <span class="number">8</span>) ^ (key[i + <span class="number">7</span>] <span class="comment">// 8)</span></span><br><span class="line">    <span class="keyword">if</span> i != <span class="number">0</span>:</span><br><span class="line">        decrypt(key, i - <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        xordecrypt(key)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def decrypt(key1, i):</span><br><span class="line">    key = key1.copy()</span><br><span class="line">    <span class="keyword">for</span> j in range(<span class="number">2</span>, key[i] - <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> key[i] % j == <span class="number">0</span> <span class="keyword">and</span> isPrime(j) <span class="keyword">and</span> isPrime(key[i] <span class="comment">// j): # key[i] % j == 0 因为指数相乘所以是肯定余数为0</span></span><br><span class="line">            key[i] = j + key[i] <span class="comment">// j</span></span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    key[i] = key[i] + <span class="number">2</span> # 先 +<span class="number">2</span> 测试偶数</span><br><span class="line">    recursion(key, i)</span><br><span class="line">    key[i] = key[i] + <span class="number">1</span> # 如果上面没出flag那么就是奇数于是再 +<span class="number">1</span> 相当于 +<span class="number">3</span></span><br><span class="line">    recursion(key, i)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">key = [<span class="number">309</span>, <span class="number">1981</span>, <span class="number">2823</span>, <span class="number">6979</span>, <span class="number">28339</span>, <span class="number">39487</span>, <span class="number">33035</span>, <span class="number">283711</span>, <span class="number">623</span>, <span class="number">4109</span>, <span class="number">23551</span>, <span class="number">54761</span>, <span class="number">67985</span>, <span class="number">231149</span>, <span class="number">499603</span>, <span class="number">1354567</span>, <span class="number">213</span>, <span class="number">2651</span>, <span class="number">22559</span>, <span class="number">52549</span>, <span class="number">484663</span>, <span class="number">290793</span>, <span class="number">532213</span>, <span class="number">1746643</span>]</span><br><span class="line">decrypt(key, <span class="number">23</span>) </span><br></pre></td></tr></table></figure>
+
+<p>GetFlag!</p>
+<p><img src="/DASCTF-X-CB-Landing-cbNET/image-20220922180541866.png" alt="image-20220922180541866"></p>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2022/09/22/DASCTF-X-CB-Landing-cbNET/" class="leancloud_visitors" data-flag-title="DASCTF X CB-Landing &amp;&amp; cbNET">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Diary/Diary.html" class="item">Diary</a>
+                
+                <a href="/Friends/Friends.html" class="item">Friends</a>
+                
+                <a href="/CTF/CTF.html" class="item">CTF</a>
+                
+                <a href="/Book/Book.html" class="item">Book</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2024 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
