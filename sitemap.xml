@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2024/11/22/2024-November/</loc>
+    
+    <lastmod>2024-11-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2022/02/08/BabyMaze/</loc>
+    
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2024/10/30/2024-October/</loc>
     
     <lastmod>2024-10-30</lastmod>
@@ -1397,15 +1415,6 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/2022/02/08/BabyMaze/</loc>
-    
-    <lastmod>2022-02-13</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://ppppz.net/2022/02/05/%E6%97%B6%E7%A9%BA%E9%A3%9E%E8%A1%8C/</loc>
     
     <lastmod>2022-02-13</lastmod>
@@ -1687,7 +1696,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2024-10-30</lastmod>
+    <lastmod>2024-11-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
