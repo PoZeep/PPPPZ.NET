@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2025/02/24/2025-February/</loc>
+    
+    <lastmod>2025-02-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2025/02/09/%E3%80%90%E7%AC%AC%E6%8B%BE%E6%9C%9F-REVERSE-%E5%88%86%E4%BA%AB%E4%BC%9A%E3%80%91/</loc>
+    
+    <lastmod>2025-02-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2024/12/30/2024-December/</loc>
     
     <lastmod>2025-01-29</lastmod>
@@ -1705,7 +1723,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2025-01-29</lastmod>
+    <lastmod>2025-02-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
