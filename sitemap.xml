@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/2025/11/30/2025-November/</loc>
+    
+    <lastmod>2025-11-15</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2025/10/29/2025-October/</loc>
     
     <lastmod>2025-10-29</lastmod>
@@ -1804,7 +1813,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2025-10-29</lastmod>
+    <lastmod>2025-11-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
