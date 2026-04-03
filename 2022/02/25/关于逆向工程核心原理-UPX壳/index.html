@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>关于逆向工程核心原理-UPX壳 - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/About/About">About</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            <span>February</span>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>25,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">关于逆向工程核心原理-UPX壳</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>（简称《逆向工程核心原理》第十四章和第十五章学习）</p>
+<h1 id="X-exe与X-upx-exe的比较"><a href="#X-exe与X-upx-exe的比较" class="headerlink" title="X.exe与X_upx.exe的比较"></a>X.exe与X_upx.exe的比较</h1><p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220225094721376.png" alt="image-20220225094721376"></p>
+<ol>
+<li> PE头的大小一样（0~400h）</li>
+<li> 节区名称改变（“.text” -&gt; “UPX0”, “.data” -&gt; “”UPX1）</li>
+<li> 第一个节区的RawDataSize = 0（文件中的大小为0）</li>
+<li> EP位于第二个节区（原nodepad.exe的EP在第一个节区）</li>
+<li> 资源区（.rsrc）大小几乎无变化</li>
+</ol>
+<p>可以发现Size of Raw Data为0，可Virtual Size设置为10000，说明在运行瞬间讲代码压缩到第一个节区</p>
+<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220225095122762.png" alt="image-20220225095122762"></p>
+<p>两种方法找到OEP</p>
+<p>首先可以看下OEP的位置在100739Dh</p>
+<p>10073B4处与10073C0地址处是比较MZ与PE签名</p>
+<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220225095744515.png" alt="image-20220225095744515"></p>
+<h1 id="单步跟踪法"><a href="#单步跟踪法" class="headerlink" title="单步跟踪法"></a>单步跟踪法</h1><p>这两条指令设置了upx1和upx0的起始位置</p>
+<p>1001000是upx0 待解压缩区</p>
+<p>1011000是upx1 资源区</p>
+<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220225100612978.png" alt="image-20220225100612978"></p>
+<p>（跟踪UPX文件，遇到LOOP时，先了解作用再跳出）</p>
+<h2 id="1-循环-1（初始化）"><a href="#1-循环-1（初始化）" class="headerlink" title="1.  循环#1（初始化）"></a>1.  循环#1（初始化）</h2><p>从EDX（1001000）中读取一个字节写入EDI（1001001）</p>
+<p>（感觉就是初始化upx0节区）</p>
+<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220225101519176.png" alt="image-20220225101519176"></p>
+<h2 id="2-循环-2（解压缩循环）"><a href="#2-循环-2（解压缩循环）" class="headerlink" title="2. 循环#2（解压缩循环）"></a>2. 循环#2（解压缩循环）</h2><p>这个循环比较大，一共有三处从upx1放入upx0</p>
+<p>第一处放入</p>
+<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220225102348391.png" alt="image-20220225102348391"></p>
+<p>第二处放入</p>
+<p>（这里有点不理解edx指向的也是upx0的区域，然后又放入upx0，为什么是upx1解压到upx0）</p>
+<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227145525947.png" alt="image-20220227145525947"></p>
+<p>第三处放入</p>
+<p>（和第二处同疑问）</p>
+<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227150518763.png" alt="image-20220227150518763"></p>
+<h2 id="3-循环-3（修复重定位）"><a href="#3-循环-3（修复重定位）" class="headerlink" title="3. 循环#3（修复重定位）"></a>3. 循环#3（修复重定位）</h2><p>恢复E9的重定位，低八位直接舍弃了，减原来基地址，再加当前upx0的基地址</p>
+<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227160054930.png" alt="image-20220227160054930"></p>
+<h2 id="4-循环-4（恢复IAT）"><a href="#4-循环-4（恢复IAT）" class="headerlink" title="4. 循环#4（恢复IAT）"></a>4. 循环#4（恢复IAT）</h2><p>从upx1存放的API函数名称，GetProcAddress获取IAT地址再放到nodepad的IAT地址</p>
+<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227161744467.png" alt="image-20220227161744467"></p>
+<h2 id="5-跳转到OEP"><a href="#5-跳转到OEP" class="headerlink" title="5. 跳转到OEP"></a>5. 跳转到OEP</h2><p>再往下一点就是跳转到OEP的位置了</p>
+<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227162329809.png" alt="image-20220227162329809"></p>
+<h1 id="ESP定律法"><a href="#ESP定律法" class="headerlink" title="ESP定律法"></a>ESP定律法</h1><h2 id="1-设置内存断点"><a href="#1-设置内存断点" class="headerlink" title="1.  设置内存断点"></a>1.  设置内存断点</h2><p>pushad是把八个通用寄存器放入堆栈，这样不会影响寄存器初始状态</p>
+<p>所以当upx恢复完了，会有对应的popad，那么在这八个寄存器的数据下个断点</p>
+<p>F9直接运行，当dbg断下来，说明已经恢复完了</p>
+<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227162545774.png" alt="image-20220227162545774"></p>
+<h1 id="2-找到OEP"><a href="#2-找到OEP" class="headerlink" title="2. 找到OEP"></a>2. 找到OEP</h1><p>可以发现已经快到跳OEP的位置了</p>
+<p><img src="/2022/02/25/%E5%85%B3%E4%BA%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86-UPX%E5%A3%B3/image-20220227162740358.png" alt="image-20220227162740358"></p>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <!-- <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div> -->
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2022/02/25/关于逆向工程核心原理-UPX壳/" class="leancloud_visitors" data-flag-title="关于逆向工程核心原理-UPX壳">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Friends/Friends" class="item">Friends</a>
+                
+                <a href="/About/About" class="item">About</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2026 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
