@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>强网拟态2023线下 REVERSE - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/About/About">About</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>December</span>
+            
+            <span>19,</span>
+            <span>2023</span>
+        </div>
+        
+
+        <h2 class="title">强网拟态2023线下 REVERSE</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <h1 id="easy-firmware"><a href="#easy-firmware" class="headerlink" title="easy_firmware"></a>easy_firmware</h1><blockquote>
+<p>描述：世界上最简单的固件逆向</p>
+</blockquote>
+<h2 id="0x00-Daily-Shell-Check"><a href="#0x00-Daily-Shell-Check" class="headerlink" title="0x00 Daily Shell Check"></a>0x00 Daily Shell Check</h2><p>喜闻乐见的stm32，关于IDA怎么加载不再赘述，arm32小端序，根据开始几个函数地址判断基地址是 0x8000000，然后全选分析即可</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-247140.htm">https://bbs.kanxue.com/thread-247140.htm</a></p>
+</blockquote>
+<p><img src="/2023/12/19/%E5%BC%BA%E7%BD%91%E6%8B%9F%E6%80%812023%E7%BA%BF%E4%B8%8B-REVERSE/image-20231220224307962.png" alt="image-20231220224307962"></p>
+<h2 id="0x01-Find-data"><a href="#0x01-Find-data" class="headerlink" title="0x01 Find data"></a>0x01 Find data</h2><p>首先可以通过字符串比较容易的分析整个加密，只是对我们的输入进行了AES加密</p>
+<p><img src="/2023/12/19/%E5%BC%BA%E7%BD%91%E6%8B%9F%E6%80%812023%E7%BA%BF%E4%B8%8B-REVERSE/image-20231221131302883.png" alt="image-20231221131302883"></p>
+<p>那么，密钥和密文呢…当时做这题的估计所有人都卡这个步骤了，这个内存 0x20000024 到底是什么数值，毕竟又运行不起来，因为qemu只对stm32的部分板子支持，所以该怎么拿到这个值呢？</p>
+<p><img src="/2023/12/19/%E5%BC%BA%E7%BD%91%E6%8B%9F%E6%80%812023%E7%BA%BF%E4%B8%8B-REVERSE/image-20231221131734306.png" alt="image-20231221131734306"></p>
+<p>于是就整个文件乱翻，在结尾处找到神秘数据，就是这段了，可以从上图可知密钥和密文在内存中连续的，那么也可以得知肯定又哪个函数调用了这些数据，把他们加载到了内存，于是尝试对所有数据进行交叉引用，发现是引用不到的，因为ida没把一个关键函数分析出来，我们可以搜索整个文件看哪里引用了这个地址</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">start = <span class="number">0x8000000</span></span><br><span class="line">end = <span class="number">0x8012408</span></span><br><span class="line"><span class="keyword">while</span> (start &lt; end):</span><br><span class="line">	<span class="keyword">if</span> (get_wide_byte(start) == <span class="number">0xA4</span> <span class="keyword">and</span> get_wide_byte(start + <span class="number">1</span>) == <span class="number">0x24</span>):</span><br><span class="line">		<span class="built_in">print</span>(<span class="built_in">hex</span>(start))</span><br><span class="line">	start += <span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;OK!&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>于是可以找到这个真正的main函数？在这里初始化了这些数据到内存，然后跳到了可以从字符串分析的sub_80000F4函数</p>
+<p><img src="/2023/12/19/%E5%BC%BA%E7%BD%91%E6%8B%9F%E6%80%812023%E7%BA%BF%E4%B8%8B-REVERSE/image-20231221132010909.png" alt="image-20231221132010909"></p>
+<p>然后可以稍微审计一下就可以知道是怎么加载数据的了</p>
+<p><img src="/2023/12/19/%E5%BC%BA%E7%BD%91%E6%8B%9F%E6%80%812023%E7%BA%BF%E4%B8%8B-REVERSE/image-20231221132140028.png" alt="image-20231221132140028"></p>
+<p>当然还有一个好用的插件，不过用unicorn来模拟一样，不过这个插件挺方便的</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/alexhude/uEmu">https://github.com/alexhude/uEmu</a></p>
+</blockquote>
+<p>于是得到我们所需的内存数据</p>
+<p><img src="/2023/12/19/%E5%BC%BA%E7%BD%91%E6%8B%9F%E6%80%812023%E7%BA%BF%E4%B8%8B-REVERSE/image-20231221132659056.png" alt="image-20231221132659056"></p>
+<h2 id="0x02-GetFlag"><a href="#0x02-GetFlag" class="headerlink" title="0x02 GetFlag"></a>0x02 GetFlag</h2><p>于是数据有了，就是我们喜闻乐见的解密环节，然后AES ECB解密失败，因为魔改了，然后掏出祖传AES解密脚本</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/kokke/tiny-AES-c">https://github.com/kokke/tiny-AES-c</a></p>
+</blockquote>
+<p>而这次魔改的点其实就一处也很明显，但最恶心的就是用了强制转换成了 int 类型，这里用bn更好看</p>
+<p><img src="/2023/12/19/%E5%BC%BA%E7%BD%91%E6%8B%9F%E6%80%812023%E7%BA%BF%E4%B8%8B-REVERSE/image-20231221133148179.png" alt="image-20231221133148179"></p>
+<p>注意这里的加密我本来以为只是个循环右移，但这里用了 int 类型，于是变得奇怪了起来，总结来说</p>
+<p>就是需要注意 (arg1 &gt;&gt; 0x1f)，这里进行算数右移31了一个int32的数据，于是只会出现两个值</p>
+<ul>
+<li>如果是正数：即最高位为0，右移31位也是0</li>
+<li>如果是负数：即最高位1，右移31位后就是-1，十六进制为 0xFFFFFFFF</li>
+</ul>
+<p>也就是这样</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int32_t</span> num = <span class="number">0xF2345678</span>;</span><br><span class="line"><span class="type">int32_t</span> tmp = ((num &lt;&lt; <span class="number">1</span>) ^ (num &gt;&gt; <span class="number">0x1f</span>));</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%X %X %X\n&quot;</span>, tmp, (num &lt;&lt; <span class="number">1</span>), (num &gt;&gt; <span class="number">0x1f</span>));</span><br><span class="line"><span class="type">int32_t</span> out = (((tmp &gt;&gt; <span class="number">1</span>)) ^ (-(tmp &amp; <span class="number">1</span>)));</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%X %X %X\n&quot;</span>, out, ((tmp &gt;&gt; <span class="number">1</span>)), (-(tmp &amp; <span class="number">1</span>)));</span><br></pre></td></tr></table></figure>
+
+<p>那么搞清楚这个，就比较容易的写处逆向脚本</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">InvCipher</span><span class="params">(<span class="type">state_t</span>* state, <span class="type">const</span> <span class="type">uint8_t</span>* RoundKey)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uint8_t</span> round = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Add the First round key to the state before starting the rounds.</span></span><br><span class="line">    AddRoundKey(Nr, state, RoundKey);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// There will be Nr rounds.</span></span><br><span class="line">    <span class="comment">// The first Nr-1 rounds are identical.</span></span><br><span class="line">    <span class="comment">// These Nr rounds are executed in the loop below.</span></span><br><span class="line">    <span class="comment">// Last one without InvMixColumn()</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (round = (Nr - <span class="number">1</span>); ; --round)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> i;</span><br><span class="line">        <span class="type">uint32_t</span>* pp = (<span class="type">uint32_t</span>*)state;</span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;%X, &quot;</span>, pp[i]);</span><br><span class="line">            pp[<span class="number">0</span>] = ((pp[<span class="number">0</span>] &gt;&gt; <span class="number">1</span>) ^ (-((<span class="type">int</span>)pp[<span class="number">0</span>] &amp; <span class="number">1</span>)));</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;%X, &quot;</span>, pp[i]);</span><br><span class="line">            <span class="comment">//printf(&quot;%X, &quot;, ((uint32_t*)state)[i]);</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;\n\n&quot;</span>);</span><br><span class="line">        InvShiftRows(state);</span><br><span class="line">        InvSubBytes(state);</span><br><span class="line">        AddRoundKey(round, state, RoundKey);</span><br><span class="line">        <span class="keyword">if</span> (round == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        InvMixColumns(state);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Get Flag!</p>
+<p><img src="/2023/12/19/%E5%BC%BA%E7%BD%91%E6%8B%9F%E6%80%812023%E7%BA%BF%E4%B8%8B-REVERSE/image-20231221134418060.png" alt="image-20231221134418060"></p>
+<h1 id="Keygen"><a href="#Keygen" class="headerlink" title="Keygen"></a>Keygen</h1><h2 id="0x00-Daily-Shell-Check-1"><a href="#0x00-Daily-Shell-Check-1" class="headerlink" title="0x00 Daily Shell Check"></a>0x00 Daily Shell Check</h2><p>apk逆向，无shell</p>
+<h2 id="0x01-Native-Time"><a href="#0x01-Native-Time" class="headerlink" title="0x01 Native Time"></a>0x01 Native Time</h2><ul>
+<li><p>Java层什么东西没有，就是把我们输入的调用到了so层，烂活，套了个魔改ollvm直接分析就行</p>
+</li>
+<li><p>而且界面的文本框没有按钮，根本不知道check怎么触发</p>
+</li>
+<li><p>如果要调试so要注意，用MT管理器或者修改重新打包把AndroidManifest.xml中的android:extractNativeLibs改成true，如果是false，则它从自身的base.apk加载so，所以在ida中调试不会出现你想要的so</p>
+</li>
+</ul>
+<p>当然也可以审计分析流程</p>
+<ol>
+<li>Java_com_qwctf_keygen_MainActivity_start（pthread_create起了个线程函数sub_4D8C来处理我们的输入）</li>
+<li>sub_4D8C函数把输入分成了三部分，第一部分是flag{ 第二三个部分是输入的两个部分 第四个部分是}<ul>
+<li>同时明文全都给加密了， sub_185C解密了我们所需要的数据第一个参数是key，第二个参数是key的长度，三四就是密文和长度</li>
+</ul>
+</li>
+</ol>
+<p><img src="/2023/12/19/%E5%BC%BA%E7%BD%91%E6%8B%9F%E6%80%812023%E7%BA%BF%E4%B8%8B-REVERSE/image-20231221135909197.png" alt="image-20231221135909197"></p>
+<ol start="3">
+<li>sub_55E4和另一个函数分别加密了我们明文的两个部分，不过都一样，无魔改RC4和无魔改AES，直接解密即可，拿到密钥直接加密即可</li>
+</ol>
+<p><img src="/2023/12/19/%E5%BC%BA%E7%BD%91%E6%8B%9F%E6%80%812023%E7%BA%BF%E4%B8%8B-REVERSE/image-20231221140108117.png" alt="image-20231221140108117"></p>
+<p>至此整个流程分析完毕，其实这题就是个非常常见的加密流程，运行解密字符串，进行验证然后再把字符串解密回去，但由于ollvm不想分析加上出题人不知道怎么写的界面导致无法触发check函数，于是做的很慢，最后还是硬分析完了</p>
+<h2 id="0x02-GetFlag-1"><a href="#0x02-GetFlag-1" class="headerlink" title="0x02 GetFlag"></a>0x02 GetFlag</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">key1:  0x21, 0xCF, 0xCC, 0x68, 0xEA, 0xC5, 0x0A, 0x87, 0xFA, 0x60, 0xDB, 0x52, 0x99, 0xD4, 0xDC, 0x1B</span><br><span class="line">key2:  0xA9, 0x86, 0xC8, 0xC8, 0x5F, 0x57, 0xF8, 0x7E, 0x57, 0x30, 0x69, 0x27, 0xD1, 0x4C, 0x41, 0x5C</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">from Crypto.Cipher import AES       </span><br><span class="line">flag = b<span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">enc = bytes.fromhex(&quot;C23093CDC44CAEB783372818757E4FA6&quot;)</span></span><br><span class="line"><span class="string">key = bytes([0x21, 0xCF, 0xCC, 0x68, 0xEA, 0xC5, 0x0A, 0x87, 0xFA, 0x60, 0xDB, 0x52, 0x99, 0xD4, 0xDC, 0x1B])</span></span><br><span class="line"><span class="string">cipher = AES.new(key, AES.MODE_ECB)</span></span><br><span class="line"><span class="string">enc = cipher.decrypt(enc)</span></span><br><span class="line"><span class="string">flag += enc</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">enc = bytes.fromhex(&quot;2CFF2945D7432A34D8E0A15F2F62BB62&quot;)</span></span><br><span class="line"><span class="string">key = bytes([0xA9, 0x86, 0xC8, 0xC8, 0x5F, 0x57, 0xF8, 0x7E, 0x57, 0x30, 0x69, 0x27, 0xD1, 0x4C, 0x41, 0x5C])</span></span><br><span class="line"><span class="string">cipher = AES.new(key, AES.MODE_ECB)</span></span><br><span class="line"><span class="string">enc = cipher.decrypt(enc)</span></span><br><span class="line"><span class="string">flag += enc</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">print(flag)</span></span><br></pre></td></tr></table></figure>
+
+<p>Get Flag!</p>
+<p><img src="/2023/12/19/%E5%BC%BA%E7%BD%91%E6%8B%9F%E6%80%812023%E7%BA%BF%E4%B8%8B-REVERSE/image-20231221140524784.png" alt="image-20231221140524784"></p>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <!-- <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div> -->
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2023/12/19/强网拟态2023线下-REVERSE/" class="leancloud_visitors" data-flag-title="强网拟态2023线下 REVERSE">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Friends/Friends" class="item">Friends</a>
+                
+                <a href="/About/About" class="item">About</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2026 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
