@@ -119,29 +119,35 @@
     <div class="divider"></div>
 
     <div class="content">
-        <h1 id="2026-July"><a href="#2026-July" class="headerlink" title="2026 July"></a>2026 July</h1><h2 id="6-29-7-5-Summary"><a href="#6-29-7-5-Summary" class="headerlink" title="6.29 ~ 7.5 Summary"></a>6.29 ~ 7.5 Summary</h2><p>📖 Theme：Router Fine-tuned Model &amp; Extractor Fine-tuned Model</p>
+        <h1 id="2026-July"><a href="#2026-July" class="headerlink" title="2026 July"></a>2026 July</h1><h2 id="Summary-6-29-7-5"><a href="#Summary-6-29-7-5" class="headerlink" title="Summary 6.29 ~ 7.5"></a>Summary 6.29 ~ 7.5</h2><p>📖 Theme：Router Fine-tuned Model &amp; Extractor Fine-tuned Model</p>
 <hr>
 <p>🧠 Cognition</p>
 <ol>
-<li>进行类似三分类微调注意训练集样本比例问题</li>
-<li>llamafactory框架有时候可能会出现流程全部正常，但adapter文件保存失败，导致跑目标微调模型失效，微调完注意看adapter大小</li>
-<li>llamafactory中yaml cutoff参数截断问题，超过cutoff的数据会直接截断训练，导致污染数据集，还要注意如果设置cutoff=4096，这里4096不是字符，要根据每个大模型的tokenizer进行计算实际值</li>
-<li>本地 agent cli 很容易犯的一个错误就是在将当前上下文泄漏，写涉及prompt相关项目的时候要尤其小心（可能会写入上下文部分名词以及莫名其妙的限制）</li>
-<li>让 few shot 代替 规则堆叠（即为了提升某个模型的数据而一直更改prompt，容易为某个狭小的场合特调prompt，不具备通用性）</li>
+<li>进行类似三分类微调注意训练集样本比例问题；</li>
+<li>llamafactory框架有时候可能会出现流程全部正常，但adapter文件保存失败，导致跑目标微调模型失效，微调完注意看adapter大小；</li>
+<li>llamafactory中yaml cutoff参数截断问题，超过cutoff的数据会直接截断训练，导致污染数据集，还要注意如果设置cutoff=4096，这里4096不是字符，要根据每个大模型的tokenizer进行计算实际值；</li>
+<li>本地 agent cli 很容易犯的一个错误就是在将当前上下文泄漏，写涉及prompt相关项目的时候要尤其小心（可能会写入上下文部分名词以及莫名其妙的限制）；</li>
+<li>让 few shot 代替 规则堆叠（即为了提升某个模型的数据而一直更改prompt，容易为某个狭小的场合特调prompt，不具备通用性）。</li>
 </ol>
 <hr>
 <p>🖊️ Boundary</p>
 <ol>
-<li>✔ 2026 June 月总结</li>
-<li>✔ 小红书简介 + 第一篇开题</li>
-<li>✔ 三分类微调模型迭代八个版本成功分类（建立训练集和测试集 + 教师期望数据 + baseline数据 + 学生微调数据）</li>
-<li>✔ 语义提取微调模型迭代四个版本测试集确立中幅度提升F2（Hard Sample 的语义提取与原zero shot的消融实验，且14b与32b都已测试）</li>
-<li>✔ Easy Medium 原 few shot 实验</li>
+<li>✔ 2026 June 月总结；</li>
+<li>✔ 小红书简介 + 第一篇开题；</li>
+<li>✔ 三分类微调模型迭代八个版本成功分类（建立训练集和测试集 + 教师期望数据 + baseline数据 + 学生微调数据）；</li>
+<li>✔ 语义提取微调模型迭代四个版本测试集确立中幅度提升F2（Hard Sample 的语义提取与原zero shot的消融实验，且14b与32b都已测试）；</li>
+<li>✔ Easy Medium 原 few shot 实验。</li>
 </ol>
 <hr>
 <p>🎉 Next Theme：Go on Fine-tune Model</p>
 <hr>
-<h3 id="七月第一周的碎碎念"><a href="#七月第一周的碎碎念" class="headerlink" title="七月第一周的碎碎念"></a>七月第一周的碎碎念</h3><p>先不念了，今天早点回去洗个澡睡觉</p>
+<h3 id="七月第一周的碎碎念"><a href="#七月第一周的碎碎念" class="headerlink" title="七月第一周的碎碎念"></a>七月第一周的碎碎念</h3><p>这周最大的就是体验就是换了时差🌕，我发现很神奇的一个事情就是强大的起晚了内耗惯性没了，这是我二十四岁人生第一次倒时差生活，往往都困在早上起来状态如何的一种感觉，如果起来状态不好往往动力就很差，而如今中午起床根本无所谓了，就是那种早起的业力心态没了，好神奇，而且晚上十点后沉浸式工位独处也很舒服，晚上凌晨两三点一个人离开工位回家也很开心，充足的七八小时睡眠实际上身体并没有感到不舒服，只是换了时差。</p>
+<p>果然啊，还是喜欢生活于社群之中，在工位的快乐又回来了，这样的生活还能体验两三年就感觉很开心，虽然如今要肩负比当年大一更多的责任，但也很期待接下来的生活。</p>
+<p>这周主要就是在弄微调模型🤖，长达两个月的各种方案的尝试终于看到了希望，所以感觉来了就一直在微调，中间当然碰到不少问题，也让我意识到了前两个月的各种尝试得到的结论也有很多价值，三分类和trace语义提取都得到了正反馈，这等待已久的正反馈…下一步就是扩大测试集进行实验了，说实话不到完整测试集上跑完之前是不敢开香槟的，现在在我心里依然是悬而未决。</p>
+<p>生活上每天真是伙食变好了，已经好久没去食堂了，附近好吃又性价比高的都吃了一遍，我甚至都好久没一个人吃饭了，嗯，上个三年真的结束了，如今每周还能约出来玩或是晚上打会game🎮，啊日子可真美好。</p>
+<p>总的来说，自从上次月记结束，感觉一下子就加快适应了如今的环境，协会前两天还刚好大扫除了，我的工位又升级了，工位旁边还有个小床，准备收拾收拾升级一下就能睡了，如果今年研究生宿舍真在三公里的G区，那估计真三天两头要睡工位了🛌。</p>
+<p>下周继续微调实验，争取这两周优化完确定完整个流程，就可以对比各种baseline后完成实验了，当然每次专注一个事物其他事情都不干了，但说实话不能完全放，实验做累了换换脑子也好，下周一定把小红书🍠第一篇内容发出来。</p>
+<hr>
 
     </div>
     
