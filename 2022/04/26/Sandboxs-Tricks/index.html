@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>Sandboxs Tricks - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/About/About">About</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            <span>April</span>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>26,</span>
+            <span>2022</span>
+        </div>
+        
+
+        <h2 class="title">Sandboxs Tricks</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <p>虽然沙盒已经听了很多次了，这还是第一次了解，这篇文章主要记录，加快逆向工程的沙盒技巧</p>
+<h1 id="一：沙盒是什么，它是怎么工作的"><a href="#一：沙盒是什么，它是怎么工作的" class="headerlink" title="一：沙盒是什么，它是怎么工作的"></a>一：沙盒是什么，它是怎么工作的</h1><p>当一个<strong>二进制文件打包后</strong>，还进行了加密，我们并<strong>不是很容易的对此进行调试或者反汇编</strong></p>
+<p>但有一个奇妙的点，就是<strong>API调用</strong></p>
+<ol>
+<li><p> 每次想与windows进行交互的Malware，它都需要通过一组API！</p>
+</li>
+<li><p> 不管怎么样，想创建文件或者网络流量，都必须经过API！</p>
+</li>
+<li><p> 而在沙盒里可以<strong>监控这所有的API</strong>并把它打包到一个容器，然后报告沙盒流量等</p>
+</li>
+</ol>
+<p>整个二进制的代码，我们并不关心，关心的是<strong>所调用的API</strong>，<strong>所干的所有操作</strong>，再整理发送报告，<strong>这就是沙盒！</strong></p>
+<p>开源沙盒<a target="_blank" rel="noopener" href="https://github.com/cuckoosandbox/cuckoo">cuckoo</a></p>
+<p><img src="/2022/04/26/Sandboxs-Tricks/image-20220426114557539.png" alt="image-20220426114557539"></p>
+<p>沙盒的DLL或钩子注入到了Malware的进程空间去，设置钩子，检测操作等</p>
+<p>当然Malware也会有一些反检测的东西，<strong>钩子加DLL是沙盒大部分的操作，其他的都是些报告细节等</strong></p>
+<p>每当Malware调用这些API时，沙盒就会截取信息，然后再继续传给系统让Malware继续操作</p>
+<p><img src="/2022/04/26/Sandboxs-Tricks/image-20220426115619876.png" alt="image-20220426115619876"></p>
+<h1 id="二：沙盒的样品报告"><a href="#二：沙盒的样品报告" class="headerlink" title="二：沙盒的样品报告"></a>二：沙盒的样品报告</h1><p>一个简单创建文件的操作，丢进HYBRIO的<a target="_blank" rel="noopener" href="https://www.hybrid-analysis.com/sample/0e7a10d984f62562a2152a80039b2e36fbc5d70c4b449d57a3df56324f213ecf?environmentId=100">样品报告</a></p>
+<p>点Input Simples，可以出现很详细的报告和所有操作</p>
+<p><img src="/2022/04/26/Sandboxs-Tricks/image-20220426121231345.png" alt="image-20220426121231345"></p>
+<h1 id="三：加快在IDA中的逆向工程"><a href="#三：加快在IDA中的逆向工程" class="headerlink" title="三：加快在IDA中的逆向工程"></a>三：加快在IDA中的逆向工程</h1><p>在创建一个文件时，会调用 </p>
+<ol>
+<li> kernel32的CreateFileW </li>
+<li> 而在kernel32内部还要调用NtCreateFile</li>
+</ol>
+<p><strong>而Ntdll创建文件已经是用户在进入内核前最底层的调用了</strong></p>
+<p><strong>所以在Ntdll上创建一个钩子，可以钩住所有文件的调用</strong>，而钩子挂高了些就会要钩一堆dll</p>
+<p>在调用CreateFile，第一个参数是我们的文件名</p>
+<p><img src="/2022/04/26/Sandboxs-Tricks/image-20220426122021624.png" alt="image-20220426122021624"></p>
+<p>在NtCreateFile中我们关心的是<strong>对象属性</strong>，ObjectAttributes</p>
+<p><img src="/2022/04/26/Sandboxs-Tricks/image-20220426121633305.png" alt="image-20220426121633305"></p>
+<p>什么是对象属性？</p>
+<p><img src="/2022/04/26/Sandboxs-Tricks/image-20220426122418334.png" alt="image-20220426122418334"></p>
+<p>现在通过IDA来查找NtCreateFile的细节！</p>
+<p>目前还不知道这个功能干嘛，好像是让界面更全面一点</p>
+<p><img src="/2022/04/26/Sandboxs-Tricks/image-20220426123848212.png" alt="image-20220426123848212"></p>
+<p>然后在moudles里打开Ntdll，再搜索CreateFile</p>
+<p><img src="/2022/04/26/Sandboxs-Tricks/image-20220426123935183.png" alt="image-20220426123935183"></p>
+<p>再首地址下个断点，直接可以跳过去，根据函数原型，我们可以看堆栈可以得知第三个就是对象属性</p>
+<p><img src="/2022/04/26/Sandboxs-Tricks/image-20220426124039970.png" alt="image-20220426124039970"></p>
+<p>跳到指定地址后，可以找到我们的ObjectName，再跳过去看结构体</p>
+<p><img src="/2022/04/26/Sandboxs-Tricks/image-20220426124151469.png" alt="image-20220426124151469"></p>
+<p>前两个是我们的short长度，第三个就是我们的文件路径了</p>
+<p><img src="/2022/04/26/Sandboxs-Tricks/image-20220426124225230.png" alt="image-20220426124225230"></p>
+<p>这就是沙箱识别二进制文件的方式！（好饿好饿，吃午餐去了–4.26 AM:12:59</p>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <!-- <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div> -->
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2022/04/26/Sandboxs-Tricks/" class="leancloud_visitors" data-flag-title="Sandboxs Tricks">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Friends/Friends" class="item">Friends</a>
+                
+                <a href="/About/About" class="item">About</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2026 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
