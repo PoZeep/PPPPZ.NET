@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>2026 August - P.Z&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+
+  
+<link rel="stylesheet" href="/css/var.css">
+
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<link rel="stylesheet" href="/css/typography.css">
+
+  
+<link rel="stylesheet" href="/css/code-highlighting.css">
+
+  
+<link rel="stylesheet" href="/css/components.css">
+
+  
+<link rel="stylesheet" href="/css/nav.css">
+
+  
+<link rel="stylesheet" href="/css/paginator.css">
+
+  
+<link rel="stylesheet" href="/css/footer.css">
+
+  
+<link rel="stylesheet" href="/css/post-list.css">
+
+  
+<link rel="stylesheet" href="/css/waline.css">
+
+  
+  
+  
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+ 
+  
+
+    <script src='//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js'></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<!-- //unpkg.com/@waline/client -->
+<!--  -->
+    <body data-color-scheme="auto">
+        <nav id="theme-nav">
+    <div class="inner">
+        <a class="title" href="/">P.Z&#39;s Blog</a>
+        <div class="nav-arrow"></div>
+        <div class="nav-items">
+            <a class="nav-item nav-item-home" href="/">Home</a>
+            
+            
+            <a class="nav-item" href="/Friends/Friends">Friends</a>
+            
+            
+            
+            <a class="nav-item" href="/About/About">About</a>
+            
+            
+            
+            <a class="nav-item nav-item-github nav-item-icon" href="https://github.com/PoZeep" target="_blank">&nbsp;</a>
+            
+            
+            
+            <a class="nav-item nav-item-patreon nav-item-icon" href="https://space.bilibili.com/39892350" target="_blank">&nbsp;</a>
+            
+            
+        </div>
+    </div>
+</nav>
+        <article class="post">
+    <div class="meta">
+        
+        <div class="date" id="date">
+            
+            
+            
+            
+            
+            
+            
+            
+            <span>August</span>
+            
+            
+            
+            
+            
+            <span>10,</span>
+            <span>2026</span>
+        </div>
+        
+
+        <h2 class="title">2026 August</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="content">
+        <h1 id="2026-August"><a href="#2026-August" class="headerlink" title="2026 August"></a>2026 August</h1><h2 id="8-1-～-8-9"><a href="#8-1-～-8-9" class="headerlink" title="8.1 ～ 8.9"></a>8.1 ～ 8.9</h2><p>📖 Theme：August Reset</p>
+<p>🧠 Cognition</p>
+<ol>
+<li>小模型最好干小而精的事情，类似于三分类，任务简单直接，回答只需要理由+答案</li>
+<li>Judger8.x方案主要是尝试不同输入，基于目前的tree、trace与ration的信息，各种不同组合，但跑出来最好的方案与全判Same也差不多，因为全Same其实也不低，居然也有0.85</li>
+<li>Judger9.x方案主要是evidence-orianted，但显然tree和trace证据无法交叉对比，继续提取证据小模型做不到，也不对ration做二次加工，只会增大小模型的不可靠性与不稳定性</li>
+<li>all4 complie关于tree的特别结论，说实话直觉上理论走的通，数字也符合，不过gpt提醒我要做个消融实验，不过我得构造测试集需要花时间，后续再做消融实验</li>
+<li>不同教师模型的slice判断也不同，一下子就加大了后续所有可能的随机性，当前baseline是拿gpt测试的，slice比较保守，而用dpsk-flash切分的激进了不少，slice并不一定哪方对，不过之前大规模测试是gpt，所以目前先用gpt训练为主</li>
+</ol>
+<p>🖊️ Boundary</p>
+<ol>
+<li>✔ Judger 8.x、9.x、10.x 方案迭代 + 总结</li>
+<li>✔ 确定Slice微调流程 + 测试Slice原模型baseline + 生成Slice训练集教师数据 + 测试Slice Adapter效果</li>
+<li>✔ 确定Algorithm微调流程 + 生成Algorithm训练集教师数据 + 侧脸 Algorithm Adapter 效果</li>
+<li>✔ Let’s Build Generatively Pretrained Transformer，Let’s Go!</li>
+</ol>
+<p>🎉 Next Theme：</p>
+<hr>
+<h3 id="⛈️-August-Reset"><a href="#⛈️-August-Reset" class="headerlink" title="⛈️ August Reset"></a>⛈️ August Reset</h3><p>今天终于把窗帘拉开了，又度过了一次台风，总觉得每年夏天期待的台风天已经好几年没感受了，但今年切实的体验了两次，如同被考试暂停的几年，以往鲜活的一部分仿佛回来了。</p>
+<p>不过困扰我最大的还是那股莫名的感觉，我今年正式定义为 间歇性意义感缺失：存在性焦虑，这股焦虑困扰了很多年，我也采用各种方式挣扎着这种感觉，直到去年考试学会了轻轻的共处，不过今年这个假期这个感觉又来了，考试的时候还有一个明确的目标，而在这低反馈的自由探索的科研生活，焦虑又换了一种形态让我继续体验。</p>
+<p>我开始寻找锚点，寻找期待感，我也尝试像去年一样共处，然而这次没有明确的考试或是某个目标，我就像漂在大海上的锚，没有明确的方向，没有明确的深度，只是悬浮着，我不知道今晚该如何入眠，明天为了什么起来，只能是最低限度的飘到工位机械的干完每天的各种实验，目前微调的工程活很多，步骤很多，各种消融实验来证明结论的严谨，但说实话根本不太需要用脑。</p>
+<p>然而书稿的ddl要来了，再不开始写真来不及了</p>
+<p><img src="/2026/08/10/2026-August/146b2691-9772-4b9e-8d6a-a3af48865a95.png" alt="146b2691-9772-4b9e-8d6a-a3af48865a95"></p>
+<p>嗯，LLM很有意思，这几天开始学习微调框架的各种知识让我体验到学习新知识的快乐感觉，然而逆向是我在逃避的，我到底在逃避什么，本身是个有趣的过程，我明白逃避的是IIE复试给我的结果，让我感觉到过去几年在专业上花费的努力毫无意义，我也客观理解只是那两个“老师”不懂逆向，只是还在慢慢接受，所以逆向书稿里的案例迟迟不想动手，而且也在思考新时代的文章到底该怎么写，我以前很喜欢分享逆向Write up，以我的角度去写整个逆向工程非常有趣，而如今LLM时代让我下不了笔，我不知道标准答案是什么，但也许需要做的只是开始手打出第一个字。</p>
+<p><img src="/2026/08/10/2026-August/4df2ebf806f639337103f9f2353055e4.png" alt="146b2691-9772-4b9e-8d6a-a3af48865a95"></p>
+<p>依然没有忘记去年八月备考心如死灰的状态，今年也是，总会需要一些他人的提醒或是强烈的体验让我醒了过来，常常会觉得大家都好辛苦，无论是走在路上看到的人，或是想起家里人，然而真的感受到了他们的实际体验，真是让我感受有些窒息，这几天体验到了很多情绪，而是但就是这份窒息感让我唤起了麻木状态下的自己。</p>
+<p>何尝不是在等待一个锚点、一份期待感，来让我继续生活，间歇性意义感缺失：存在性焦虑，其实就是这些体验让我感觉又有了意义，让我感受到了我的存在，才会有勇气敲下书稿的第一个字，再次面对微调存在的难题，从零开始学习模型的新知识，可能不能一下子就改变我的现状，但一点点小小的改变，足以给我继续生活下去的勇气。</p>
+
+    </div>
+    
+    <div id = "frozen-btn" class = "center">
+    <!-- <button class="green" onclick = "Change()">🎉☕一杯咖啡~</button> -->
+    <button class="purple" onclick = "Change()">🍰</button>
+    </div>
+    
+    <!-- <div class = "hide" id = "img">
+        <div class="post-list">
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/AliPay.png" alt="DASCTF X SU">
+                    <div class="center">
+                        🍬
+                    </div>
+                </div>
+            </article>
+            <article class="post-list-item">
+                <div class="content">
+                    <img src="/img/Coffee/WeChat.png" alt="HFCTF2022">
+                    <div class="center">
+                        🍪
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div> -->
+    <script>
+            function Change()
+            {
+                var img = document.getElementById("img");
+                if(img.className == "hide")
+                {
+                    img.className="";
+                }
+                else
+                {
+                    img.className="hide";
+                }
+            }
+    </script>
+
+    <div class="about">
+        <h1>About this Post</h1>
+        <p>This post is written by P.Z, licensed under <a
+                target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc/4.0">CC BY-NC 4.0</a>.</p>
+    </div>
+    <!-- 
+        
+     -->
+<div class="container">
+<!-- <div id="waline"></div>
+  <script>
+    Waline({
+      el: '#waline',
+      serverURL: 'https://blog-api-pozeep.vercel.app/',  
+      visitor: true,
+      emoji: [   //这里加了一些表情 
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/qq',
+        'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/tieba',
+      ],
+       avatar: 'robohash',   //自定义默认头像为随机的机器人
+       placeholder: '🍟🍰🧊🍔🍓🍫🍦🍗🍇🍉🍑🥐🍕',   //占位符
+    });
+  </script>
+</div> -->
+
+<!-- <span id="/2026/08/10/2026-August/" class="leancloud_visitors" data-flag-title="2026 August">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="waline-visitor-count"></i>
+</span> -->
+
+</article>
+        <footer>
+    <div class="inner">
+        <div class="links">
+            
+            <div class="group">
+                <h4 class="title">Blog</h4>
+                
+                <a href="/" class="item">Home</a>
+                
+                <a href="/Friends/Friends" class="item">Friends</a>
+                
+                <a href="/About/About" class="item">About</a>
+                
+            </div>
+            
+            <div class="group">
+                <h4 class="title">Me</h4>
+                
+                <a target="_blank" rel="noopener" href="https://github.com/PoZeep" class="item">GitHub</a>
+                
+                <a target="_blank" rel="noopener" href="https://space.bilibili.com/39892350" class="item">BiliBili</a>
+                
+            </div>
+            
+        </div>
+        <span>&copy; 2026 P.Z<br >Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></span>
+        
+            <br>
+            <div class="color-scheme-toggle" role="radiogroup" id="theme-color-scheme-toggle">
+                <label>
+                    <input type="radio" value="light">
+                    <span>Light</span>
+                </label>
+                <label>
+                    <input type="radio" value="dark">
+                    <span>Dark</span>
+                </label>
+                <label>
+                    <input type="radio" value="auto">
+                    <span>Auto</span>
+                </label>
+            </div>
+        
+        
+    <span id="sitetime" style="text-align: center;display:block;"></span>
+
+
+</footer>
+
+<script language=javascript>
+    function siteTime() {
+        window.setTimeout("siteTime()", 1000);
+        var seconds = 1000;
+        var minutes = seconds * 60;
+        var hours = minutes * 60;
+        var days = hours * 24;
+        var years = days * 365;
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth() + 1;
+        var todayDate = today.getDate();
+        var todayHour = today.getHours();
+        var todayMinute = today.getMinutes();
+        var todaySecond = today.getSeconds();
+        /* Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+        year - 作为date对象的年份，为4位年份值
+        month - 0-11之间的整数，做为date对象的月份
+        day - 1-31之间的整数，做为date对象的天数
+        hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+        minutes - 0-59之间的整数，做为date对象的分钟数
+        seconds - 0-59之间的整数，做为date对象的秒数
+        microseconds - 0-999之间的整数，做为date对象的毫秒数 */
+        var t1 = Date.UTC(2021, 12, 27, 12, 00, 00); //北京时间2018-2-13 00:00:00
+        var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+        var diff = t2 - t1;
+        var diffYears = Math.floor(diff / years);
+        var diffDays = Math.floor((diff / days) - diffYears * 365);
+        var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+        var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) / minutes);
+        var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours - diffMinutes * minutes) / seconds);
+        document.getElementById("sitetime").innerHTML = "我已运行 " +diffYears+" 年 "+diffDays + " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+    }/*因为建站时间还没有一年，就将之注释掉了*/
+    siteTime();
+</script>
+
+<!-- 在线通讯Tidio -->
+
+<script src="//code.tidio.co/zmdcv08a6racnaer2so7xybdwby41fsa.js"></script>
+
+
+
+        
+<script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
