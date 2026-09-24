@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://ppppz.net/About/About.html</loc>
+    
+    <lastmod>2026-09-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/Friends/Friends.html</loc>
+    
+    <lastmod>2026-09-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://ppppz.net/2026/09/08/2026-September/</loc>
+    
+    <lastmod>2026-09-21</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://ppppz.net/2026/08/31/2026-August/</loc>
     
     <lastmod>2026-08-31</lastmod>
@@ -47,15 +74,6 @@
   </url>
   
   <url>
-    <loc>http://ppppz.net/Friends/Friends.html</loc>
-    
-    <lastmod>2026-04-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://ppppz.net/2026/03/31/2026-March/</loc>
     
     <lastmod>2026-04-06</lastmod>
@@ -86,15 +104,6 @@
     <loc>http://ppppz.net/2026/02/07/2021-%E8%85%BE%E8%AE%AF%E6%B8%B8%E6%88%8F%E5%AE%89%E5%85%A8-%E5%AE%89%E5%8D%93%E5%88%9D%E8%B5%9B/</loc>
     
     <lastmod>2026-02-07</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://ppppz.net/About/About.html</loc>
-    
-    <lastmod>2026-01-13</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1930,7 +1939,7 @@
 
   <url>
     <loc>http://ppppz.net/</loc>
-    <lastmod>2026-08-31</lastmod>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
